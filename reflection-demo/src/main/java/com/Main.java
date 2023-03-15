@@ -70,43 +70,8 @@ public class Main {
         }*/
 
         //作业1：同一个类的Class对象是相等的吗？
-        /*Class<?> clz=Parent.class;
-        Class<?> clz1=Parent.class;
-        Method[] methods = clz.getDeclaredMethods();
-        Method[] methods1 = clz1.getDeclaredMethods();
-
-        Class<?> clz5=Parent.class;
-        Field[] declaredField = clz5.getDeclaredFields();
-        Field[] declaredField1 = clz5.getDeclaredFields();
-        System.out.println(declaredField==declaredField1);
-        System.out.println(declaredField.equals(declaredField1));
-
-        Class<?> clz3 = Class.forName("com.Parent");
-        Class<?> clz4 = Class.forName("com.Parent");
-        System.out.println(clz3.equals(clz4));
-
-        System.out.println(methods);
-        System.out.println(methods1);
-
-        System.out.println(clz.equals(clz1));
-        System.out.println(clz==clz1);
-        System.out.println(methods.equals(methods1));
-        System.out.println(methods == methods1);*/
-
         //作业2：静态方法怎么获取？
-//        Class<?> cls=Parent.class;
-//        Method[] method = cls.getMethods();
-//        System.out.println(method);
-
-//        Parent parent=new Parent();
-//        Class<?> cls1=parent.getClass();
-//        Method[] declaredMethod = cls1.getDeclaredMethods();
-//        for (Method method2 : declaredMethod) {
-//            System.out.println(method2.getName());
-//        }
         //作业3：方法的参数怎么获取
-        Parent parent=new Parent();
-        Class<?> cls6=parent.getClass();
     }
 
     private static void inspectMethod() throws NoSuchMethodException {
@@ -189,8 +154,6 @@ public class Main {
         Method m1Method = clz.getDeclaredMethod("m1");
         //p.m1();p.m1("asdf",100)
         m1Method.invoke(instance);
-        System.out.println("love jipo");
-        System.out.println("强固love jipo");
     }
 
 
@@ -211,7 +174,6 @@ public class Main {
     public Object mapToBean(Map<String, Object> source,
                             Class<?> clz) {
         return null;
-
     }
 
 }
