@@ -23,8 +23,9 @@ public class Parent {
     //2. 修饰符
     //3. 返回类型
     //4.参数，数组（个数与类型）
-    public void m1(){
-        System.out.println("m1 in parent---");
+    public Integer m1(){
+        Integer a=1;
+        System.out.println("m1 in parent---");return a;
     }
     public void m1(String name){
         System.out.println("m1 in parent---");
@@ -45,5 +46,15 @@ public class Parent {
 
     public int getId() {
         return id;
+    }
+
+    public static void test1(){
+        System.out.println("love jipo");
+    }
+    static {
+        String a="abcjianmao1";
+        System.out.println("abc");
+        System.out.println("abcjianmao");
+
     }
 }
