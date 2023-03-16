@@ -140,7 +140,12 @@ public class Main {
         //第一个参数表明是给哪个对象的id字段赋值，
         // 第二个参数是字段实际赋的值
         //这种方式是直接操作一个私有的字段，违法了封装的原则
+        //下面的代码是设置字段的值，类似于p.id=333
         idField.set(instance,333);
+
+        //下面的代码是获取字段的值，类似p.id
+        System.out.println("idField.get(instance) = " + idField.get(instance));
+        //
         idField.setAccessible(false);
         System.out.println("instance.getId() = " + instance.getId());
         System.out.println("instance2.getId() = " + instance2.getId());
@@ -171,9 +176,6 @@ public class Main {
      * @param clz
      * @return
      */
-    public Object mapToBean(Map<String, Object> source,
-                            Class<?> clz) {
-        return null;
-    }
+
 
 }
