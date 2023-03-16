@@ -6,24 +6,26 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) throws Exception {
         //inspector();
-       // inspectMethod();
+       inspectMethod();
         //instanceClass();
         //fieldHandle();
-        methodHandle();
+       // methodHandle();
 
         //作业1：静态字段的赋值，取值，静态方法的调用怎么弄？
     }
 
+    //反射（Reflection）就是运行时解析类本身，调用方法，设置属性，实例化
     private static void inspector() {
         //1.反射的基础都是从Class对象来
 
         //获取class对象有3种方法
         // 下面就是第一种，通过任何类的静态字段class来得到class对象
-       /* Class<?> clz = Parent.class;
+    /*    Class<?> clz = Parent.class;
 
         System.out.println(clz.getName());
-        System.out.println(clz.getSimpleName());*/
+        System.out.println(clz.getSimpleName());
 
+*/
         //方法二：forName方法本质是加载类的作用，
 
       /*  Class<?> clz = Class.forName("com.Parent");
@@ -41,16 +43,20 @@ public class Main {
         //获取类中的所有方法
 
         //Declare：声明的意思 ，获取自己声明的所有方法
-       /* Parent parent = new Parent();
+        Parent parent = new Parent();
         Class<?> clz = parent.getClass();
+        //方法要么是类或者接口自己写的，要么是继承过来
+        //DeclaredMethods获取的就是自己编写的，不管它的修饰符是什么（4个）
         Method[] methods = clz.getDeclaredMethods();
+//  getMethods:包含自己声明的以及继承过来的，但只包括public的方法
+       // clz.getMethods()
 
         for (Method method : methods) {
             System.out.println(method.getName());
-        }*/
+        }
 
 
-     /*   Parent parent = new Parent();
+     /* Parent parent = new Parent();
         Class<?> clz = parent.getClass();
         Field[] methods = clz.getDeclaredFields();
 
@@ -77,7 +83,14 @@ public class Main {
     private static void inspectMethod() throws NoSuchMethodException {
         Class<Parent> clz = Parent.class;
 
+        //因为有重载的原因（方法名一样，参数的类型或者个数不一样）
+        //所以反射时光指定名字是不能准确的获取某个方法的
+        //还需要指定参数，下面的写法表名获取的是名字为m1,有一个参数，并且类型是String的方法
         Method m1 = clz.getDeclaredMethod("m1",String.class);
+        Method m11 = clz.getDeclaredMethod("m1",String.class);
+
+        System.out.println("m1 == m11：" + (m1 == m11));
+
         System.out.println("m1.getName() = " + m1.getName());
         System.out.println("Modifier.isPublic(m1.getModifiers()) = " + Modifier.isPublic(m1.getModifiers()));
 
@@ -113,13 +126,15 @@ public class Main {
     private static void instanceClass() throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Class<Parent> clz = Parent.class;
 
+        // 实例化一个对象的时候，一定是会调用某个构造函数的
         //newInstance默认是会调用默认构造函数（无参）
+        //下面这一行代码是反射的方式创建对象
+        //效果就等价于Parent p = new Parent();
 //        Parent instance = clz.newInstance();
 //        System.out.println("instance = " + instance);
 //
 
         Constructor<Parent> c = clz.getDeclaredConstructor(String.class);
-
         Parent instance = c.newInstance("asdf");
         System.out.println("instance = " + instance);
 
@@ -145,11 +160,17 @@ public class Main {
 
         //下面的代码是获取字段的值，类似p.id
         System.out.println("idField.get(instance) = " + idField.get(instance));
-        //
+        //别忘记关闭安全性，因为反射是直接操作字段本身，而且跳过了setter方法
         idField.setAccessible(false);
         System.out.println("instance.getId() = " + instance.getId());
         System.out.println("instance2.getId() = " + instance2.getId());
 
+        Field urlField = clz.getDeclaredField("url");
+        urlField.setAccessible(true);
+
+        urlField.set(null,"fanshe");
+        //获取字段的值用get方法，如果是实例字段，get的第一个参数就是一个对象
+        System.out.println("urlField.get(null) = " + urlField.get(null));
     }
 
     private static void methodHandle() throws Exception {
@@ -158,24 +179,18 @@ public class Main {
         Parent instance = clz.newInstance();
         Method m1Method = clz.getDeclaredMethod("m1");
         //p.m1();p.m1("asdf",100)
-        m1Method.invoke(instance);
+        //如果被调用的方法有返回值，就可以像下面这样接收
+        //如果被调用的方法没有返回值，result就是null
+        Object result = m1Method.invoke(instance);
+        System.out.println("result = " + result);
+        //下面是静态的方法的调用，静态方法的调用的第一个参数为null就可以
+        Method sm1 = clz.getDeclaredMethod("sm1");
+        sm1.invoke(null);
+
+        Method sm2 = clz.getDeclaredMethod("sm2",String.class);
+        sm2.invoke(null,"abc");
     }
 
-
-    /**
-     * Map<String,Object> map = new HashMap();..
-     * map.put("id",100);
-     * map.put("username，“abc");
-     *
-     * 写了一个UserInfo的类，里面刚好有id与username属性
-     *
-     * UserInfo ui = mapToBean(map,UserInfo.class)
-     * ui.getId = 100
-     * ui.getUsername="abc
-     * @param source
-     * @param clz
-     * @return
-     */
 
 
 }

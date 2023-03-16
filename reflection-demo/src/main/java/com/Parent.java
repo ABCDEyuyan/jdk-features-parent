@@ -5,6 +5,7 @@ public class Parent {
     //字段（Field）
     private String name;
     private int id;
+    private static String url = "asfda";
 
     //默认构造函数（Constructor）
     public Parent() {
@@ -45,5 +46,13 @@ public class Parent {
 
     public int getId() {
         return id;
+    }
+
+    public static void sm1(){
+        System.out.println("sm1----");
+    }
+
+    public static void sm2(String a){
+        System.out.println("sm2----" + a);
     }
 }
