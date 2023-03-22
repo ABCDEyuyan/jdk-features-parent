@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="reflection-demo" />
         <module name="annotation-demo" />
+        <module name="exception-demo" />
       </profile>
     </annotationProcessing>
   </component>
