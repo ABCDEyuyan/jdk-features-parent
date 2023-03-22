@@ -25,6 +25,23 @@ public class Main {
 
 
         }*/
+
+        sm2();
     }
 
+    private static void sm1(){
+        try {
+            new C().m1();
+        } finally {
+            throw new RuntimeException("finally");
+        }
+    }
+
+    private static void sm2(){
+        try {
+            sm1();
+        } catch (RuntimeException re){
+            System.out.println(re.getMessage());
+        }
+    }
 }
