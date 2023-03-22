@@ -19,12 +19,12 @@ public class Main {
             re.printStackTrace();
         }*/
 
-        try (MyCloseable my = new MyCloseable();
+    /*    try (MyCloseable my = new MyCloseable();
+             String sql="sadfasd";
             MyCloseable2 my2 = new MyCloseable2()) {
-            my2.m1();
-            my.m1();
 
-        }
+
+        }*/
     }
 
 }
