@@ -12,6 +12,7 @@
         <module>reflection-demo</module>
         <module>annotation-demo</module>
         <module>exception-demo</module>
+        <module>dbutils-lib</module>
     </modules>
 
     <properties>
