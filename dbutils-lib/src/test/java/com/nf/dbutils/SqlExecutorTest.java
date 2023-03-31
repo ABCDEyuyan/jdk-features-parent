@@ -1,10 +1,12 @@
 package com.nf.dbutils;
 
+import com.nf.dbutils.handlers.ArrayHandler;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -36,5 +38,21 @@ public class SqlExecutorTest {
         String sql = "delete from t5 where id = 4";
         executor.update(connection , sql);
 
+    }
+
+    @Test
+    public void query() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        ArrayHandler handler = new ArrayHandler();
+        Object[] objects = executor.query(connection, sql, handler);
+
+        System.out.println(Arrays.toString(objects));
     }
 }

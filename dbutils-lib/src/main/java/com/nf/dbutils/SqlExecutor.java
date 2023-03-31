@@ -3,17 +3,19 @@ package com.nf.dbutils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * 类似于QueryRunner的一个类，客户用此类完成crud
  */
-public class SqlExecutor {
+public class SqlExecutor extends AbstractSqlExecutor{
     private DataSource dataSource;
 
     /**
      * 无参的构造函数意味着不使用DataSource
+     *
+     * 这样写，默认就是调用父类的默认构造函数
      */
     public SqlExecutor() {
     }
@@ -23,7 +25,8 @@ public class SqlExecutor {
      * @param dataSource
      */
     public SqlExecutor(DataSource dataSource) {
-        this.dataSource = dataSource;
+
+        super(dataSource);
     }
 
     public int update(Connection conn, String sql, Object... params) {
@@ -32,25 +35,15 @@ public class SqlExecutor {
 
     public int update( String sql, Object... params) {
         Connection conn = prepareConnection();
+
         return this.update(conn, true, sql, params);
     }
 
 
     private int update(Connection conn, boolean closeConn, String sql, Object... params) {
-        //下面的代码有一个专门的称呼：guard code（守护代码），先写这些guard代码
-        if (conn == null) {
-            throw new DaoException("要有一个连接");
-        }
+        checkConnetion(conn);
 
-        //执行到下面的代码时，已经表示conn不为null
-        if (sql == null || sql.trim().length() == 0) {
-           //此时此刻，连接是有得，sql没有，所以执行crud是没有意义的
-            //问closeConn是不是true，需要我们这个方法帮你关闭吗？
-            if (closeConn) {
-                ResourceCleanerUtils.closeQuietly(conn);
-            }
-            throw new DaoException("sql语句不能是空的");
-        }
+        checkSql(conn, closeConn, sql);
 
         int rows =0;
 
@@ -77,35 +70,46 @@ public class SqlExecutor {
         return  rows;
     }
 
-    private void fillStatement(PreparedStatement stmt, Object... params) throws SQLException{
-        if (params == null) {
-            return;
-        }
 
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null) {
-                stmt.setObject(i+1,params[i]);
-            }else{
-                stmt.setNull(i+1, Types.VARCHAR);
-            }
-            
-        }
-
-
-    }
-
-    /**
-     * 这里搞一个方法的作用是，可以让子类重写此方法，以便对DataSource
-     * 返回的Connection进行一些额外的设置
-     *
-     * protected修饰符是为了给子类重写，不需要搞成public
-     * @return
-     */
-    protected Connection prepareConnection() {
+    public  <T> T query(Connection conn,String sql,ResultSetHandler<T> handler,Object... params) {
         try {
-            return  this.dataSource.getConnection();
+            return query(conn, false,sql, handler, params);
         } catch (SQLException e) {
-            throw new DaoException("从dataSource创建Connection失败",e);
+            throw new RuntimeException("执行查询出错", e);
         }
     }
+
+
+    private <T> T query(Connection conn,boolean closeConn,String sql,ResultSetHandler<T> handler,Object... params) throws SQLException {
+        checkConnetion(conn);
+        checkSql(conn,closeConn,sql);
+        checkResultSetHandler(handler,closeConn,conn);
+
+        PreparedStatement pstmt = null;
+        T result = null;
+        ResultSet rs = null;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            fillStatement(pstmt,params);
+            rs = pstmt.executeQuery();
+            //框架的原始代码中是有一个wrap，它里面的实现原理是动态代理，
+            // 现在就暂时不处理
+            result = handler.handle(rs);
+        } catch (SQLException e) {
+            throw new DaoException("执行查询出错", e);
+        }finally {
+            try {
+                close(rs);
+            } finally {
+                close(pstmt);
+                if (closeConn) {
+                    close(conn);
+                }
+            }
+        }
+
+        return  result;
+
+    }
+
 }
