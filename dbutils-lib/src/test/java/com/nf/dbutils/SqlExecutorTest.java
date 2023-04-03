@@ -1,12 +1,15 @@
 package com.nf.dbutils;
 
 import com.nf.dbutils.handlers.ArrayHandler;
+import com.nf.dbutils.handlers.MapHandler;
+import com.nf.dbutils.handlers.ScalarHandler;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -54,5 +57,40 @@ public class SqlExecutorTest {
         Object[] objects = executor.query(connection, sql, handler);
 
         System.out.println(Arrays.toString(objects));
+    }
+
+    @Test
+    public void queryScalarHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        ScalarHandler<String> handler = new ScalarHandler("uname");
+        String name = executor.query(connection, sql, handler);
+
+        System.out.println(name);
+    }
+
+
+    @Test
+    public void queryMapHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        MapHandler handler = new MapHandler();
+        Map<String,Object> result = executor.query(connection, sql, handler);
+
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            System.out.println("key:" + entry.getKey() + " value:" + entry.getValue());
+        }
     }
 }
