@@ -35,12 +35,18 @@ public class SqlExecutor extends AbstractSqlExecutor{
 
     public int update( String sql, Object... params) {
         Connection conn = prepareConnection();
-
         return this.update(conn, true, sql, params);
     }
 
-
     private int update(Connection conn, boolean closeConn, String sql, Object... params) {
+        try {
+            return this.update0(conn, closeConn, sql, params);
+        } catch (SQLException e) {
+            throw new DaoException("执行sql出错", e);
+        }
+    }
+
+    private int update0(Connection conn, boolean closeConn, String sql, Object... params) throws SQLException{
         checkConnetion(conn);
 
         checkSql(conn, closeConn, sql);
@@ -61,9 +67,9 @@ public class SqlExecutor extends AbstractSqlExecutor{
         } catch (SQLException e) {
             throw new DaoException("sql执行失败",e);
         }finally {
-            ResourceCleanerUtils.closeQuietly(pstmt);
+            ResourceCleanerUtils.close(pstmt);
             if (closeConn) {
-                ResourceCleanerUtils.closeQuietly(conn);
+                ResourceCleanerUtils.close(conn);
             }
         }
 

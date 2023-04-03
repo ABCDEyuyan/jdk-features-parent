@@ -7,6 +7,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class ArrayHandler implements ResultSetHandler<Object[]> {
+
+    private static final Object[] EMPTY_OBJECT = new Object[0];
+
     @Override
     public Object[] handle(ResultSet rs) throws SQLException {
         if(rs.next()) {
@@ -21,6 +24,10 @@ public class ArrayHandler implements ResultSetHandler<Object[]> {
             }
             return result;
         }
-        return  null;
+        //能不返回null的时候，可以尽量想办法不返回null
+        //除非null有特殊的含义
+       // return  null;
+
+        return EMPTY_OBJECT;
     }
 }
