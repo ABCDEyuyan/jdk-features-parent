@@ -17,12 +17,25 @@ public class KeyedHandler extends
                             Map<String,Object>>> {
     @Override
     public Map<Integer,Map<String, Object>> handle(ResultSet rs) throws SQLException {
-        Map<Integer,Map<String, Object>> outer = new HashMap();
+        Map<Integer,Map<String, Object>> outer = createMap();
 
         while (rs.next()) {
-            Integer key = Integer.valueOf(rs.getObject(1).toString());
-            outer.put(key, rowProcessor.toMap(rs));
+            Integer key = createKey(rs);
+            Map<String, Object> row = createRow(rs);
+            outer.put(key, row);
         }
         return outer;
+    }
+
+    private Map<Integer,Map<String, Object>> createMap(){
+        return new HashMap();
+    }
+
+    private Integer createKey(ResultSet rs) throws SQLException {
+       return Integer.valueOf(rs.getObject(1).toString());
+    }
+
+    private Map<String, Object> createRow(ResultSet rs) throws SQLException{
+        return rowProcessor.toMap(rs);
     }
 }
