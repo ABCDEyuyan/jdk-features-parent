@@ -1,33 +1,35 @@
 package com.nf.dbutils.handlers;
 
 import com.nf.dbutils.ResultSetHandler;
+import com.nf.dbutils.RowProcessor;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class ArrayHandler implements ResultSetHandler<Object[]> {
+public class ArrayHandler extends AbstractResultSetHandler<Object[]> {
 
     private static final Object[] EMPTY_OBJECT = new Object[0];
 
+
+    public ArrayHandler() {
+
+    }
+
+    public ArrayHandler(RowProcessor rowProcessor) {
+        super(rowProcessor);
+    }
+
     @Override
     public Object[] handle(ResultSet rs) throws SQLException {
-        if(rs.next()) {
-            ResultSetMetaData metaData = rs.getMetaData();
-            int count = metaData.getColumnCount();
-            Object[] result = new Object[count];
+      //rs.next在这里调用，因为此类自己决定我只处理一行记录
+       return rs.next()? rowProcessor.toArray(rs):EMPTY_OBJECT;
 
-            for (int i = 0; i < count; i++) {
-                //取resultset的数据时，序号是从1开始的，
-                // 平时我们都是写sql语句中的字段名(select id,name from emp)
-                result[i] = rs.getObject(i + 1);
-            }
-            return result;
-        }
         //能不返回null的时候，可以尽量想办法不返回null
         //除非null有特殊的含义
        // return  null;
 
-        return EMPTY_OBJECT;
+
     }
+
 }

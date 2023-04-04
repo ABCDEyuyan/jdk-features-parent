@@ -1,14 +1,13 @@
 package com.nf.dbutils;
 
-import com.nf.dbutils.handlers.ArrayHandler;
-import com.nf.dbutils.handlers.MapHandler;
-import com.nf.dbutils.handlers.ScalarHandler;
+import com.nf.dbutils.handlers.*;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -59,6 +58,26 @@ public class SqlExecutorTest {
         System.out.println(Arrays.toString(objects));
     }
 
+
+    @Test
+    public void queryArrayListHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        ArrayListHandler handler = new ArrayListHandler();
+        List<Object[]> objects = executor.query(connection, sql, handler);
+
+        for (Object[] o : objects) {
+            System.out.println(Arrays.toString(o));
+        }
+
+    }
+
     @Test
     public void queryScalarHandler() throws SQLException {
         Connection connection = DriverManager
@@ -92,5 +111,54 @@ public class SqlExecutorTest {
         for (Map.Entry<String, Object> entry : result.entrySet()) {
             System.out.println("key:" + entry.getKey() + " value:" + entry.getValue());
         }
+    }
+
+
+    @Test
+    public void queryMapListHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        MapListHandler handler = new MapListHandler();
+        List<Map<String,Object>> mapList = executor.query(connection, sql, handler);
+
+        for (Map<String, Object> map : mapList) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                System.out.println("key:" + entry.getKey() + " value:" + entry.getValue());
+            }
+            System.out.println("------------------");
+        }
+
+
+    }
+
+
+    @Test
+    public void queryKeyedHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        KeyedHandler handler = new KeyedHandler();
+        Map<Integer,Map<String,Object>> mapMap = executor.query(connection, sql, handler);
+
+        for (Map.Entry<Integer, Map<String, Object>> map : mapMap.entrySet()) {
+            System.out.println("外层key:" + map.getKey() );
+
+            for (Map.Entry<String, Object> entry : map.getValue().entrySet()) {
+                System.out.println("key:" + entry.getKey() + " value:" + entry.getValue());
+
+            }
+        }
+
     }
 }
