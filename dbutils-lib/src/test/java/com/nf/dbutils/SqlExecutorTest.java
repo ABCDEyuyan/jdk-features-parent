@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 public class SqlExecutorTest {
 
     @Test
@@ -139,7 +137,7 @@ public class SqlExecutorTest {
 
 
     @Test
-    public void queryKeyedHandler() throws SQLException {
+    public void queryKeyedMapHandler() throws SQLException {
         Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/demo",
                         "root", "root");
@@ -148,7 +146,7 @@ public class SqlExecutorTest {
 
         String sql = "select id,uname from t5 ";
 
-        KeyedHandler handler = new KeyedHandler();
+        KeyedMapHandler handler = new KeyedMapHandler();
         Map<Integer,Map<String,Object>> mapMap = executor.query(connection, sql, handler);
 
         for (Map.Entry<Integer, Map<String, Object>> map : mapMap.entrySet()) {
@@ -158,6 +156,33 @@ public class SqlExecutorTest {
                 System.out.println("key:" + entry.getKey() + " value:" + entry.getValue());
 
             }
+        }
+
+    }
+
+
+    @Test
+    public void queryKeyedArrayHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname,uname from t5 ";
+
+        KeyedArrayHandler handler = new KeyedArrayHandler();
+        Map<Integer,Object[]> mapMap = executor.query(connection, sql, handler);
+
+        for (Map.Entry<Integer, Object[]> map : mapMap.entrySet()) {
+            System.out.println("外层key:" + map.getKey() );
+
+            Object[] objects = map.getValue();
+
+            for (int i = 0; i < objects.length; i++) {
+                System.out.println(objects[i]);
+            }
+            System.out.println("=============");
         }
 
     }
