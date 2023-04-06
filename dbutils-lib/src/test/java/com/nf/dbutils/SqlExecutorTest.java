@@ -146,7 +146,7 @@ public class SqlExecutorTest {
 
         String sql = "select id,uname from t5 ";
 
-        KeyedMapHandler handler = new KeyedMapHandler();
+        KeyedMapHandler<Integer> handler = new KeyedMapHandler();
         Map<Integer,Map<String,Object>> mapMap = executor.query(connection, sql, handler);
 
         for (Map.Entry<Integer, Map<String, Object>> map : mapMap.entrySet()) {
@@ -169,12 +169,12 @@ public class SqlExecutorTest {
 
         SqlExecutor executor = new SqlExecutor();
 
-        String sql = "select id,uname,uname from t5 ";
+        String sql = "select id,uname from t5 ";
 
-        KeyedArrayHandler handler = new KeyedArrayHandler();
-        Map<Integer,Object[]> mapMap = executor.query(connection, sql, handler);
+        KeyedArrayHandler<String> handler = new KeyedArrayHandler("uname");
+        Map<String,Object[]> mapMap = executor.query(connection, sql, handler);
 
-        for (Map.Entry<Integer, Object[]> map : mapMap.entrySet()) {
+        for (Map.Entry<String, Object[]> map : mapMap.entrySet()) {
             System.out.println("外层key:" + map.getKey() );
 
             Object[] objects = map.getValue();
@@ -186,4 +186,22 @@ public class SqlExecutorTest {
         }
 
     }
+
+    @Test
+    public void queryBeanHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        BeanHandler<MyEntity> handler = new BeanHandler(MyEntity.class);
+        MyEntity entity = executor.query(connection, sql, handler);
+
+        System.out.println(entity);
+
+    }
+
 }
