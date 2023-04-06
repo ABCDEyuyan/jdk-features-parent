@@ -1,5 +1,6 @@
 package com.nf.dbutils;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -41,6 +42,36 @@ public interface RowProcessor {
         }
 
         return map;
+
+    }
+
+
+    default <T> T toBean(ResultSet rs,Class<?> clz) throws SQLException {
+        T instance = null;
+        try {
+            instance =(T) clz.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        Field[] fields = clz.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            Object value = rs.getObject(fieldName);
+            try {
+                field.set(instance,value);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            field.setAccessible(false);
+        }
+
+        return instance;
 
     }
 }
