@@ -188,6 +188,12 @@ public class SqlExecutorTest {
     }
 
     @Test
+    public void testNullToString(){
+        String a = null;
+        System.out.println(a);//输出null
+    }
+
+    @Test
     public void queryBeanHandler() throws SQLException {
         Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/demo",
@@ -195,13 +201,44 @@ public class SqlExecutorTest {
 
         SqlExecutor executor = new SqlExecutor();
 
-        String sql = "select id,uname from t5 ";
+        String sql = "select id,uname,birthday,gender from t5 ";
 
         BeanHandler<MyEntity> handler = new BeanHandler(MyEntity.class);
         MyEntity entity = executor.query(connection, sql, handler);
 
         System.out.println(entity);
 
+    }
+
+
+    @Test
+    public void queryBeanListHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,birthday,gender from t5 ";
+
+        BeanListHandler<MyEntity> handler = new BeanListHandler(MyEntity.class);
+        List<MyEntity> entities = executor.query(connection, sql, handler);
+
+        for (MyEntity entity : entities) {
+            System.out.println(entity);
+        }
+
+    }
+
+    @Test
+    public void testType(){
+        //包装类型的TYPE静态字段代表此包装类型对应的基础（Primitive）类型
+        //java有8个基础类型：int，float。。。。
+        Class<?> clz = Integer.TYPE;
+
+//        Double.TYPE
+
+       // Boolean.TYPE
     }
 
 }
