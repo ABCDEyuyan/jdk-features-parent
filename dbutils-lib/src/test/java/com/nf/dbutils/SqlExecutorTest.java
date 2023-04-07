@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -194,6 +195,44 @@ public class SqlExecutorTest {
     }
 
     @Test
+    public void queryBeanPropertyFirstHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname,birthday,gender from t5 ";
+
+        BeanPropertyFirstHandler<MyEntity> handler = new BeanPropertyFirstHandler(MyEntity.class);
+        MyEntity entity = executor.query(connection, sql, handler);
+
+        System.out.println(entity);
+
+    }
+
+
+    @Test
+    public void queryBeanListPropertyFirstHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,birthday,gender from t5 ";
+
+        BeanPropertyFirstListHandler<MyEntity> handler = new BeanPropertyFirstListHandler(MyEntity.class);
+        List<MyEntity> entities = executor.query(connection, sql, handler);
+
+        for (MyEntity entity : entities) {
+            System.out.println(entity);
+        }
+
+    }
+
+
+    @Test
     public void queryBeanHandler() throws SQLException {
         Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/demo",
@@ -212,24 +251,27 @@ public class SqlExecutorTest {
 
 
     @Test
-    public void queryBeanListHandler() throws SQLException {
+    public void queryBeanPropertyOverridesHandler() throws SQLException {
         Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/demo",
                         "root", "root");
 
         SqlExecutor executor = new SqlExecutor();
 
-        String sql = "select id,birthday,gender from t5 ";
+        String sql = "select id,uname,birthday,gender from t5 ";
 
-        BeanListHandler<MyEntity> handler = new BeanListHandler(MyEntity.class);
-        List<MyEntity> entities = executor.query(connection, sql, handler);
+        HashMap<String, String> mapping = new HashMap<>();
+        mapping.put("uname", "username");
 
-        for (MyEntity entity : entities) {
-            System.out.println(entity);
-        }
+        RowProcessor rowProcessor = new DefaultRowProcessor(mapping);
+
+
+        BeanHandler<MyEntity> handler = new BeanHandler(rowProcessor,MyEntity.class);
+        MyEntity entity = executor.query(connection, sql, handler);
+
+        System.out.println(entity);
 
     }
-
     @Test
     public void testType(){
         //包装类型的TYPE静态字段代表此包装类型对应的基础（Primitive）类型

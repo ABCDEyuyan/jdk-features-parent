@@ -7,14 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeanListHandler<T> extends AbstractResultSetHandler<List<T>>{
+@Deprecated
+public class BeanPropertyFirstListHandler<T> extends AbstractResultSetHandler<List<T>>{
     private Class<?> clz ;
 
-    public BeanListHandler(Class<?> clz) {
+    public BeanPropertyFirstListHandler(Class<?> clz) {
         this.clz = clz;
     }
 
-    public BeanListHandler(RowProcessor rowProcessor, Class<?> clz) {
+    public BeanPropertyFirstListHandler(RowProcessor rowProcessor, Class<?> clz) {
         super(rowProcessor);
         this.clz = clz;
     }
