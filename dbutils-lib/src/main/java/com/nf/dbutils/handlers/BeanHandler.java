@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class BeanHandler<T> extends AbstractResultSetHandler<T>{
-    private Class<?> clz ;
+   private Class<?> clz;
 
     public BeanHandler(Class<?> clz) {
         this.clz = clz;
@@ -19,6 +19,6 @@ public class BeanHandler<T> extends AbstractResultSetHandler<T>{
 
     @Override
     public T handle(ResultSet rs) throws SQLException {
-        return rs.next()?rowProcessor.toBean(rs, this.clz):null;
+        return rs.next()?rowProcessor.toBean(rs,clz):null;
     }
 }

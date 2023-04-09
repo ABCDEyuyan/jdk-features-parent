@@ -4,7 +4,8 @@ import java.util.Date;
 
 public class MyEntity {
     private Integer id;
-    private String uname;
+
+    private String username;
     private Date birthday;
     private Boolean gender;
 
@@ -16,12 +17,12 @@ public class MyEntity {
         this.id = id;
     }
 
-    public String getUname() {
-        return uname;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUname(String uname) {
-        this.uname = uname;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Date getBirthday() {
@@ -44,7 +45,7 @@ public class MyEntity {
     public String toString() {
         return "MyEntity{" +
                 "id=" + id +
-                ", uname='" + uname + '\'' +
+                ", uname='" + username + '\'' +
                 ", birthday=" + birthday +
                 ", gender=" + gender +
                 '}';
