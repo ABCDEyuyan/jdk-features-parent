@@ -1,12 +1,13 @@
 package com.nf.dbutils;
 
-import java.util.Date;
+
+import java.time.LocalDate;
 
 public class MyEntity {
     private Integer id;
 
-    private String username;
-    private Date birthday;
+    private String uname;
+    private LocalDate birthday;
     private Boolean gender;
 
     public Integer getId() {
@@ -17,19 +18,19 @@ public class MyEntity {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUname() {
+        return uname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUname(String uname) {
+        this.uname = uname;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
@@ -45,7 +46,7 @@ public class MyEntity {
     public String toString() {
         return "MyEntity{" +
                 "id=" + id +
-                ", uname='" + username + '\'' +
+                ", uname='" + uname + '\'' +
                 ", birthday=" + birthday +
                 ", gender=" + gender +
                 '}';

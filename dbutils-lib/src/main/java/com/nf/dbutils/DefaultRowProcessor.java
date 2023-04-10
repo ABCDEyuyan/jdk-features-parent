@@ -15,11 +15,14 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 public class DefaultRowProcessor implements RowProcessor{
 
     public static final int   PROPERTY_NOT_FOUND = -1;
 
+    //利用spi技术来找到所有的PropertyHandler接口的实现类
+    private static final ServiceLoader<PropertyHandler> propertyHandlers = ServiceLoader.load(PropertyHandler.class);
     private final Map<String,String> propertyOverrides ;
 
     public DefaultRowProcessor() {
@@ -126,7 +129,8 @@ public class DefaultRowProcessor implements RowProcessor{
             Object value = rs.getObject(i);
 
             //不需要像源码那样赋值为0或者false，因为这些属性不处理，它也是这样的值
-            if (value == null && propertyType.isPrimitive()) {
+            //不管属性是基本类型还是包装类型，还是其它类型，数据库取出来的值是null，此属性就不需要特别处理，直接跳过
+            if (value == null ) {
                 continue;
             }
 
@@ -162,11 +166,19 @@ public class DefaultRowProcessor implements RowProcessor{
         try {
             Class<?> firstParam = method.getParameterTypes()[0];
 
+            //应用PropertyHandler扩展机制
+
+            for (PropertyHandler propertyHandler : propertyHandlers) {
+                if (propertyHandler.support(firstParam, value)) {
+                    value=propertyHandler.apply(firstParam,value);
+                    break;
+                }
+            }
             if (isCompatibleType(value, firstParam)) {
                 //兼容的话就可以赋值了
                 method.invoke(bean, value);
             } else {
-                throw new SQLException("值与属性类型不兼容");
+                throw new SQLException("值与属性类型不兼容，值得类型是：" + value.getClass() + " 属性的类型是:"+ firstParam);
             }
         }catch (IllegalArgumentException e) {
             throw new SQLException(
@@ -207,8 +219,7 @@ public class DefaultRowProcessor implements RowProcessor{
      */
     private boolean isCompatibleType(Object value, Class<?> type) {
 
-        if(value==null
-                || type.isInstance(value)
+        if(type.isInstance(value)
                 || matchesPrimitive(type,value.getClass())){
             return true;
         }
