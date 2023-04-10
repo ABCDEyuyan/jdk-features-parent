@@ -46,7 +46,6 @@ public class SqlExecutor extends AbstractSqlExecutor {
 
     private int update0(Connection conn, boolean closeConn, String sql, Object... params) throws SQLException {
         checkConnetion(conn);
-
         checkSql(conn, closeConn, sql);
 
         int rows = 0;
@@ -73,15 +72,15 @@ public class SqlExecutor extends AbstractSqlExecutor {
         return rows;
     }
 
-    public <T> T query( String sql, ResultSetHandler<T> handler, Object... params) {
-            return query(prepareConnection(), true, sql, handler, params);
+    public <T> T query(String sql, ResultSetHandler<T> handler, Object... params) {
+        return query(prepareConnection(), true, sql, handler, params);
     }
 
     public <T> T query(Connection conn, String sql, ResultSetHandler<T> handler, Object... params) {
-            return query(conn, false, sql, handler, params);
+        return query(conn, false, sql, handler, params);
     }
 
-    private <T> T query(Connection conn, boolean closeConn, String sql, ResultSetHandler<T> handler, Object... params){
+    private <T> T query(Connection conn, boolean closeConn, String sql, ResultSetHandler<T> handler, Object... params) {
         try {
             return query0(conn, closeConn, sql, handler, params);
         } catch (SQLException e) {

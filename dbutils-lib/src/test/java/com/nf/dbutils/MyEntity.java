@@ -1,12 +1,14 @@
 package com.nf.dbutils;
 
-import java.util.Date;
+
+import java.sql.Date;
+import java.time.LocalDate;
 
 public class MyEntity {
     private Integer id;
 
     private String username;
-    private Date birthday;
+    private LocalDate birthday;
     private Boolean gender;
 
     public Integer getId() {
@@ -25,11 +27,11 @@ public class MyEntity {
         this.username = username;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
