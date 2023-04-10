@@ -1,13 +1,12 @@
 package com.nf.dbutils;
 
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 public class MyEntity {
     private Integer id;
 
-    private String username;
+    private String uname;
     private LocalDate birthday;
     private Boolean gender;
 
@@ -19,12 +18,12 @@ public class MyEntity {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUname() {
+        return uname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUname(String uname) {
+        this.uname = uname;
     }
 
     public LocalDate getBirthday() {
@@ -47,7 +46,7 @@ public class MyEntity {
     public String toString() {
         return "MyEntity{" +
                 "id=" + id +
-                ", uname='" + username + '\'' +
+                ", uname='" + uname + '\'' +
                 ", birthday=" + birthday +
                 ", gender=" + gender +
                 '}';

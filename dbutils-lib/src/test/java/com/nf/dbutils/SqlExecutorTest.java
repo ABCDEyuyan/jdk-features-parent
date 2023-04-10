@@ -250,6 +250,29 @@ public class SqlExecutorTest {
 
     }
 
+    @Test
+    public void queryKeyedBeanHandler() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "select id,uname from t5 ";
+
+        KeyedBeanHandler<BigInteger,MyEntity> handler = new KeyedBeanHandler(MyEntity.class);
+        Map<BigInteger,MyEntity> mapMap = executor.query(connection, sql, handler);
+
+        for (Map.Entry<BigInteger,MyEntity> entry : mapMap.entrySet()) {
+            System.out.println("外层key:" + entry.getKey() );
+
+            MyEntity entity = entry.getValue();
+
+            System.out.println("entity = " + entity);
+            System.out.println("=============");
+        }
+
+    }
 
     @Test
     public void queryBeanPropertyOverridesHandler() throws SQLException {
