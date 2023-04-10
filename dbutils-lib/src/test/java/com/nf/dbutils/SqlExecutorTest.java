@@ -3,6 +3,7 @@ package com.nf.dbutils;
 import com.nf.dbutils.handlers.*;
 import org.junit.Test;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -272,6 +273,23 @@ public class SqlExecutorTest {
         System.out.println(entity);
 
     }
+
+    @Test
+    public void testInsert() throws SQLException {
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/demo",
+                        "root", "root");
+
+        SqlExecutor executor = new SqlExecutor();
+
+        String sql = "insert into t5(uname) values(?) ";
+        ScalarHandler<BigInteger> handler = new ScalarHandler<>();
+        BigInteger id = executor.insert(connection,sql, handler, "auto");
+
+        System.out.println(id);
+
+    }
+
     @Test
     public void testType(){
         //包装类型的TYPE静态字段代表此包装类型对应的基础（Primitive）类型
