@@ -5,6 +5,7 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,5 +52,17 @@ public class ReflectionTest {
         SomeClass instance = new SomeClass();
         System.out.println(aClass == instance.getClass());
         System.out.println(aClass.equals(instance.getClass()));
+    }
+
+    @Test
+    public void testMethodReturnVoid() throws Exception{
+        Class<SomeClass> aClass = SomeClass.class;
+        Method m1 = aClass.getDeclaredMethod("m1", String.class, int.class);
+        Class<?> m1ReturnType = m1.getReturnType();
+
+        System.out.println(m1ReturnType == Void.class);//false
+        System.out.println(m1ReturnType == Void.TYPE); //true
+        System.out.println(m1ReturnType == void.class);//true
+
     }
 }
