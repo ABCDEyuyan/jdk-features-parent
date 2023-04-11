@@ -297,15 +297,13 @@ public class SqlExecutorTest {
 
     @Test
     public void testInsert() throws SQLException {
-        Connection connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/demo",
-                        "root", "root");
+        Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/test_small_db","root","123456");
 
         SqlExecutor executor = new SqlExecutor();
 
         String sql = "insert into t5(uname) values(?) ";
         ScalarHandler<BigInteger> handler = new ScalarHandler<>();
-        BigInteger id = executor.insert(connection,sql, handler, "auto");
+        BigInteger id = executor.insert(connection,sql, handler, "autodasc");
 
         System.out.println(id);
 
