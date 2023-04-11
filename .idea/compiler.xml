@@ -11,6 +11,7 @@
         <module name="exception-demo" />
         <module name="dbutils-lib" />
         <module name="annotation-demo" />
+        <module name="mvc-lib" />
       </profile>
     </annotationProcessing>
   </component>
