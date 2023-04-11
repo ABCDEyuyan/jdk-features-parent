@@ -97,9 +97,7 @@ public class SqlExecutorTest {
 
     @Test
     public void queryMapHandler() throws SQLException {
-        Connection connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/demo",
-                        "root", "root");
+        Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/test_small_db","root","123456");
 
         SqlExecutor executor = new SqlExecutor();
 

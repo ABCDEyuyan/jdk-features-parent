@@ -41,7 +41,7 @@ public class KeyedMapHandler<K> extends
 
     @Override
     protected Map<String, Object> createRow(ResultSet rs) throws SQLException {
-        return rowProcessor.toMap(rs);
+        return this.rowProcessor.toMap(rs);
     }
 
 }

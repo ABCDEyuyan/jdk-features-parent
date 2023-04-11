@@ -21,7 +21,7 @@ public class MapListHandler extends AbstractResultSetHandler<List<Map<String,Obj
     public List<Map<String, Object>> handle(ResultSet rs) throws SQLException {
         List<Map<String, Object>> list = new ArrayList<>();
         while (rs.next()) {
-            list.add(rowProcessor.toMap(rs));
+            list.add(this.rowProcessor.toMap(rs));
         }
         return list;
     }
