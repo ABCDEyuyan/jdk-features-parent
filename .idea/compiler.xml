@@ -15,5 +15,9 @@
         <module name="mvc-lib" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dbutils-demo" target="8" />
+      <module name="lamdba-demo" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
