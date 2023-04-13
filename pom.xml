@@ -13,6 +13,7 @@
         <module>annotation-demo</module>
         <module>exception-demo</module>
         <module>dbutils-lib</module>
+        <module>mvc-lib</module>
     </modules>
 
     <properties>

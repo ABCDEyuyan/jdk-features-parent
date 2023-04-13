@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ public class JdbcTest {
 
     @Test
     public void testGetString() throws SQLException {
+
         Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/demo",
                         "root", "root");
