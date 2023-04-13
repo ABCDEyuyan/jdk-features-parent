@@ -10,6 +10,7 @@
         <module name="reflection-demo" />
         <module name="exception-demo" />
         <module name="dbutils-lib" />
+        <module name="lambda-demo" />
         <module name="annotation-demo" />
         <module name="mvc-lib" />
       </profile>
