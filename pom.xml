@@ -14,6 +14,7 @@
         <module>exception-demo</module>
         <module>dbutils-lib</module>
         <module>mvc-lib</module>
+        <module>lambda-demo</module>
     </modules>
 
     <properties>
