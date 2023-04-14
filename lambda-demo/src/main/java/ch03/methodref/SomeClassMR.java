@@ -3,9 +3,11 @@ package ch03.methodref;
 public class SomeClassMR {
     private String f;
     public SomeClassMR() {
+        System.out.println("someClassMr默认构造函数");
     }
 
     public SomeClassMR(String f) {
+        System.out.println("someClassMr有字符串参数的构造函数");
         this.f = f;
         System.out.println("字段赋值了");
     }
