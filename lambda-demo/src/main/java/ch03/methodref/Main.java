@@ -62,6 +62,7 @@ public class Main {
         list.add("b");
         list.add("c");
         // list.forEach(s->System.out.println(s));
+        //方法引用写法更简洁
         list.forEach(System.out::println);
     }
 
