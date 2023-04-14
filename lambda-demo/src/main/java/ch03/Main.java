@@ -2,7 +2,7 @@ package ch03;
 
 public class Main {
     //lambda表达式是一个方法的引用，类似于c#中委托
-    //lambda表达式通常会赋值给函数接口（里面只有一个抽象方法的接口）
+    //lambda表达式通常会赋值给函数接口（只有一个抽象方法的接口）
 
     public static void main(String[] args) {
         //1.lambda主要是可以赋值给一个函数接口

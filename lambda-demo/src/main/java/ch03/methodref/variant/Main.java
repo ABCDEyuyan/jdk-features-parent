@@ -18,7 +18,7 @@ public class Main {
         //covariant();
     }
 
-    //逆变
+    //逆变:主要是体现在方法的参数这一边（往上）
     private static void contravariant() {
         // 当接口的类型是某个类型（B)，那么关联方法时，
         // 方法的参数可以是这个类型本身以及它的父类型
@@ -29,13 +29,13 @@ public class Main {
         inf2.doSth(new B());
     }
 
-    //协变
+    //协变:体现在方法的返回类型 （往下）
     private static void covariant() {
         //当接口的返回类型是某个类型，那么关联方法时，
         // 方法的返回类型可以是这个类型本身以及它的子类型
-        // Inf2 inf1 = SomeClass2::m1;
-        Inf2 inf2 = SomeClass2::m2;
-        Inf2 inf3 = SomeClass2::m3;
+        // Inf2 inf1 = SomeClass2::m1; //不行
+        Inf2 inf2 = SomeClass2::m2; //返回B
+        Inf2 inf3 = SomeClass2::m3; //返回C
         //A a = inf1.doSth();
         B b = inf2.doSth();
         C c = (C) inf3.doSth();
