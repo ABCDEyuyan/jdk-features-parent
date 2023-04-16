@@ -33,10 +33,18 @@ public class Main {
 
             @Override
             public void doSth2(int a) {
+                a=1;
                 System.out.println(a);
             }
-        });
 
+            @Override
+            public int doSth3(int a) {
+                a=2;
+                return a;
+            }
+        });
+        MyInfImpl m=new MyInfImpl();
+        m.doSth3(3);
 
     }
 }

@@ -11,4 +11,9 @@ public class MyInfImpl implements Inf1{
         System.out.println(b);
         b=2;//被覆盖了
     }
+
+    @Override
+    public int doSth3(int a) {
+        return 0;
+    }
 }

@@ -6,14 +6,14 @@ package ch02;
  */
 public interface Jdk8Inf {
        int A = 10;
-    void doSth();
+    int doSth(int a);
 
     static  void sm1(){
         System.out.println("接口中的静态方法");
     }
 
     default void m2(){
-        doSth();
+        doSth(3);
         System.out.println("默认方法，实例方法");
     }
 }

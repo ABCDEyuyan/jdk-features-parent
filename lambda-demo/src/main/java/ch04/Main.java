@@ -6,10 +6,10 @@ import java.util.function.*;
  * lambda表达式出来之后，jdk帮我们已经创建了一些常见的接口
  * 主要在java.util包下面
  * <p>
- * Consumer 有参 accept() 接受
- * Supplier：有返回值 get() 获取
- * Predicate：返回逻辑值 test() 测试
- * Function：有参有返回值 apply() 应用
+ * Consumer 消费者：有参 accept() 接受
+ * Supplier 提供者：有返回值 get() 获取
+ * Predicate 谓语，断言：返回逻辑值 test() 测试
+ * Function 函数：有参有返回值 apply() 应用
  * Bi：Binary（二元）
  * Unary（一元）
  * 泛型不能使用基本类型，所以有以下几类接口
@@ -24,7 +24,7 @@ import java.util.function.*;
 public class Main {
     public static void main(String[] args) {
 
-        //consumerDemo();
+        consumerDemo();
 
         //supplierDemo();
 
