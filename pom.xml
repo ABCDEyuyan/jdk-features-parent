@@ -15,6 +15,7 @@
         <module>dbutils-lib</module>
         <module>mvc-lib</module>
         <module>lambda-demo</module>
+        <module>mvc-lib-demo</module>
     </modules>
 
     <properties>
