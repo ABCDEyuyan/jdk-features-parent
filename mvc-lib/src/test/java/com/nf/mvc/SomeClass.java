@@ -4,9 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 public class SomeClass {
+
+
     public void m1(String a, int b) {
 
     }
+    public void m1(String c) {
+
+    }
+
 
     public void m2(List<String> list) {
 

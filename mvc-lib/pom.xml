@@ -19,6 +19,13 @@
             <version>3.28.0-GA</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.157</version>
+        </dependency>
+
 
         <!--下面的都是测试用的依赖-->
         <dependency>
@@ -27,6 +34,7 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
 
 
     </dependencies>
