@@ -59,7 +59,7 @@ public class ParameterNameTest {
 
             CtClass[] paramClasses = new CtClass[paramTypes.length];
             for (int i = 0; i < paramTypes.length; i++) {
-                paramClasses[i] =pool.getCtClass(paramTypes[i].getName());
+                paramClasses[i] =pool.get(paramTypes[i].getName());
             }
             CtMethod ctMethod = ctClass.getDeclaredMethod(methodName,paramClasses);
             // 使用javassist的反射方法的参数名
