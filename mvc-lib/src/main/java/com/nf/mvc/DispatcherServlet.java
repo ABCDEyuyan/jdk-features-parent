@@ -3,6 +3,7 @@ package com.nf.mvc;
 import com.nf.mvc.adapters.HttpRequestHandlerAdapter;
 import com.nf.mvc.mappings.NameConventionHandlerMapping;
 import com.nf.mvc.util.ScanUtils;
+import com.nf.mvc.view.VoidView;
 import io.github.classgraph.ClassInfoList;
 
 import javax.servlet.ServletConfig;
@@ -38,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMapping.getHandler(req);
-            ViewResult viewResult = null;
+            ViewResult viewResult = new VoidView();
             if (handlerAdapter.supports(handler)) {
                  viewResult = handlerAdapter.handle(req, resp, handler);
             }
