@@ -9,13 +9,10 @@
         <servlet-class>com.nf.mvc.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>componentScan</param-name>
-            <param-value>controller</param-value>
+            <param-value>mvcdemo.controller</param-value>
         </init-param>
 
-        <init-param>
-            <param-name>bb</param-name>
-            <param-value>234</param-value>
-        </init-param>
+
     </servlet>
 
     <servlet-mapping>

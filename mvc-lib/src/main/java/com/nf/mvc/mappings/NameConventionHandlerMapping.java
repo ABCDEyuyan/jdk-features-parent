@@ -2,8 +2,10 @@ package com.nf.mvc.mappings;
 
 import com.nf.mvc.HandlerInfo;
 import com.nf.mvc.HandlerMapping;
+import com.nf.mvc.MvcContext;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,28 +19,40 @@ import java.util.Map;
  */
 public class NameConventionHandlerMapping implements HandlerMapping {
 
+    /** 类名的后缀 */
     private static final String SUFFIX = "Controller";
+    /** 此map中放置的是当前HandlerMapping所能处理的所有请求 */
     private Map<String, HandlerInfo> handlers = new HashMap<>();
-    private ClassInfoList infoList ;
 
-    public NameConventionHandlerMapping(ClassInfoList infoList) {
-        this.infoList = infoList;
+
+    public NameConventionHandlerMapping() {
+        ScanResult scanResult = MvcContext.getMvcContext().getScanResult();
+        ClassInfoList infoList = scanResult.getAllClasses();
 
         for (ClassInfo classInfo : infoList) {
-            //FirstController
+            //com.FirstController(类的全程）--->FirstController（简单名）
             String simpleName= classInfo.getSimpleName();
             if(simpleName.endsWith(SUFFIX)){
-                String url ="/"+ simpleName.substring(0, simpleName.length() - SUFFIX.length());
+
+                String url = generateHandleUrl(simpleName);
                 HandlerInfo handlerInfo = new HandlerInfo(classInfo.loadClass());
                 handlers.put(url.toLowerCase(),handlerInfo);
             }
         }
     }
 
+    private String generateHandleUrl(String simpleName) {
+        return "/" + simpleName.substring(0, simpleName.length() - SUFFIX.length());
+    }
+
     @Override
     public Object getHandler(HttpServletRequest request) throws ServletException {
-        String contextPath= request.getContextPath();
-        String uri = request.getRequestURI().substring(contextPath.length());
+        String uri = getRequestUrl(request);
         return handlers.get(uri);
+    }
+
+    private String getRequestUrl(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
+        return request.getRequestURI().substring(contextPath.length());
     }
 }

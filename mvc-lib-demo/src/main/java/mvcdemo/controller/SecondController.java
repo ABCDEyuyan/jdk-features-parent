@@ -1,4 +1,4 @@
-package controller;
+package mvcdemo.controller;
 
 import com.nf.mvc.HttpRequestHandler;
 
