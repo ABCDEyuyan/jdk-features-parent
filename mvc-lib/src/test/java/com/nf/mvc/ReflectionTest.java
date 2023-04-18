@@ -15,11 +15,6 @@ import java.util.Map;
 
 public class ReflectionTest {
 
-
-
-
-
-
     @Test
     public void testClassEquals(){
         Class<SomeClass> aClass = SomeClass.class;

@@ -5,11 +5,11 @@
          version="4.0">
 
     <servlet>
-        <servlet-name>asdlkfjasasdf</servlet-name>
-        <servlet-class>controller.FirstServlet</servlet-class>
+        <servlet-name>mvcdemo</servlet-name>
+        <servlet-class>com.nf.mvc.DispatcherServlet</servlet-class>
         <init-param>
-            <param-name>aa</param-name>
-            <param-value>123</param-value>
+            <param-name>componentScan</param-name>
+            <param-value>controller</param-value>
         </init-param>
 
         <init-param>
@@ -19,7 +19,7 @@
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>asdlkfjasasdf</servlet-name>
-        <url-pattern>/first2</url-pattern>
+        <servlet-name>mvcdemo</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 </web-app>
