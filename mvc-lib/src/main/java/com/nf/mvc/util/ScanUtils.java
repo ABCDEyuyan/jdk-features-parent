@@ -6,12 +6,14 @@ import io.github.classgraph.ScanResult;
 
 public class ScanUtils {
 
-    public static ClassInfoList scan(String packageName) {
+    public static ScanResult scan(String packageName) {
         ClassGraph classGraph = new ClassGraph();
         classGraph.enableAllInfo();
         classGraph.acceptPackages(packageName);
         ScanResult scanResult = classGraph.scan();
-        return scanResult.getAllClasses();
+
+
+        return scanResult;
 
     }
 }

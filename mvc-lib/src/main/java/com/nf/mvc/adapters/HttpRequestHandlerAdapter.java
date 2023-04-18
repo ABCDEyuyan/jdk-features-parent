@@ -6,21 +6,15 @@ import com.nf.mvc.HttpRequestHandler;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.view.VoidView;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-
        return handler instanceof HandlerInfo
-                &&
-                HttpRequestHandler
-                        .class
-                        .isAssignableFrom(((HandlerInfo)handler).getClz());
-
-
+                && HttpRequestHandler.class
+                        .isAssignableFrom(((HandlerInfo)handler).getHandlerClass());
     }
 
     @Override
@@ -28,7 +22,7 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
                              HttpServletResponse resp,
                              Object handler) throws Exception {
         HandlerInfo handlerInfo = (HandlerInfo) handler;
-        Class<?> handlerInfoClz = handlerInfo.getClz();
+        Class<?> handlerInfoClz = handlerInfo.getHandlerClass();
         Object instance = handlerInfoClz.newInstance();
 
 

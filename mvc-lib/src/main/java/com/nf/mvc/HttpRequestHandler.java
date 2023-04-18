@@ -6,5 +6,5 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface HttpRequestHandler {
-    void processRequest(HttpServletRequest req, HttpServletResponse response) throws Exception;
+    void processRequest(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException;
 }
