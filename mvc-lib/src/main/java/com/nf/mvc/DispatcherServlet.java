@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
-
+    /** 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置 */
     private static final String COMPONENT_SCAN = "componentScan";
-
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
+    //region 初始化逻辑
     @Override
     public void init(ServletConfig config) throws ServletException {
         //获取要扫描的类所在的包的名字
@@ -40,13 +40,14 @@ public class DispatcherServlet extends HttpServlet {
 
     }
 
-    private void initMvcContext(ScanResult scanResult){
+    private void initMvcContext(ScanResult scanResult) {
         MvcContext.getMvcContext().config(scanResult);
     }
+
     private void initHandlerMappings() {
-        //优先添加用户自定义的HandlerAdapter
+        //优先添加用户自定义的HandlerMapping
         List<HandlerMapping> customHandlerMappings = getCustomHandlerMappings();
-        //mvc框架自身的HandlerAdapter优先级更低，后注册
+        //mvc框架自身的HandlerMapping优先级更低，后注册
         List<HandlerMapping> defaultHandlerMappings = getDefaultHandlerMappings();
 
         handlerMappings.addAll(customHandlerMappings);
@@ -73,15 +74,13 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.addAll(customHandlerAdapters);
         handlerAdapters.addAll(defaultHandlerAdapters);
 
-
-
     }
 
-    protected List<HandlerAdapter> getCustomHandlerAdapters(){
+    protected List<HandlerAdapter> getCustomHandlerAdapters() {
         return MvcContext.getMvcContext().getHandlerAdapters();
     }
 
-    protected List<HandlerAdapter> getDefaultHandlerAdapters(){
+    protected List<HandlerAdapter> getDefaultHandlerAdapters() {
         List<HandlerAdapter> adapters = new ArrayList<>();
         adapters.add(new HttpRequestHandlerAdapter());
         // handlerAdapters.add(new MethodNameHandlerAdapter());
@@ -96,6 +95,9 @@ public class DispatcherServlet extends HttpServlet {
         }
         return pkg;
     }
+
+    //endregion
+    //region 请求处理逻辑
 
     /**
      * 方法通常会包含很多核心逻辑步骤，如果每一个逻辑步骤都有一些零散的代码
@@ -113,30 +115,36 @@ public class DispatcherServlet extends HttpServlet {
         if (handler != null) {
             doService(req, resp, handler);
         } else {
-            noHandlerFound(req,resp);
+            noHandlerFound(req, resp);
             //发送一个404的错误之后，就不需要再走后续流程，所以要return
             return;
         }
-
     }
 
-    protected void noHandlerFound(HttpServletRequest req,HttpServletResponse resp) throws ServletException,IOException{
-        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-    protected Object getHandler(HttpServletRequest request) {
-
-        try {
-            for (HandlerMapping mapping : handlerMappings) {
-                Object handler = mapping.getHandler(request);
-                if (handler != null) {
-                   return  handler;
-                }
+    protected Object getHandler(HttpServletRequest request) throws ServletException, IOException {
+        for (HandlerMapping mapping : handlerMappings) {
+            Object handler = mapping.getHandler(request);
+            if (handler != null) {
+                return handler;
             }
-
-        } catch (Exception e) {
-            throw new IllegalStateException("针对此请求查找handler的时候出错");
         }
         return null;
+    }
+
+    protected void doService(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException, IOException {
+        try {
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            ViewResult viewResult = adapter.handle(req, resp, handler);
+            render(req, resp, viewResult);
+        } catch (ServletException | IOException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            System.out.println("对请求进行处理时出错------" + ex.getMessage());
+        }
+    }
+
+    protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) {
@@ -149,16 +157,6 @@ public class DispatcherServlet extends HttpServlet {
         viewResult.render(req, resp);
     }
 
-    protected void doService(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException, IOException {
-        try {
-            HandlerAdapter adapter = getHandlerAdapter(handler);
-            ViewResult viewResult = adapter.handle(req, resp, handler);
-            render(req, resp, viewResult);
-        } catch (Exception ex) {
-            System.out.println("yichang dispatcher------" + ex.getMessage());
-        }
-    }
-
     protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
@@ -167,4 +165,6 @@ public class DispatcherServlet extends HttpServlet {
         }
         throw new ServletException("此Handler没有对应的adapter去处理，请在DispatcherServlet中进行额外的配置");
     }
+
+    //endregion
 }
