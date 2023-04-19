@@ -24,6 +24,14 @@ public class ReflectionTest {
         System.out.println(aClass.equals(instance.getClass()));
     }
 
+    @Test(expected = NoSuchMethodException.class)
+    public void testMethod() throws NoSuchMethodException {
+        Class<SomeClass> aClass = SomeClass.class;
+        //测试只给方法名，没有给正确的参数（少了一个List参数），
+        // 这样是获取不到方法的，会抛NoSuchMethodException异常
+        Method m2 = aClass.getDeclaredMethod("m2");
+    }
+
     @Test
     public void testMethodReturnVoid() throws Exception{
         Class<SomeClass> aClass = SomeClass.class;
