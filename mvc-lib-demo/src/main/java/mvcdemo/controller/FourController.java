@@ -1,7 +1,5 @@
 package mvcdemo.controller;
 
-import com.nf.mvc.ViewResult;
-import com.nf.mvc.view.VoidView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -10,6 +10,7 @@ import io.github.classgraph.ScanResult;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,19 +27,19 @@ public class NameConventionHandlerMapping implements HandlerMapping {
 
 
     public NameConventionHandlerMapping() {
-        ScanResult scanResult = MvcContext.getMvcContext().getScanResult();
-        ClassInfoList infoList = scanResult.getAllClasses();
 
-        for (ClassInfo classInfo : infoList) {
+        List<Class<?>> classList = MvcContext.getMvcContext().getAllScanedClasses();
+        for (Class<?> clz : classList) {
             //com.FirstController(类的全程）--->FirstController（简单名）
-            String simpleName= classInfo.getSimpleName();
+            String simpleName= clz.getSimpleName();
             if(simpleName.endsWith(SUFFIX)){
 
                 String url = generateHandleUrl(simpleName);
-                HandlerInfo handlerInfo = new HandlerInfo(classInfo.loadClass());
+                HandlerInfo handlerInfo = new HandlerInfo(clz);
                 handlers.put(url.toLowerCase(),handlerInfo);
             }
         }
+
     }
 
     private String generateHandleUrl(String simpleName) {
