@@ -15,4 +15,9 @@ public interface HandlerMapping {
      * @throws Exception
      */
     Object getHandler(HttpServletRequest request) throws Exception;
+
+    default String getRequestUrl(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
+        return request.getRequestURI().substring(contextPath.length());
+    }
 }

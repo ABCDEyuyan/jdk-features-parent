@@ -49,8 +49,5 @@ public class NameConventionHandlerMapping implements HandlerMapping {
         return handlers.get(uri);
     }
 
-    private String getRequestUrl(HttpServletRequest request) {
-        String contextPath = request.getContextPath();
-        return request.getRequestURI().substring(contextPath.length());
-    }
+
 }

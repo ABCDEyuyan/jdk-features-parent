@@ -1,5 +1,7 @@
 package com.nf.mvc.handler;
 
+import java.lang.reflect.Method;
+
 /**
  * 此类是一个封装handler相关信息的类型,我们现在所有的类都是扫描得到的
  * 所以，基本都是class信息，基本没有实例形式的Handler，这点与spring mvc是不同的
@@ -9,12 +11,28 @@ package com.nf.mvc.handler;
 public class HandlerInfo {
     /** 处理者的Class*/
     private Class<?> handlerClass;
+    private Method handlerMethod;
+
+    public HandlerInfo(Method handlerMethod) {
+        this(handlerMethod.getDeclaringClass(), handlerMethod);
+    }
 
     public HandlerInfo(Class<?> handlerClass) {
+        this(handlerClass, null);
+    }
+
+    public HandlerInfo(Class<?> handlerClass, Method handlerMethod) {
         this.handlerClass = handlerClass;
+        this.handlerMethod = handlerMethod;
     }
 
     public Class<?> getHandlerClass() {
         return handlerClass;
     }
+
+    public Method getHandlerMethod() {
+        return handlerMethod;
+    }
 }
+
+

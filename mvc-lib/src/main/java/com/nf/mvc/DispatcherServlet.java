@@ -3,6 +3,7 @@ package com.nf.mvc;
 import com.nf.mvc.adapters.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.mappings.NameConventionHandlerMapping;
+import com.nf.mvc.mappings.RequestMappingHandlerMapping;
 import com.nf.mvc.util.ScanUtils;
 import com.nf.mvc.view.VoidViewResult;
 import io.github.classgraph.ScanResult;
@@ -59,6 +60,7 @@ public class DispatcherServlet extends HttpServlet {
 
     protected List<HandlerMapping> getDefaultHandlerMappings() {
         List<HandlerMapping> mappings = new ArrayList<>();
+        mappings.add(new RequestMappingHandlerMapping());
         mappings.add(new NameConventionHandlerMapping());
         return mappings;
     }
