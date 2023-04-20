@@ -5,7 +5,7 @@ import com.nf.mvc.ViewResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class VoidView extends ViewResult {
+public class VoidViewResult extends ViewResult {
     @Override
     public void render(HttpServletRequest req, HttpServletResponse resp) {
 

@@ -1,4 +1,4 @@
-package com.nf.mvc;
+package com.nf.mvc.handler;
 
 /**
  * 此类是一个封装handler相关信息的类型,我们现在所有的类都是扫描得到的

@@ -3,11 +3,8 @@ package com.nf.mvc;
 import com.nf.mvc.adapters.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.mappings.NameConventionHandlerMapping;
-import com.nf.mvc.util.ReflectionUtils;
 import com.nf.mvc.util.ScanUtils;
-import com.nf.mvc.view.VoidView;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
+import com.nf.mvc.view.VoidViewResult;
 import io.github.classgraph.ScanResult;
 
 import javax.servlet.ServletConfig;
@@ -147,12 +144,12 @@ public class DispatcherServlet extends HttpServlet {
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
-    protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) {
+    protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) throws Exception {
         //如果handler的方法返回void或者返回null，
         // 我们框架就自动的帮你封装成VoidView，
         //这样做的目的是想让handler的作者在写方法时，不限制必须返回ViewResult类型
         if (viewResult == null) {
-            viewResult = new VoidView();
+            viewResult = new VoidViewResult();
         }
         viewResult.render(req, resp);
     }

@@ -1,11 +1,8 @@
 package com.nf.mvc.mappings;
 
-import com.nf.mvc.HandlerInfo;
+import com.nf.mvc.handler.HandlerInfo;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
