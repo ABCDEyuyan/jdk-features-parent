@@ -22,19 +22,14 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         List<Class<?>> classList = MvcContext.getMvcContext().getAllScanedClasses();
 
         for (Class<?> clz : classList) {
-            String urlPrefix="";
-            if(clz.isAnnotationPresent(RequestMapping.class)){
-                RequestMapping clzDeclaredAnnotation = clz.getDeclaredAnnotation(RequestMapping.class);
-                urlPrefix = clzDeclaredAnnotation.value();
-            }
+            String urlInClass = getUrl(clz);
             Method[] methods = clz.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     HandlerInfo handlerInfo = new HandlerInfo(method);
-                    RequestMapping methodDeclaredAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
-                    String methodUrl = methodDeclaredAnnotation.value();
-                    String url = urlPrefix.toLowerCase()+ methodUrl.toLowerCase();
-
+                    String urlInMethod = getUrl(method);
+                    String url = urlInClass + urlInMethod;
+                    //TODO:不能有重复的url，要抛出异常
                     handlers.put(url, handlerInfo);
                 }
             }
@@ -46,12 +41,9 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return handlers.get(requestUrl);
     }
 
-   /* private String getUrl(AnnotatedElement element) {
-        if (element.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping annotation = element.getDeclaredAnnotation(RequestMapping.class);
-            annotation.value();
+    private String getUrl(AnnotatedElement element) {
+        return element.isAnnotationPresent(RequestMapping.class) ?
+                element.getDeclaredAnnotation(RequestMapping.class).value().toLowerCase() : "";
+    }
 
-
-        }
-    }*/
 }

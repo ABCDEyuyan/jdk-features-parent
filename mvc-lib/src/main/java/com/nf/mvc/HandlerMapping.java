@@ -9,7 +9,6 @@ import java.io.IOException;
  */
 public interface HandlerMapping {
     /**
-     * TODO：相比ServletException，IOException还是觉得抛出Exception异常更合理
      * @param request
      * @return 是一个请求处理者（或者执行链）
      * @throws Exception
