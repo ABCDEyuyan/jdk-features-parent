@@ -116,8 +116,6 @@ public class DispatcherServlet extends HttpServlet {
                 doService(req, resp, handler);
             } else {
                 noHandlerFound(req, resp);
-                //发送一个404的错误之后，就不需要再走后续流程，所以要return
-                return;
             }
         }catch (ServletException | IOException ex) {
             throw ex;
