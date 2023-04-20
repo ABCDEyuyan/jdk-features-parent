@@ -1,7 +1,7 @@
 package mvcdemo.controller;
 
 import com.nf.mvc.HandlerAdapter;
-import com.nf.mvc.HandlerInfo;
+import com.nf.mvc.handler.HandlerInfo;
 import com.nf.mvc.ViewResult;
 
 import javax.servlet.http.HttpServletRequest;

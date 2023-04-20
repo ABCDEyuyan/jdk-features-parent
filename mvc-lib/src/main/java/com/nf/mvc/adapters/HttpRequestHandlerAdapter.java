@@ -1,10 +1,10 @@
 package com.nf.mvc.adapters;
 
 import com.nf.mvc.HandlerAdapter;
-import com.nf.mvc.HandlerInfo;
+import com.nf.mvc.handler.HandlerInfo;
 import com.nf.mvc.HttpRequestHandler;
 import com.nf.mvc.ViewResult;
-import com.nf.mvc.view.VoidView;
+import com.nf.mvc.view.VoidViewResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
 
         HttpRequestHandler requestHandler = (HttpRequestHandler) instance;
         requestHandler.processRequest(req, resp);
-        return new VoidView();
+        return new VoidViewResult();
 
     }
 }
