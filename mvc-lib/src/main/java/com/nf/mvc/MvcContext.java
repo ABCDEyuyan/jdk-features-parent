@@ -54,30 +54,23 @@ public class MvcContext {
         ClassInfoList allClasses = scanResult.getAllClasses();
         for (ClassInfo classInfo : allClasses) {
             Class<?> scanedClass = classInfo.loadClass();
-            if (HandlerMapping.class.isAssignableFrom(scanedClass)) {
-                HandlerMapping mapping = (HandlerMapping) ReflectionUtils.newInstance(scanedClass);
-                handlerMappings.add(mapping);
-            }
-
-            if (HandlerAdapter.class.isAssignableFrom(scanedClass)) {
-                HandlerAdapter adapter = (HandlerAdapter) ReflectionUtils.newInstance(scanedClass);
-                handlerAdapters.add(adapter);
-            }
-
-            if (MethodArgumentResolver.class.isAssignableFrom(scanedClass)) {
-                MethodArgumentResolver argumentResolver = (MethodArgumentResolver) ReflectionUtils.newInstance(scanedClass);
-                argumentResolvers.add(argumentResolver);
-            }
-
-            if (HandlerExceptionResolver.class.isAssignableFrom(scanedClass)) {
-                HandlerExceptionResolver exceptionResolver = (HandlerExceptionResolver) ReflectionUtils.newInstance(scanedClass);
-                exceptionResolvers.add(exceptionResolver);
-            }
+            //与DispatcherServlet类加载器是同一个
+            //System.out.println("scanedClass.getClassLoader() = " + scanedClass.getClassLoader());
+            resolveClasses(HandlerMapping.class,scanedClass,handlerMappings);
+            resolveClasses(HandlerAdapter.class,scanedClass,handlerAdapters);
+            resolveClasses(MethodArgumentResolver.class,scanedClass,argumentResolvers);
+            resolveClasses(HandlerExceptionResolver.class,scanedClass,exceptionResolvers);
 
             allScanedClasses.add(scanedClass);
         }
     }
 
+    private <T> void resolveClasses(Class<? extends T> mvcInf, Class<?> scannedClass,List<T> list) {
+        if (mvcInf.isAssignableFrom(scannedClass)) {
+            T instance = (T)ReflectionUtils.newInstance(scannedClass);
+            list.add(instance);
+        }
+    }
      ScanResult getScanResult(){
         return  this.scanResult;
     }

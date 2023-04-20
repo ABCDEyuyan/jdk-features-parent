@@ -14,5 +14,5 @@ public interface HandlerMapping {
      * @return 是一个请求处理者（或者执行链）
      * @throws Exception
      */
-    Object getHandler(HttpServletRequest request) throws ServletException, IOException;
+    Object getHandler(HttpServletRequest request) throws Exception;
 }

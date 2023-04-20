@@ -25,6 +25,8 @@ public class DispatcherServlet extends HttpServlet {
     //region 初始化逻辑
     @Override
     public void init(ServletConfig config) throws ServletException {
+        //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());
+
         //获取要扫描的类所在的包的名字
         String scanPackage = getScanPackage(config);
         //去执行类扫描的功能
@@ -108,17 +110,23 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Object handler = getHandler(req);
-        if (handler != null) {
-            doService(req, resp, handler);
-        } else {
-            noHandlerFound(req, resp);
-            //发送一个404的错误之后，就不需要再走后续流程，所以要return
-            return;
+        try {
+            Object handler = getHandler(req);
+            if (handler != null) {
+                doService(req, resp, handler);
+            } else {
+                noHandlerFound(req, resp);
+                //发送一个404的错误之后，就不需要再走后续流程，所以要return
+                return;
+            }
+        }catch (ServletException | IOException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            System.out.println("对请求进行处理时出错------" + ex.getMessage());
         }
     }
 
-    protected Object getHandler(HttpServletRequest request) throws ServletException, IOException {
+    protected Object getHandler(HttpServletRequest request) throws Exception {
         for (HandlerMapping mapping : handlerMappings) {
             Object handler = mapping.getHandler(request);
             if (handler != null) {
@@ -128,19 +136,13 @@ public class DispatcherServlet extends HttpServlet {
         return null;
     }
 
-    protected void doService(HttpServletRequest req, HttpServletResponse resp, Object handler) throws ServletException, IOException {
-        try {
-            HandlerAdapter adapter = getHandlerAdapter(handler);
-            ViewResult viewResult = adapter.handle(req, resp, handler);
-            render(req, resp, viewResult);
-        } catch (ServletException | IOException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            System.out.println("对请求进行处理时出错------" + ex.getMessage());
-        }
+    protected void doService(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        HandlerAdapter adapter = getHandlerAdapter(handler);
+        ViewResult viewResult = adapter.handle(req, resp, handler);
+        render(req, resp, viewResult);
     }
 
-    protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
