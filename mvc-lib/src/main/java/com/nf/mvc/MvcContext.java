@@ -42,10 +42,11 @@ public class MvcContext {
      * HandlerExceptionResolver
      * ViewResult
      *
-     * 目前扫描的是各种各样，有HandlerMapping，也有HandlerAdapter
-     * 也有Handler
-     * 因为一般不会写一个类，实现多个接口，所以这种多个if写法问题不大
+     * 目前扫描的是各种各样的类，没有规定只扫描Handler，
+     * 比如有HandlerMapping，也有HandlerAdapter以及Handler等
      *
+     *  //与DispatcherServlet类加载器是同一个
+     *  //System.out.println("scanedClass.getClassLoader() = " + scanedClass.getClassLoader());
      * @param scanResult
      */
      void config(ScanResult scanResult) {
@@ -54,15 +55,21 @@ public class MvcContext {
         ClassInfoList allClasses = scanResult.getAllClasses();
         for (ClassInfo classInfo : allClasses) {
             Class<?> scanedClass = classInfo.loadClass();
-            //与DispatcherServlet类加载器是同一个
-            //System.out.println("scanedClass.getClassLoader() = " + scanedClass.getClassLoader());
-            resolveClasses(HandlerMapping.class,scanedClass,handlerMappings);
-            resolveClasses(HandlerAdapter.class,scanedClass,handlerAdapters);
-            resolveClasses(MethodArgumentResolver.class,scanedClass,argumentResolvers);
-            resolveClasses(HandlerExceptionResolver.class,scanedClass,exceptionResolvers);
-
+            resolveMvcClass(scanedClass);
             allScanedClasses.add(scanedClass);
         }
+    }
+
+    /**
+     * 解析类是否是mvc框架扩展用的类，主要有4类接口的实现类归属于框架扩展类
+     * @param scanedClass
+     */
+    private void resolveMvcClass(Class<?> scanedClass){
+        resolveClasses(HandlerMapping.class,scanedClass,handlerMappings);
+        resolveClasses(HandlerAdapter.class,scanedClass,handlerAdapters);
+        resolveClasses(MethodArgumentResolver.class,scanedClass,argumentResolvers);
+        resolveClasses(HandlerExceptionResolver.class,scanedClass,exceptionResolvers);
+
     }
 
     private <T> void resolveClasses(Class<? extends T> mvcInf, Class<?> scannedClass,List<T> list) {
@@ -77,8 +84,7 @@ public class MvcContext {
 
     /**
      * 因为我们解析之后，结果就是固定的，如果直接返回List
-     * 用户是可以改这个集合里面的内容，所以返回一个只读集合
-     *
+     * 用户是可以更改集合里面的内容的，所以需要返回一个只读集合
      * @return
      */
     public List<HandlerMapping> getHandlerMappings() {
