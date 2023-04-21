@@ -51,13 +51,15 @@ public class DispatcherServlet extends HttpServlet {
         List<HandlerMapping> customHandlerMappings = getCustomHandlerMappings();
         //mvc框架自身的HandlerMapping优先级更低，后注册
         List<HandlerMapping> defaultHandlerMappings = getDefaultHandlerMappings();
-        Collections.sort(customHandlerMappings, new OrderComparator());
+
         handlerMappings.addAll(customHandlerMappings);
         handlerMappings.addAll(defaultHandlerMappings);
+        //把定制+默认的所有HandlerMapping组件添加到上下文中
+        MvcContext.getMvcContext().setHandlerMappings(handlerMappings);
     }
 
     protected List<HandlerMapping> getCustomHandlerMappings() {
-        return MvcContext.getMvcContext().getHandlerMappings();
+        return MvcContext.getMvcContext().getCustomHandlerMappings();
     }
 
     protected List<HandlerMapping> getDefaultHandlerMappings() {
@@ -74,14 +76,14 @@ public class DispatcherServlet extends HttpServlet {
         //mvc框架自身的HandlerAdapter优先级更低，后注册
         List<HandlerAdapter> defaultHandlerAdapters = getDefaultHandlerAdapters();
 
-        Collections.sort(customHandlerAdapters,new OrderComparator<>());
         handlerAdapters.addAll(customHandlerAdapters);
         handlerAdapters.addAll(defaultHandlerAdapters);
+        MvcContext.getMvcContext().setHandlerAdapters(handlerAdapters);
 
     }
 
     protected List<HandlerAdapter> getCustomHandlerAdapters() {
-        return MvcContext.getMvcContext().getHandlerAdapters();
+        return MvcContext.getMvcContext().getCustomHandlerAdapters();
     }
 
     protected List<HandlerAdapter> getDefaultHandlerAdapters() {
