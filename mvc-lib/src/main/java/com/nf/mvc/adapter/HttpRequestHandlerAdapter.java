@@ -1,4 +1,4 @@
-package com.nf.mvc.adapters;
+package com.nf.mvc.adapter;
 
 import com.nf.mvc.HandlerAdapter;
 import com.nf.mvc.handler.HandlerInfo;

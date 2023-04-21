@@ -1,6 +1,6 @@
 package mvcdemo.controller;
 
-import com.nf.mvc.mappings.RequestMapping;
+import com.nf.mvc.mapping.RequestMapping;
 @RequestMapping("/prodUct")
 public class ProductController {
 

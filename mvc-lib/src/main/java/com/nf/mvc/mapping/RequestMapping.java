@@ -1,4 +1,4 @@
-package com.nf.mvc.mappings;
+package com.nf.mvc.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

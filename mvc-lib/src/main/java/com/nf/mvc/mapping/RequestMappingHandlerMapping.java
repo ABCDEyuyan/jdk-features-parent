@@ -1,4 +1,4 @@
-package com.nf.mvc.mappings;
+package com.nf.mvc.mapping;
 
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
@@ -29,11 +29,16 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                     HandlerInfo handlerInfo = new HandlerInfo(method);
                     String urlInMethod = getUrl(method);
                     String url = urlInClass + urlInMethod;
-                    //TODO:不能有重复的url，要抛出异常
-                    handlers.put(url, handlerInfo);
+                    addHandler(url,handlerInfo);
                 }
             }
         }
+    }
+    protected void addHandler(String url,HandlerInfo handlerInfo){
+        if(handlers.get(url)!=null){
+            throw new IllegalStateException("不能有多个处理者对应同一个url");
+        }
+        this.handlers.put(url, handlerInfo);
     }
     @Override
     public Object getHandler(HttpServletRequest request) throws Exception {
@@ -41,6 +46,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return handlers.get(requestUrl);
     }
 
+    /**
+     *
+     * @param element AnnotatedElement类型代表着所有可以放置注解的元素，比如类，方法参数，字段等
+     * @return
+     */
     private String getUrl(AnnotatedElement element) {
         return element.isAnnotationPresent(RequestMapping.class) ?
                 element.getDeclaredAnnotation(RequestMapping.class).value().toLowerCase() : "";

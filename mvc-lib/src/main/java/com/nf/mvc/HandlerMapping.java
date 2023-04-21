@@ -3,6 +3,7 @@ package com.nf.mvc;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * 此接口用来依据请求找到对应的处理者（Handler)
@@ -17,6 +18,6 @@ public interface HandlerMapping {
 
     default String getRequestUrl(HttpServletRequest request) {
         String contextPath = request.getContextPath();
-        return request.getRequestURI().substring(contextPath.length());
+        return request.getRequestURI().substring(contextPath.length()).toLowerCase();
     }
 }
