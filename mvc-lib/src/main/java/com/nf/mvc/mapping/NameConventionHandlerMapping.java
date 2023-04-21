@@ -1,4 +1,4 @@
-package com.nf.mvc.mappings;
+package com.nf.mvc.mapping;
 
 import com.nf.mvc.handler.HandlerInfo;
 import com.nf.mvc.HandlerMapping;
