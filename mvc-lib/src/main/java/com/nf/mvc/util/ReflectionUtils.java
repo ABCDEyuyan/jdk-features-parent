@@ -3,11 +3,41 @@ package com.nf.mvc.util;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
+import nonapi.io.github.classgraph.utils.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
+import java.util.*;
+import java.util.regex.Pattern;
 
+/**
+ * 此类的代码参考了spring 的ClassUtils，ReflectionUtils,BeanUtils
+ */
 public abstract class ReflectionUtils {
+
+    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(9);
+    private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new IdentityHashMap<>(9);
+
+    static {
+        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
+        primitiveWrapperTypeMap.put(Byte.class, byte.class);
+        primitiveWrapperTypeMap.put(Character.class, char.class);
+        primitiveWrapperTypeMap.put(Double.class, double.class);
+        primitiveWrapperTypeMap.put(Float.class, float.class);
+        primitiveWrapperTypeMap.put(Integer.class, int.class);
+        primitiveWrapperTypeMap.put(Long.class, long.class);
+        primitiveWrapperTypeMap.put(Short.class, short.class);
+        primitiveWrapperTypeMap.put(Void.class, void.class);
+
+        for (Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperTypeMap.entrySet()) {
+            primitiveTypeToWrapperMap.put(entry.getValue(), entry.getKey());
+        }
+    }
+
     /**
      * 现在这种写法是默认调用class的默认构造函数来实例化对象的
      * 暂时没有考虑调用其它构造函数的情况
@@ -91,4 +121,94 @@ public abstract class ReflectionUtils {
             return null;
         }
     }
+
+    /**
+     * https://www.runoob.com/regexp/regexp-syntax.html
+     * 正则表达式：
+     * ^:表示以什么开始，^set意思就是以set开头
+     * [A-Z] ： 表示一个区间，匹配所有大写字母，[a-z] 表示所有小写字母
+     * 句号：匹配除换行符（\n、\r）之外的任何单个字符
+     * ‘*’：匹配前面的子表达式零次或多次,在下面的例子就是前面的句号
+     * 所以^set[A-Z].* 意思就是以set开头，之后跟一个大写字母，大写字母之后可以出现0个或多个字符
+     * @param method
+     * @return
+     */
+    public static boolean isSetter(Method method) {
+        return Modifier.isPublic(method.getModifiers()) &&
+                method.getReturnType().equals(void.class) &&
+                method.getParameterTypes().length == 1 &&
+                method.getName().matches("^set[A-Z].*");
+    }
+
+    public static boolean isGetter(Method method) {
+        if (Modifier.isPublic(method.getModifiers()) &&
+                method.getParameterTypes().length == 0) {
+            if (method.getName().matches("^get[A-Z].*") &&
+                    !method.getReturnType().equals(void.class))
+                return true;
+            if (method.getName().matches("^is[A-Z].*") &&
+                    method.getReturnType().equals(boolean.class))
+                return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Pattern pattern = Pattern.compile("^set[A-Z].*");
+        System.out.println("pattern.matcher(\"set\").matches() = " + pattern.matcher("setAA").matches());
+    }
+
+    public static boolean isSimpleProperty(Class<?> type) {
+        return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
+    }
+
+    public static boolean isSimpleArrayType(Class<?> type) {
+        return  type.isArray() && isSimpleType(type.getComponentType());
+    }
+
+
+    public static boolean isCollection(Class<?> type) {
+        return Collection.class.isAssignableFrom(type) ||
+                Map.class.isAssignableFrom(type);
+    }
+
+    public static boolean isSimpleType(Class<?> type) {
+        return (Void.class != type && void.class != type &&
+                (isPrimitiveOrWrapper(type) ||
+                        Enum.class.isAssignableFrom(type) ||
+                        CharSequence.class.isAssignableFrom(type) ||
+                        Number.class.isAssignableFrom(type) ||
+                        Date.class.isAssignableFrom(type) ||
+                        Temporal.class.isAssignableFrom(type) ||
+                        URI.class == type ||
+                        URL.class == type ||
+                        Locale.class == type ||
+                        Class.class == type) ||
+                        LocalDate.class == type ||
+                        LocalDateTime.class == type
+        );
+    }
+
+    public static boolean isPrimitiveWrapper(Class<?> clazz) {
+        return primitiveWrapperTypeMap.containsKey(clazz);
+    }
+
+    public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
+        return (clazz.isPrimitive() || isPrimitiveWrapper(clazz));
+    }
+
+    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+        if (lhsType.isAssignableFrom(rhsType)) {
+            return true;
+        }
+        if (lhsType.isPrimitive()) {
+            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+            return (lhsType == resolvedPrimitive);
+        }
+        else {
+            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+            return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
+        }
+    }
+
 }
