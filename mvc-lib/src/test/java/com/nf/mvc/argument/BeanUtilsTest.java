@@ -35,8 +35,8 @@ public class BeanUtilsTest {
     @Test
     public  void testBeanUtilsGetNestedProperty() throws Exception{
         Emp2 emp2 = new Emp2();
-        Dept dept = new Dept(1, "asdf");
-        emp2.setDept(dept);
+        //Dept dept = new Dept(1, "asdf");
+       // emp2.setDept(dept);
         System.out.println("BeanUtils.getNestedProperty(emp2,\"dept.deptName\") = " + BeanUtils.getNestedProperty(emp2, "dept.deptName"));
     }
     @Test

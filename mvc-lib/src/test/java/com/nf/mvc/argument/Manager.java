@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Dept {
-    private int deptId;
-    private String deptName;
-    private Manager manager;
+public class Manager {
+    private String title;
+    private Game youxi;
 }

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MethodInvokerTest {
@@ -24,6 +25,11 @@ public class MethodInvokerTest {
         requestMap.put("emp2.deptId", "100");
         requestMap.put("emp2.deptName", "rd");
 
+        requestMap.put("dept.deptId", "1111");
+        requestMap.put("dept.deptName", "nested hr");
+        requestMap.put("dept.manager.title", "jingli");
+        requestMap.put("dept.manager.youxi.gameName", "starcraft");
+
     }
 
     @Test
@@ -31,7 +37,8 @@ public class MethodInvokerTest {
         MethodInvoker methodInvoker = new MethodInvoker();
         SomeController2 instance = ReflectionUtils.newInstance(SomeController2.class);
         Method method = instance.getClass().getDeclaredMethods()[0];
-        Object invokeResult = methodInvoker.invoke(instance, method,"", requestMap);
+        List<String> paramNames = ReflectionUtils.getParamNames(SomeController2.class, method.getName());
+        Object invokeResult = methodInvoker.invoke(instance, method,false, requestMap);
         System.out.println("invokeResult = " + invokeResult);
     }
 }

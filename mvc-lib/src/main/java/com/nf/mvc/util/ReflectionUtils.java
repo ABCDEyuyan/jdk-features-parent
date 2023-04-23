@@ -160,6 +160,10 @@ public abstract class ReflectionUtils {
         return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
     }
 
+    public static boolean isComplexProperty(Class<?> type) {
+        return isSimpleProperty(type)==false && isCollection(type)==false;
+    }
+
     public static boolean isSimpleArrayType(Class<?> type) {
         return  type.isArray() && isSimpleType(type.getComponentType());
     }
