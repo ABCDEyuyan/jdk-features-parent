@@ -41,4 +41,15 @@ public class MethodInvokerTest {
         Object invokeResult = methodInvoker.invoke(instance, method,false, requestMap);
         System.out.println("invokeResult = " + invokeResult);
     }
+
+
+    @Test
+    public void testMethodInvokerOptimize() throws Exception{
+        MethodInvokerOptimize methodInvoker = new MethodInvokerOptimize();
+        SomeController2 instance = ReflectionUtils.newInstance(SomeController2.class);
+        Method method = instance.getClass().getDeclaredMethods()[0];
+        List<String> paramNames = ReflectionUtils.getParamNames(SomeController2.class, method.getName());
+        Object invokeResult = methodInvoker.invoke(instance, method, requestMap);
+        System.out.println("invokeResult = " + invokeResult);
+    }
 }
