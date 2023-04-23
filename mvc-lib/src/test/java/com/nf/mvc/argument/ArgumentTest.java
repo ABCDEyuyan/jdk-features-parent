@@ -64,4 +64,6 @@ public class ArgumentTest {
         //省略其它n多类型判断的if
         return null;//表示不识别这种类型，无法解析
     }
+
+
 }

@@ -4,6 +4,7 @@ import com.nf.mvc.HandlerAdapter;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.HttpRequestHandler;
 import com.nf.mvc.ViewResult;
+import com.nf.mvc.util.ReflectionUtils;
 import com.nf.mvc.view.VoidViewResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +24,7 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
                              Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Class<?> handlerInfoClz = handlerMethod.getHandlerClass();
-        Object instance = handlerInfoClz.newInstance();
-
+        Object instance = ReflectionUtils.newInstance(handlerInfoClz);
 
         HttpRequestHandler requestHandler = (HttpRequestHandler) instance;
         requestHandler.processRequest(req, resp);

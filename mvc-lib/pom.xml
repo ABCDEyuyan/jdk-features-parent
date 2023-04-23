@@ -18,27 +18,25 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.28.0-GA</version>
+            <version>3.29.2-GA</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
             <version>4.8.157</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.14.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -59,7 +57,6 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
 
 
     </dependencies>

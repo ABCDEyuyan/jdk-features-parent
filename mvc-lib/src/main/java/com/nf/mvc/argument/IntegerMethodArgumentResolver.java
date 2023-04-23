@@ -1,4 +1,4 @@
-package com.nf.mvc.arguments;
+package com.nf.mvc.argument;
 
 import com.nf.mvc.MethodArgumentResolver;
 

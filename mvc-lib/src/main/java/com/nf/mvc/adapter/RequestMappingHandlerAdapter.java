@@ -16,14 +16,18 @@ import java.util.List;
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof HandlerMethod;
+        return handler instanceof HandlerMethod &&
+                ((HandlerMethod)handler).getHandlerMethod()!=null;
     }
 
     @Override
     public ViewResult handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Class<?> handlerClass = ((HandlerMethod) handler).getHandlerClass();
-        Object instance = ReflectionUtils.newInstance(handlerClass);
+        Object instance = handlerMethod.getHandler();
+        if(instance==null){
+            instance = ReflectionUtils.newInstance(handlerClass);
+        }
 
         Method method = handlerMethod.getHandlerMethod();
 

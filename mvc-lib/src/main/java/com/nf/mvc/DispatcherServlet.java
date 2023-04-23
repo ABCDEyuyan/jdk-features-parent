@@ -154,12 +154,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) throws Exception {
-        //如果handler的方法返回void或者返回null，
-        // 我们框架就自动的帮你封装成VoidView，
-        //这样做的目的是想让handler的作者在写方法时，不限制必须返回ViewResult类型
-        if (viewResult == null) {
-            viewResult = new VoidViewResult();
-        }
         viewResult.render(req, resp);
     }
 
