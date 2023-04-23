@@ -13,6 +13,11 @@ import java.util.Map;
 
 public class ArgumentTest {
     private Map<String,String> requestMap ;
+
+    /**
+     * Before：之前的意思
+     * 就是在每个单元测试方法执行之前先执行的方法
+     */
     @Before
     public void before(){
         requestMap = new HashMap<>();
@@ -55,7 +60,8 @@ public class ArgumentTest {
         if (parameterType == String.class) {
             return requestMap.get(paramName);
         }
-        //省略
-        return null;
+
+        //省略其它n多类型判断的if
+        return null;//表示不识别这种类型，无法解析
     }
 }

@@ -8,20 +8,20 @@ import java.lang.reflect.Method;
  * spring mvc中的handler很多都是从spring容器中获取的bean 实例。
  * 如果想让HandlerInfo支持实例，可以添加一个字段Object handler的形式来处理
  */
-public class HandlerInfo {
+public class HandlerMethod {
     /** 处理者的Class*/
     private Class<?> handlerClass;
     private Method handlerMethod;
 
-    public HandlerInfo(Method handlerMethod) {
+    public HandlerMethod(Method handlerMethod) {
         this(handlerMethod.getDeclaringClass(), handlerMethod);
     }
 
-    public HandlerInfo(Class<?> handlerClass) {
+    public HandlerMethod(Class<?> handlerClass) {
         this(handlerClass, null);
     }
 
-    public HandlerInfo(Class<?> handlerClass, Method handlerMethod) {
+    public HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
         this.handlerClass = handlerClass;
         this.handlerMethod = handlerMethod;
     }

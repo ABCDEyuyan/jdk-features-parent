@@ -97,10 +97,11 @@ public abstract class ReflectionUtils {
     public static List<String> getParamNames(Class<?> clazz, String methodName) {
         List<String> paramNames = new ArrayList<>();
         ClassPool pool = ClassPool.getDefault();
+
+        pool.insertClassPath(new ClassClassPath(ReflectionUtils.class));
+
         try {
             CtClass ctClass = pool.getCtClass(clazz.getName());
-
-
             CtMethod ctMethod = ctClass.getDeclaredMethod(methodName);
             // 使用javassist的反射方法的参数名
             javassist.bytecode.MethodInfo methodInfo = ctMethod.getMethodInfo();

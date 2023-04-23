@@ -2,6 +2,7 @@ package com.nf.mvc;
 
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
+import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.support.OrderComparator;
@@ -88,6 +89,7 @@ public class DispatcherServlet extends HttpServlet {
 
     protected List<HandlerAdapter> getDefaultHandlerAdapters() {
         List<HandlerAdapter> adapters = new ArrayList<>();
+        adapters.add(new RequestMappingHandlerAdapter());
         adapters.add(new HttpRequestHandlerAdapter());
         // handlerAdapters.add(new MethodNameHandlerAdapter());
         return adapters;

@@ -1,7 +1,7 @@
 package mvcdemo.controller;
 
 import com.nf.mvc.HandlerAdapter;
-import com.nf.mvc.handler.HandlerInfo;
+import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.ViewResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +15,10 @@ import java.lang.reflect.Method;
 public class MethodNameHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-        if(handler instanceof HandlerInfo){
+        if(handler instanceof HandlerMethod){
 
-            HandlerInfo handlerInfo = (HandlerInfo)handler;
-            Class<?> handlerClass = handlerInfo.getHandlerClass();
+            HandlerMethod handlerMethod = (HandlerMethod)handler;
+            Class<?> handlerClass = handlerMethod.getHandlerClass();
             try {
                 Method method = handlerClass.getDeclaredMethod("process");
                 return  method !=null;
@@ -32,8 +32,8 @@ public class MethodNameHandlerAdapter implements HandlerAdapter {
     @Override
     public ViewResult handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
 
-        HandlerInfo handlerInfo = (HandlerInfo)handler;
-        Class<?> handlerClass = handlerInfo.getHandlerClass();
+        HandlerMethod handlerMethod = (HandlerMethod)handler;
+        Class<?> handlerClass = handlerMethod.getHandlerClass();
 
         Object instance = handlerClass.newInstance();
         Method method = handlerClass.getDeclaredMethod("process");
