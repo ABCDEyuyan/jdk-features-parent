@@ -2,7 +2,7 @@ package com.nf.mvc.mapping;
 
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
-import com.nf.mvc.handler.HandlerInfo;
+import com.nf.mvc.handler.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
-    private Map<String, HandlerInfo> handlers = new HashMap<>();
+    private Map<String, HandlerMethod> handlers = new HashMap<>();
     public RequestMappingHandlerMapping() {
         resolveHandlers();
     }
@@ -26,19 +26,19 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
             Method[] methods = clz.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
-                    HandlerInfo handlerInfo = new HandlerInfo(method);
+                    HandlerMethod handlerMethod = new HandlerMethod(method);
                     String urlInMethod = getUrl(method);
                     String url = urlInClass + urlInMethod;
-                    addHandler(url,handlerInfo);
+                    addHandler(url, handlerMethod);
                 }
             }
         }
     }
-    protected void addHandler(String url,HandlerInfo handlerInfo){
+    protected void addHandler(String url, HandlerMethod handlerMethod){
         if(handlers.get(url)!=null){
             throw new IllegalStateException("不能有多个处理者对应同一个url");
         }
-        this.handlers.put(url, handlerInfo);
+        this.handlers.put(url, handlerMethod);
     }
     @Override
     public Object getHandler(HttpServletRequest request) throws Exception {

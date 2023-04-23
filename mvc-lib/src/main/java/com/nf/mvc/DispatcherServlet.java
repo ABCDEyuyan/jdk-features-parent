@@ -2,6 +2,7 @@ package com.nf.mvc;
 
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
+import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.support.OrderComparator;
@@ -51,13 +52,15 @@ public class DispatcherServlet extends HttpServlet {
         List<HandlerMapping> customHandlerMappings = getCustomHandlerMappings();
         //mvc框架自身的HandlerMapping优先级更低，后注册
         List<HandlerMapping> defaultHandlerMappings = getDefaultHandlerMappings();
-        Collections.sort(customHandlerMappings, new OrderComparator());
+
         handlerMappings.addAll(customHandlerMappings);
         handlerMappings.addAll(defaultHandlerMappings);
+        //把定制+默认的所有HandlerMapping组件添加到上下文中
+        MvcContext.getMvcContext().setHandlerMappings(handlerMappings);
     }
 
     protected List<HandlerMapping> getCustomHandlerMappings() {
-        return MvcContext.getMvcContext().getHandlerMappings();
+        return MvcContext.getMvcContext().getCustomHandlerMappings();
     }
 
     protected List<HandlerMapping> getDefaultHandlerMappings() {
@@ -74,18 +77,19 @@ public class DispatcherServlet extends HttpServlet {
         //mvc框架自身的HandlerAdapter优先级更低，后注册
         List<HandlerAdapter> defaultHandlerAdapters = getDefaultHandlerAdapters();
 
-        Collections.sort(customHandlerAdapters,new OrderComparator<>());
         handlerAdapters.addAll(customHandlerAdapters);
         handlerAdapters.addAll(defaultHandlerAdapters);
+        MvcContext.getMvcContext().setHandlerAdapters(handlerAdapters);
 
     }
 
     protected List<HandlerAdapter> getCustomHandlerAdapters() {
-        return MvcContext.getMvcContext().getHandlerAdapters();
+        return MvcContext.getMvcContext().getCustomHandlerAdapters();
     }
 
     protected List<HandlerAdapter> getDefaultHandlerAdapters() {
         List<HandlerAdapter> adapters = new ArrayList<>();
+        adapters.add(new RequestMappingHandlerAdapter());
         adapters.add(new HttpRequestHandlerAdapter());
         // handlerAdapters.add(new MethodNameHandlerAdapter());
         return adapters;
@@ -150,12 +154,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) throws Exception {
-        //如果handler的方法返回void或者返回null，
-        // 我们框架就自动的帮你封装成VoidView，
-        //这样做的目的是想让handler的作者在写方法时，不限制必须返回ViewResult类型
-        if (viewResult == null) {
-            viewResult = new VoidViewResult();
-        }
         viewResult.render(req, resp);
     }
 
