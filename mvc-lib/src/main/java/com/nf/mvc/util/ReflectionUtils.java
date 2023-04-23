@@ -55,6 +55,16 @@ public abstract class ReflectionUtils {
         return null;
     }
 
+    public static List<Method> getAllSetterMethods(Class<?> clz) {
+        List<Method> setterMethods = new ArrayList<>();
+        Method[] methods = clz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (ReflectionUtils.isSetter(method)) {
+                setterMethods.add(method);
+            }
+        }
+        return setterMethods;
+    }
     /**
      *
      * @param clazz:方法所在的类
