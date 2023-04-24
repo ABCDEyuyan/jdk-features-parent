@@ -19,6 +19,11 @@ import java.util.regex.Pattern;
  */
 public abstract class ReflectionUtils {
 
+    /**这个map集合，key是包装类型（wrapper），值是此包装类型对应的基本类型(primitive)
+     * IdentityHashMap表示的是key用==符号比较是true才相等，而不是普通HashMap用equals比较
+     * ==符号表示指向的是同一个对象，equals表示的内容相等，简单来说，==是true就表示两者完全一样，
+     * 那么equals也肯定是true，但equals是true不一定==也是true
+     * */
     private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(9);
     private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new IdentityHashMap<>(9);
 
@@ -151,11 +156,11 @@ public abstract class ReflectionUtils {
         return false;
     }
 
-    public static void main(String[] args) {
-        Pattern pattern = Pattern.compile("^set[A-Z].*");
-        System.out.println("pattern.matcher(\"set\").matches() = " + pattern.matcher("setAA").matches());
-    }
-
+    /**
+     * 是简单类型或者简单类型的数组就认为是一个简单属性
+     * @param type
+     * @return
+     */
     public static boolean isSimpleProperty(Class<?> type) {
         return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
     }
@@ -164,16 +169,30 @@ public abstract class ReflectionUtils {
         return isSimpleProperty(type)==false && isCollection(type)==false;
     }
 
+    /**
+     * 判断是否是简单类型的数组，比如int[],Integer[],Date[]
+     * @param type
+     * @return
+     */
     public static boolean isSimpleArrayType(Class<?> type) {
         return  type.isArray() && isSimpleType(type.getComponentType());
     }
 
-
+    /**
+     * 如果是Collection以及Map的子类型，就认为是一个集合
+     * @param type
+     * @return
+     */
     public static boolean isCollection(Class<?> type) {
         return Collection.class.isAssignableFrom(type) ||
                 Map.class.isAssignableFrom(type);
     }
 
+    /**
+     * 如果是基本类型、包装类型或者date，number等等就认为是简单类型
+     * @param type
+     * @return
+     */
     public static boolean isSimpleType(Class<?> type) {
         return (Void.class != type && void.class != type &&
                 (isPrimitiveOrWrapper(type) ||
@@ -191,14 +210,32 @@ public abstract class ReflectionUtils {
         );
     }
 
+    /**
+     * 判断是否是基本类型的包装类型，比如传递的参数是Integer就会返回true
+     * @param clazz：包装类型
+     * @return
+     */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
         return primitiveWrapperTypeMap.containsKey(clazz);
     }
 
+    /**
+     * 判断一个类是否是简单类型或者简单类型对应的包装类型
+     * @param clazz
+     * @return
+     */
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         return (clazz.isPrimitive() || isPrimitiveWrapper(clazz));
     }
 
+    /**
+     * 判断第二个参数是否是第一个参数的子类或者实现类
+     * 也考虑了基本类型，比如Integer与int认为是isAssignable
+     * assignable：可赋值的
+     * @param lhsType
+     * @param rhsType
+     * @return
+     */
     public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
         if (lhsType.isAssignableFrom(rhsType)) {
             return true;

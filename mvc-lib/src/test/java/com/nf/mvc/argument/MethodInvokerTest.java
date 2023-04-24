@@ -30,6 +30,7 @@ public class MethodInvokerTest {
         requestMap.put("dept.deptName", "nested hr");
         requestMap.put("dept.manager.title", "jingli");
         requestMap.put("dept.manager.youxi.gameName", "starcraft");
+        requestMap.put("dept.youxi.gameName", "cs");
 
     }
 

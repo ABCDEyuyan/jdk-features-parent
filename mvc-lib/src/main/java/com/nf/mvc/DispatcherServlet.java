@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -119,6 +120,7 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        setEncoding(req, resp);
         try {
             Object handler = getHandler(req);
             if (handler != null) {
@@ -131,6 +133,18 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception ex) {
             System.out.println("对请求进行处理时出错------" + ex.getMessage());
         }
+    }
+
+    /**
+     * 设置编码的方法是在service方法里面第一个调用，如果已经从req
+     * 对象中获取数据了，再设置这个编码是无效
+     * @param req
+     * @param resp
+     * @throws Exception
+     */
+    protected void setEncoding(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
     }
 
     protected Object getHandler(HttpServletRequest request) throws Exception {
@@ -150,11 +164,16 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        //resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        //我们获取容器中本来就有的默认servlet来处理静态资源
+        //容器中默认servlet是有能力处理静态资源
+        //默认servlet的名字，在很多容器中就是叫default，但有些容器不叫default
+        //常用的tomcat，jetty这些容器中就是叫default
+        req.getServletContext().getNamedDispatcher("default").forward(req,resp);
     }
 
     protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) throws Exception {
-        viewResult.render(req, resp);
+            viewResult.render(req, resp);
     }
 
     protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
