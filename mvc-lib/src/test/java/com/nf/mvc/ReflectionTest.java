@@ -105,4 +105,16 @@ public class ReflectionTest {
         System.out.println(g1);
         System.out.println(g2);
     }
+
+    @Test
+    public void testTypedParameter() throws Exception{
+        Field field;
+
+        List<String> list = new ArrayList<>();
+        ParameterizedType parameterizedType = (ParameterizedType) list.getClass().getGenericSuperclass();
+
+        Class<?> genericType = (Class) parameterizedType.getActualTypeArguments()[0];
+
+        System.out.println(genericType);
+    }
 }

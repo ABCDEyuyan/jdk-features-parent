@@ -3,7 +3,6 @@ package com.nf.mvc.util;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
-import nonapi.io.github.classgraph.utils.Assert;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * 此类的代码参考了spring 的ClassUtils，ReflectionUtils,BeanUtils
@@ -174,10 +172,20 @@ public abstract class ReflectionUtils {
      * @param type
      * @return
      */
-    public static boolean isSimpleArrayType(Class<?> type) {
+    public static boolean isSimpleTypeArray(Class<?> type) {
         return  type.isArray() && isSimpleType(type.getComponentType());
     }
 
+
+    public static boolean isSimpleCollection(Class<?> type) {
+        return isAssignable(List.class,type) ||
+                isAssignable(Set.class,type) ||
+                isAssignable(Map.class,type);
+    }
+
+    public static boolean isSimpleTypeCollection(Class<?> collectionType, Class<?> actualTypeParam) {
+        return isSimpleCollection(collectionType) && isSimpleType(actualTypeParam);
+    }
     /**
      * 如果是Collection以及Map的子类型，就认为是一个集合
      * @param type

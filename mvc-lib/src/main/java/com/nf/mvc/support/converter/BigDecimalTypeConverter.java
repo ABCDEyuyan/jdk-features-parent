@@ -6,12 +6,7 @@ import com.nf.mvc.support.WebTypeConverter;
 import java.math.BigDecimal;
 
 
-public class BigDecimalTypeConverter implements WebTypeConverter<BigDecimal> {
-
-    @Override
-    public boolean supports(Class<BigDecimal> paramType) {
-        return paramType== BigDecimal.class;
-    }
+public class BigDecimalTypeConverter implements WebTypeConverter {
 
     @Override
     public BigDecimal convert(String paramValue) throws Exception {

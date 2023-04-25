@@ -8,12 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class LocalDateTypeConverter implements WebTypeConverter<LocalDate> {
-
-    @Override
-    public boolean supports(Class<LocalDate> paramType) {
-        return paramType==LocalDate.class;
-    }
+public class LocalDateTypeConverter implements WebTypeConverter{
 
     @Override
     public LocalDate convert(String paramValue) throws Exception {
