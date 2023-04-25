@@ -4,6 +4,7 @@ import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.IntegerMethodArgumentResolver;
+import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
 import com.nf.mvc.argument.StringMethodArgumentResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
@@ -63,8 +64,9 @@ public class DispatcherServlet extends HttpServlet {
 
     protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
         List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
-        argumentResolvers.add(new IntegerMethodArgumentResolver());
-        argumentResolvers.add(new StringMethodArgumentResolver());
+        argumentResolvers.add(new SimpleTypeMethodArguementResolver());
+        //argumentResolvers.add(new IntegerMethodArgumentResolver());
+        //argumentResolvers.add(new StringMethodArgumentResolver());
         return argumentResolvers;
     }
 

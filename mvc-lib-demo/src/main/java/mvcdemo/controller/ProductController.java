@@ -22,4 +22,12 @@ public class ProductController {
 
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
+
+
+    @RequestMapping("/delete")
+    public JsonViewResult delete(int[] ids){
+        System.out.println("====delete in product-");
+        System.out.println("ids = " + ids);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
 }
