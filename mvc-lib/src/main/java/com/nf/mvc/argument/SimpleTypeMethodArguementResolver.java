@@ -26,7 +26,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-        Object value = null;
+        Object value ;
         String paramName = parameter.getParamName();
         //获取参数类型
         Class<?> paramType = parameter.getParamType();
@@ -34,7 +34,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
         if(paramType.isArray()) {
             Class<?> componentType = paramType.getComponentType();
             value = WebTypeConverterUtils.toSimpleTypeArray(componentType, request.getParameterValues(paramName));
-        } else if(List.class.isAssignableFrom(paramType)) {
+        } else if(List.class.isAssignableFrom(paramType) || Set.class.isAssignableFrom(paramType)) {
             //获取集合泛型参数类型
             ParameterizedType type = (ParameterizedType) parameter.getParameter().getParameterizedType();
             Class<?> genericType = (Class) type.getActualTypeArguments()[0];
