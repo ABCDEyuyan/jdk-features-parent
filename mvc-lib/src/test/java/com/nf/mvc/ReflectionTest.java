@@ -55,10 +55,16 @@ public class ReflectionTest {
         //parameter.getType().newInstance();
 
         Class<?> componentType = parameter.getType().getComponentType();
+        System.out.println("componentType = " + componentType);
+        //这里instance的实际类型是一个整数数组，声明的类型是Object
         Object instance = Array.newInstance(componentType, 2);
-
+        //data.get得到的是一个字符串数组，赋值给一个声明为Object类型数据是可以的，不报错，
+        // 但此时instance就代表着一个字符串数组类型了，这不是我们的期望，我们期望的是一个整数类型
         instance = data.get("names");
         //Arrays.toString(instance);
+        //所以在直接调用m5方法时就报错了。报Argument type mismatch（参数类型不匹配）
+        SomeClass someClass = SomeClass.class.newInstance();
+        m5.invoke(someClass, instance);
     }
 
     @Test
