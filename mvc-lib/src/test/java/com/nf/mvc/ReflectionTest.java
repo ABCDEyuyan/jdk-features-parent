@@ -40,7 +40,20 @@ public class ReflectionTest {
     }
 
     @Test
-    public void testArray() throws Exception{
+    public void testSimpleArray() throws Exception{
+        Object instance = Array.newInstance(Integer.TYPE, 2);
+        Array.set(instance,0,100);
+        Array.set(instance,1,200);
+        //不能这样判断
+        boolean result = instance instanceof Array;
+        System.out.println("result = " + result); //false
+
+        System.out.println(Array.get(instance, 0));
+        System.out.println(Array.get(instance, 1));
+    }
+
+    @Test
+    public void testArrayParam() throws Exception{
 
         Map<String, String[]> data = new HashMap<>();
         data.put("names", new String[]{"100", "200"});

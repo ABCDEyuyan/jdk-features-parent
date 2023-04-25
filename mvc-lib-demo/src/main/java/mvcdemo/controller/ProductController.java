@@ -3,6 +3,9 @@ package mvcdemo.controller;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RequestMapping("/prodUct")
 public class ProductController {
 
@@ -23,11 +26,15 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
-
+//http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id=123&name=abc
     @RequestMapping("/delete")
-    public JsonViewResult delete(int[] ids){
+    public JsonViewResult delete(int[] ids, List<Integer> id2s,Emp emp){
         System.out.println("====delete in product-");
-        System.out.println("ids = " + ids);
+        System.out.println("ids.length = " + ids.length);
+        System.out.println("ids = " + Arrays.toString(ids));
+        System.out.println("id2s.size() = " + id2s.size());
+        System.out.println("emp = " + emp);
+        id2s.forEach(System.out::println);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 }

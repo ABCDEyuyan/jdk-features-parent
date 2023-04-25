@@ -6,7 +6,6 @@ import com.nf.mvc.util.WebTypeConverterUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +16,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
         if( ReflectionUtils.isSimpleProperty(paramType)){
             return true;
         }
-        if (ReflectionUtils.isAssignableToAll(paramType, Set.class,List.class)) {
+        if (ReflectionUtils.isAssignableToAny(paramType, Set.class,List.class)) {
             ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameter().getParameterizedType();
             Class<?> genericType = (Class) parameterizedType.getActualTypeArguments()[0];
             return ReflectionUtils.isSimpleType(genericType);
@@ -34,14 +33,14 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
         //转换为数组、集合、或具体类型的值
         if(paramType.isArray()) {
             Class<?> componentType = paramType.getComponentType();
-            value = WebTypeConverterUtils.toArray(componentType, paramName,request);
+            value = WebTypeConverterUtils.toSimpleTypeArray(componentType, request.getParameterValues(paramName));
         } else if(List.class.isAssignableFrom(paramType)) {
             //获取集合泛型参数类型
             ParameterizedType type = (ParameterizedType) parameter.getParameter().getParameterizedType();
             Class<?> genericType = (Class) type.getActualTypeArguments()[0];
-            value = WebTypeConverterUtils.toCollection(paramType, genericType, paramName, request);
+            value = WebTypeConverterUtils.toCollection(paramType, genericType, request.getParameterValues(paramName));
         } else {
-            value = WebTypeConverterUtils.toValue(paramType, paramName, request);
+            value = WebTypeConverterUtils.toSimpleTypeValue(paramType, request.getParameter(paramName));
         }
         return value;
     }

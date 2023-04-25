@@ -249,11 +249,11 @@ public abstract class ReflectionUtils {
             return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
         }
     }
-    public static boolean isAssignableToAll(Class<?> lhsType, Class<?>... rhsTypes) {
-       boolean isAssignable = true;
+    public static boolean isAssignableToAny(Class<?> lhsType, Class<?>... rhsTypes) {
+       boolean isAssignable = false;
         for (Class<?> rhsType : rhsTypes) {
             isAssignable =  isAssignable(rhsType,lhsType);
-            if (isAssignable == false) {
+            if (isAssignable == true) {
                 break;
             }
         }

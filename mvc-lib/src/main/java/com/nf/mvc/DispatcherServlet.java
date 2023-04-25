@@ -3,14 +3,11 @@ package com.nf.mvc;
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
-import com.nf.mvc.argument.IntegerMethodArgumentResolver;
+import com.nf.mvc.argument.ComplexTypeMethodArguementResolver;
 import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
-import com.nf.mvc.argument.StringMethodArgumentResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
-import com.nf.mvc.support.OrderComparator;
 import com.nf.mvc.util.ScanUtils;
-import com.nf.mvc.view.VoidViewResult;
 import io.github.classgraph.ScanResult;
 
 import javax.servlet.ServletConfig;
@@ -19,9 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
@@ -65,8 +60,8 @@ public class DispatcherServlet extends HttpServlet {
     protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
         List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
-        //argumentResolvers.add(new IntegerMethodArgumentResolver());
-        //argumentResolvers.add(new StringMethodArgumentResolver());
+        argumentResolvers.add(new ComplexTypeMethodArguementResolver());
+
         return argumentResolvers;
     }
 
