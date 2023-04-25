@@ -3,6 +3,8 @@ package com.nf.mvc;
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
+import com.nf.mvc.argument.IntegerMethodArgumentResolver;
+import com.nf.mvc.argument.StringMethodArgumentResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.support.OrderComparator;
@@ -26,6 +28,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final String COMPONENT_SCAN = "componentScan";
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
 
     //region 初始化逻辑
     @Override
@@ -38,10 +41,35 @@ public class DispatcherServlet extends HttpServlet {
         ScanResult scanResult = ScanUtils.scan(scanPackage);
 
         initMvcContext(scanResult);
+        //参数解析器因为被Adapter使用，所以要在adapter初始化之前进行
+        initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
 
 
+    }
+
+    private void initArgumentResolvers(){
+
+        List<MethodArgumentResolver> customArgumentResolvers = getCustomArgumentResolvers();
+
+        List<MethodArgumentResolver> defaultArgumentResolvers = getDefaultArgumentResolvers();
+
+        argumentResolvers.addAll(customArgumentResolvers);
+        argumentResolvers.addAll(defaultArgumentResolvers);
+        //把定制+默认的所有HandlerMapping组件添加到上下文中
+        MvcContext.getMvcContext().setArgumentResolvers(argumentResolvers);
+    }
+
+    protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
+        List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
+        argumentResolvers.add(new IntegerMethodArgumentResolver());
+        argumentResolvers.add(new StringMethodArgumentResolver());
+        return argumentResolvers;
+    }
+
+    protected List<MethodArgumentResolver> getCustomArgumentResolvers() {
+        return MvcContext.getMvcContext().getCustomArgumentResolvers();
     }
 
     private void initMvcContext(ScanResult scanResult) {

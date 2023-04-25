@@ -28,6 +28,7 @@ public class FileViewResult extends ViewResult {
     @Override
     public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String filename = getFileName();
+        resp.setContentType(getMediaType(filename));
         //attachment表示以附件的形式下载，对文件名编码以防止中文文件名在保存对话框中是乱码的
         resp.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(filename,"UTF-8"));
         Path path = Paths.get(realPath);

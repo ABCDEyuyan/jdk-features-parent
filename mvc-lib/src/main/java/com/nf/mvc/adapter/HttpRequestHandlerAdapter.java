@@ -1,6 +1,7 @@
 package com.nf.mvc.adapter;
 
 import com.nf.mvc.HandlerAdapter;
+import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.HttpRequestHandler;
 import com.nf.mvc.ViewResult;
@@ -13,17 +14,17 @@ import javax.servlet.http.HttpServletResponse;
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-       return handler instanceof HandlerMethod
+       return handler instanceof HandlerClass
                 && HttpRequestHandler.class
-                        .isAssignableFrom(((HandlerMethod)handler).getHandlerClass());
+                        .isAssignableFrom(((HandlerClass)handler).getHandlerClass());
     }
 
     @Override
     public ViewResult handle(HttpServletRequest req,
                              HttpServletResponse resp,
                              Object handler) throws Exception {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Class<?> handlerInfoClz = handlerMethod.getHandlerClass();
+        HandlerClass handlerClass = (HandlerClass) handler;
+        Class<?> handlerInfoClz = handlerClass.getHandlerClass();
         Object instance = ReflectionUtils.newInstance(handlerInfoClz);
 
         HttpRequestHandler requestHandler = (HttpRequestHandler) instance;

@@ -25,4 +25,9 @@ public class SomeClass {
     public void m4(Map<String,Integer> map) {
 
     }
+
+
+    public void m5(int[] names) {
+
+    }
 }

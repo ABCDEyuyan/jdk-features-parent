@@ -7,15 +7,13 @@ import java.lang.reflect.Parameter;
 
 public class StringMethodArgumentResolver implements MethodArgumentResolver {
     @Override
-    public boolean supports(Parameter parameter) {
-        Class<?> parameterType = parameter.getType();
+    public boolean supports(MethodParameter parameter) {
+        Class<?> parameterType = parameter.getParamType();
         return parameterType==String.class;
     }
 
     @Override
-    public Object resolveArgument(Parameter parameter, HttpServletRequest request) throws Exception {
-        //parameter.getName()???
-        //Integer.parset(request.getParameter(n))
-        return null;
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
+        return request.getParameter(parameter.getParamName());
     }
 }

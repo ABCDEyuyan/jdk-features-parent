@@ -1,7 +1,10 @@
 package com.nf.mvc.adapter;
 
 import com.nf.mvc.HandlerAdapter;
+import com.nf.mvc.MethodArgumentResolver;
+import com.nf.mvc.MvcContext;
 import com.nf.mvc.ViewResult;
+import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.util.ReflectionUtils;
 import com.nf.mvc.view.PlainViewResult;
@@ -14,6 +17,18 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
+
+    private List<MethodArgumentResolver> argumentResolvers;
+
+    public RequestMappingHandlerAdapter() {
+
+        this(MvcContext.getMvcContext().getArgumentResolvers());
+    }
+
+    public RequestMappingHandlerAdapter(List<MethodArgumentResolver> argumentResolvers) {
+        this.argumentResolvers = argumentResolvers;
+    }
+
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerMethod &&
@@ -23,29 +38,33 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
     public ViewResult handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Class<?> handlerClass = ((HandlerMethod) handler).getHandlerClass();
-        Object instance = handlerMethod.getHandler();
-        if(instance==null){
-            instance = ReflectionUtils.newInstance(handlerClass);
-        }
+        Object instance = handlerMethod.getInstance();
 
         Method method = handlerMethod.getHandlerMethod();
 
-        List<String> paramNames = ReflectionUtils.getParamNames(handlerClass, method.getName());
-        Parameter[] parameters = method.getParameters();
-        int parameterCount = method.getParameterCount();
-        Object[] paramValues = new Object[parameterCount];
-
-        for (int i = 0; i < parameterCount; i++) {
-            Parameter parameter = parameters[i];
-            paramValues[i]= resolveArgument(parameter,paramNames.get(i),req);
-        }
+        Object[] paramValues = resolveParamValues(req, handlerMethod);
         //handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
         //所以handler的方法执行之后，可能返回别的类型，或者void
         Object handlerResult = method.invoke(instance,paramValues);
 
+        return handleViewResult(handlerResult);
+
+    }
+
+    private Object[] resolveParamValues(HttpServletRequest req, HandlerMethod handlerMethod) throws Exception {
+        int parameterCount = handlerMethod.getParameterCount();
+        Object[] paramValues = new Object[parameterCount];
+
+        for (int i = 0; i < parameterCount; i++) {
+            MethodParameter parameter = handlerMethod.getMethodParameters()[i];
+            paramValues[i]= resolveArgument(parameter, req);
+        }
+        return paramValues;
+    }
+
+    private ViewResult handleViewResult(Object handlerResult) {
         ViewResult viewResult ;
-        if(handlerResult==null){
+        if(handlerResult ==null){
             //这种情况表示handler方法执行返回null或者方法的签名本身就是返回void
             viewResult = new VoidViewResult();
         } else if (handlerResult instanceof ViewResult) {
@@ -55,16 +74,15 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         }
 
         return viewResult;
-
     }
 
-    private Object resolveArgument(Parameter parameter, String paramName,HttpServletRequest req) {
-        Class<?> parameterType = parameter.getType();
-        if(parameterType==Integer.class || parameterType==Integer.TYPE){
-            return Integer.parseInt(req.getParameter(paramName));
-        }
-        if (parameterType == String.class) {
-            return req.getParameter(paramName);
+
+    private Object resolveArgument(MethodParameter parameter, HttpServletRequest req) throws Exception {
+        Class<?> parameterType = parameter.getParamType();
+        for (MethodArgumentResolver resolver : argumentResolvers) {
+            if (resolver.supports(parameter)) {
+                return resolver.resolveArgument(parameter,req);
+            }
         }
         return null;
     }

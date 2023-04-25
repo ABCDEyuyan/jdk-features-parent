@@ -1,5 +1,6 @@
 package com.nf.mvc.mapping;
 
+import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
@@ -20,7 +21,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     /** 类名的后缀 */
     private static final String SUFFIX = "Controller";
     /** 此map中放置的是当前HandlerMapping所能处理的所有请求 */
-    private Map<String, HandlerMethod> handlers = new HashMap<>();
+    private Map<String, HandlerClass> handlers = new HashMap<>();
 
 
     public NameConventionHandlerMapping() {
@@ -32,8 +33,8 @@ public class NameConventionHandlerMapping implements HandlerMapping {
             if(simpleName.endsWith(SUFFIX)){
 
                 String url = generateHandleUrl(simpleName);
-                HandlerMethod handlerMethod = new HandlerMethod(clz);
-                handlers.put(url.toLowerCase(), handlerMethod);
+                HandlerClass handlerClass = new HandlerClass(clz);
+                handlers.put(url.toLowerCase(), handlerClass);
             }
         }
 
