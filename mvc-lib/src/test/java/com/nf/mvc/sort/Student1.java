@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Order(1000)
+@Order(10)
 public class Student1 implements StudentInf  {
     private int id;
     private String name;

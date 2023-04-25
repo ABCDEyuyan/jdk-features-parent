@@ -1,56 +1,68 @@
 package com.nf.mvc.handler;
 
-import java.lang.reflect.Method;
+import com.nf.mvc.argument.MethodParameter;
+import com.nf.mvc.util.ReflectionUtils;
 
-/**
- * 此类是一个封装handler相关信息的类型,现在支持以下几种类型的Handler
- * <ul>
- *     <li>只有handlerClass信息，无方法信息，具体调用哪个方法由具体的{@codeHandlerAdapter}决定</li>
- *     <li>只有Handler信息，无方法信息，具体调用哪个方法由具体的{@codeHandlerAdapter}决定</li>
- *     <li>有HandlerClass信息，有方法信息，实例化由mvc框架处理</li>
- *     <li>有Handler信息，有方法信息，实例化不需要mvc框架处理</li>
- * </ul>
- *
- * @see com.nf.mvc.HandlerAdapter
- * @see com.nf.mvc.adapter.RequestMappingHandlerAdapter
- */
-public class HandlerMethod {
-    /** 处理者的Class*/
-    private Class<?> handlerClass;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.List;
+
+
+public class HandlerMethod extends HandlerClass {
+
     private Method handlerMethod;
-    private Object handler;
+
+    private MethodParameter[] methodParameters;
 
     public HandlerMethod(Method handlerMethod) {
         this(handlerMethod.getDeclaringClass(), handlerMethod);
     }
 
-    public HandlerMethod(Class<?> handlerClass) {
-        this(handlerClass, null);
+    public HandlerMethod(Method handlerMethod, Object handlerObject) {
+        this(handlerObject, handlerMethod);
     }
 
-    public HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
-        this.handlerClass = handlerClass;
+    private HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
+        super(handlerClass);
         this.handlerMethod = handlerMethod;
+        initMethodParameters();
     }
 
-    public HandlerMethod(Object handler) {
-        this(handler, null);
-    }
-
-    public HandlerMethod(Object handler, Method handlerMethod) {
-        this.handler = handler;
+    private HandlerMethod(Object handlerObject, Method handlerMethod) {
+        super(handlerObject);
         this.handlerMethod = handlerMethod;
+        initMethodParameters();
     }
-    public Class<?> getHandlerClass() {
-        return handlerClass;
+
+
+    private void initMethodParameters() {
+
+        List<String> paramNames = ReflectionUtils.getParamNames(getHandlerClass(), getMethodName());
+        Parameter[] parameters = handlerMethod.getParameters();
+        int parameterCount = handlerMethod.getParameterCount();
+        methodParameters = new MethodParameter[parameterCount];
+        for (int i = 0; i < parameterCount; i++) {
+            MethodParameter methodParameter = new MethodParameter(parameters[i], paramNames.get(i));
+            methodParameters[i] = methodParameter;
+        }
+
     }
+
+    public String getMethodName() {
+        return handlerMethod.getName();
+    }
+
 
     public Method getHandlerMethod() {
         return handlerMethod;
     }
 
-    public Object getHandler() {
-        return handler;
+    public MethodParameter[] getMethodParameters() {
+        return methodParameters;
+    }
+
+    public int getParameterCount() {
+        return handlerMethod.getParameterCount();
     }
 }
 

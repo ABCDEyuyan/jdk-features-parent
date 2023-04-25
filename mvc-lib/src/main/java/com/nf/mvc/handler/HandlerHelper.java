@@ -22,4 +22,7 @@ public class HandlerHelper {
     public static RedirectViewResult redirect(String url) {
         return new RedirectViewResult(url);
     }
+    public static FileViewResult file(String realPath) {
+        return new FileViewResult(realPath);
+    }
 }

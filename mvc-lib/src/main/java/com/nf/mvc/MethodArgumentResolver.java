@@ -1,10 +1,13 @@
 package com.nf.mvc;
 
+import com.nf.mvc.argument.MethodParameter;
+
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Parameter;
 
 public interface MethodArgumentResolver {
-    boolean supports(Parameter parameter);
 
-    Object resolveArgument(Parameter parameter, HttpServletRequest request) throws Exception;
+    boolean supports(MethodParameter parameter);
+
+    Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception;
 }

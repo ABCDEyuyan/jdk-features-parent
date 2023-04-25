@@ -5,13 +5,8 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class ReflectionTest {
 
@@ -42,6 +37,28 @@ public class ReflectionTest {
         System.out.println(m1ReturnType == Void.TYPE); //true
         System.out.println(m1ReturnType == void.class);//true
 
+    }
+
+    @Test
+    public void testArray() throws Exception{
+
+        Map<String, String[]> data = new HashMap<>();
+        data.put("names", new String[]{"100", "200"});
+
+        Method m5 = SomeClass.class.getDeclaredMethod("m5", int[].class);
+        Parameter parameter = m5.getParameters()[0];
+        boolean isArray = parameter.getType().isArray();
+
+        System.out.println("isArray = " + isArray);
+        System.out.println("parameter.getType() = " + parameter.getType());
+        //不能用下面的方式给数组实例化
+        //parameter.getType().newInstance();
+
+        Class<?> componentType = parameter.getType().getComponentType();
+        Object instance = Array.newInstance(componentType, 2);
+
+        instance = data.get("names");
+        //Arrays.toString(instance);
     }
 
     @Test

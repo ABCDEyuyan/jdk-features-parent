@@ -11,7 +11,6 @@ public class Emp2 {
     private int id;
     private String name;
     private Dept dept;
-
     public int getId() {
         return id;
     }

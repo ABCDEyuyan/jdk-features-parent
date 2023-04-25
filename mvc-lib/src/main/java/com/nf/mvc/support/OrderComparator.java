@@ -15,19 +15,15 @@ public class OrderComparator<T> implements Comparator<T> {
      */
     @Override
     public int compare(T o1, T o2) {
-        boolean o1HaveOrder = o1.getClass().isAnnotationPresent(Order.class);
-        boolean o2HaveOrder = o2.getClass().isAnnotationPresent(Order.class);
-        int o1Order = Integer.MAX_VALUE;
-        int o2Order = Integer.MAX_VALUE;
-        if (o1HaveOrder ) {
-            Order o1Anno = o1.getClass().getDeclaredAnnotation(Order.class);
-            o1Order = o1Anno.value();
-        }
-        if (o2HaveOrder ) {
-            Order o2Anno = o2.getClass().getDeclaredAnnotation(Order.class);
-            o2Order = o2Anno.value();
-        }
-
+        int o1Order = getOrderValue(o1);
+        int o2Order = getOrderValue(o2);
         return  o1Order - o2Order;
+    }
+
+    private int getOrderValue(T o){
+        return o.getClass().isAnnotationPresent(Order.class)?
+                o.getClass().getDeclaredAnnotation(Order.class).value():
+                Integer.MAX_VALUE;
+
     }
 }
