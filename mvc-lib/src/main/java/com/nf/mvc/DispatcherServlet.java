@@ -4,6 +4,7 @@ import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.ComplexTypeMethodArguementResolver;
+import com.nf.mvc.argument.MultipartFileMethodArgumentResolver;
 import com.nf.mvc.argument.RequestBodyMethodArguementResolver;
 import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
@@ -60,6 +61,8 @@ public class DispatcherServlet extends HttpServlet {
 
     protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
         List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
+        //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
+        argumentResolvers.add(new MultipartFileMethodArgumentResolver());
         argumentResolvers.add(new RequestBodyMethodArguementResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
         argumentResolvers.add(new ComplexTypeMethodArguementResolver());

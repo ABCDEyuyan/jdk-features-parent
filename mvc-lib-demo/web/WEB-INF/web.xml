@@ -11,8 +11,10 @@
             <param-name>componentScan</param-name>
             <param-value>mvcdemo.controller</param-value>
         </init-param>
-
         <load-on-startup>111</load-on-startup>
+        <!--要设置在load-on-startup下面-->
+        <multipart-config>
+        </multipart-config>
     </servlet>
 
     <servlet-mapping>
