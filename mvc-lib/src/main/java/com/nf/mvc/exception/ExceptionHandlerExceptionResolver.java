@@ -39,7 +39,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
                     return handleViewResult(handleResult);
                 } catch (Exception e) {
                     /* 进入到这里就是异常处理方法本身的执行出了错，通过返回null的形式，
-                    就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是同一个异常对象*/
+                    就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递的第四个参数的值*/
                     return null;
                 }
             }
