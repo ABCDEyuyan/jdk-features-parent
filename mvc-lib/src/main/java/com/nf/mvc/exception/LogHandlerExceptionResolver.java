@@ -12,6 +12,6 @@ public class LogHandlerExceptionResolver implements HandlerExceptionResolver {
     @Override
     public ViewResult resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         System.out.println("异常消息是:" + ex.getMessage());
-        return empty();
+        return null;
     }
 }

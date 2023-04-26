@@ -66,6 +66,7 @@ public abstract class WebTypeConverterUtils {
         try {
             return typeConverter.convert(requestParamValue);
         } catch (Exception exception) {
+            exception.printStackTrace();
             //出现了转换异常就返回null，交由MethodArgumentResolver去处理这些null的问题，比如赋值为注解指定的默认值
             return null;
         }

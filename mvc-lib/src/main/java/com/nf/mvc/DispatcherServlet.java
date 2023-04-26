@@ -234,8 +234,8 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter adapter = getHandlerAdapter(handler);
             viewResult = adapter.handle(req, resp, handler);
         } catch (Exception ex) {
-            ArithmeticException realEx = (ArithmeticException) ((InvocationTargetException)ex).getTargetException();
-             viewResult = resolveException(req, resp, handler, realEx);
+           // ArithmeticException realEx = (ArithmeticException) ((InvocationTargetException)ex).getTargetException();
+             viewResult = resolveException(req, resp, handler, ex);
         }
         render(req, resp, viewResult);
     }

@@ -28,13 +28,14 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
     @Override
     public ViewResult resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         Object handleResult = null;
+        Exception exposedException = (Exception) getExposedException(ex);
         for (HandlerMethod handlerMethod : exHandleMethods) {
             Method method = handlerMethod.getHandlerMethod();
             Class<?> exceptionClass = method.getDeclaredAnnotation(ExceptionHandler.class).value();
-            if (exceptionClass.isAssignableFrom(ex.getClass())) {
+            if (exceptionClass.isAssignableFrom(exposedException.getClass())) {
                 try {
                     Object instance = method.getDeclaringClass().getConstructor().newInstance();
-                    handleResult = method.invoke(instance, ex);
+                    handleResult = method.invoke(instance, exposedException);
                     return handleViewResult(handleResult);
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -45,6 +46,21 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
         return null;
     }
 
+    /**
+     * 反射调用会把任何方法调用抛出的异常用InvocationTargetException异常包装起来，想得到真正的异常需要调用getCause方法获取
+     * 参考: https://stackoverflow.com/questions/6020719/what-could-cause-java-lang-reflect-invocationtargetexception
+     * https://stackoverflow.com/questions/17747175/how-can-i-loop-through-exception-getcause-to-find-root-cause-with-detail-messa
+     * @param ex
+     * @return
+     */
+    private Throwable getExposedException(Throwable ex){
+        Throwable cause;
+        Throwable result = ex;
+        while(null != (cause = result.getCause())  && (result != cause) ) {
+            result = cause;
+        }
+        return result;
+    }
     private ViewResult handleViewResult(Object handlerResult) {
         ViewResult viewResult ;
         if(handlerResult ==null){

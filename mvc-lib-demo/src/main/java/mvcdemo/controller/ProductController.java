@@ -30,7 +30,7 @@ public class ProductController {
 
 //http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id=123&name=abc
     @RequestMapping("/delete")
-    public JsonViewResult delete(int[] ids, List<Integer> id2s,Emp emp){
+    public JsonViewResult delete(Integer[] ids, List<Integer> id2s,Emp emp){
         System.out.println("====delete in product-");
         System.out.println("ids.length = " + ids.length);
         System.out.println("ids = " + Arrays.toString(ids));

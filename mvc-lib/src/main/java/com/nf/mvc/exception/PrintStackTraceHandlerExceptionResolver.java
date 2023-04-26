@@ -12,6 +12,6 @@ public class PrintStackTraceHandlerExceptionResolver implements HandlerException
     @Override
     public ViewResult resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         ex.printStackTrace();
-        return empty();
+        return null;
     }
 }
