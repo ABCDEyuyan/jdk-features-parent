@@ -156,6 +156,9 @@ public abstract class ReflectionUtils {
 
     /**
      * 是简单类型或者简单类型的数组就认为是一个简单属性
+     * 比如int，Integer这种就是简单类型（SimpleType）
+     * 是一个数组，并且数组的成员（Component）是简单类型，就认为是一个简单属性
+     * 比如int[],Integer[],String[]就认为是简单属性，但Emp[]不是简单属性，因为其成员Emp不是简单类型
      * @param type
      * @return
      */
@@ -163,6 +166,15 @@ public abstract class ReflectionUtils {
         return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
     }
 
+    /**
+     * 通常指的就是我们自己写的pojo类，比如Emp
+     * 判断是”不严谨“的，比如我们自己写的一个Servlet的类，它也是返回true
+     *
+     * 这个方法的初衷是想让我们自己写的pojo类才返回true
+     * 我们的pojo类通常不继承任何父类，就是普通的属性的封装
+     * @param type
+     * @return
+     */
     public static boolean isComplexProperty(Class<?> type) {
         return isSimpleProperty(type)==false && isCollection(type)==false;
     }
@@ -225,6 +237,11 @@ public abstract class ReflectionUtils {
      */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
         return primitiveWrapperTypeMap.containsKey(clazz);
+    }
+
+
+    public static boolean isPrimitive(Class<?> clazz) {
+        return clazz.isPrimitive();
     }
 
     /**

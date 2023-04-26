@@ -1,5 +1,7 @@
 package mvcdemo.controller;
 
+import com.nf.mvc.argument.RequestBody;
+import com.nf.mvc.argument.RequestParam;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
 
@@ -35,6 +37,24 @@ public class ProductController {
         System.out.println("id2s.size() = " + id2s.size());
         System.out.println("emp = " + emp);
         id2s.forEach(System.out::println);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
+
+    @RequestMapping("/page")
+    public JsonViewResult page(@RequestParam("no") int pageNo,
+                                 @RequestParam(defaultValue = "5") String pageSize){
+
+        System.out.println("pageNo = " + pageNo);
+        System.out.println("pageSize = " + pageSize);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+
+
+    }
+
+    @RequestMapping("/json")
+    public JsonViewResult json(@RequestBody Emp emp){
+
+        System.out.println("emp = " + emp);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 }

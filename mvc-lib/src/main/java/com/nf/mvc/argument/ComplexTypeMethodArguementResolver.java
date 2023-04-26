@@ -19,6 +19,8 @@ public class ComplexTypeMethodArguementResolver implements MethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
+        //BeanUtils来自于Apache的commons-beanutils工具包
+        //如果你不想用BeanUtils实现，你可以用之前学过的Introspector
         Class<?> paramType = parameter.getParamType();
         Object instance = ReflectionUtils.newInstance(paramType);
         BeanUtils.populate(instance,request.getParameterMap());
