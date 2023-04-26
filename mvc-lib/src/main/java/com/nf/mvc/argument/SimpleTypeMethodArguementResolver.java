@@ -53,7 +53,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
                 throw new IllegalArgumentException("不能把null给简单类型");
             }
 
-            if (value==null && paramType.isAnnotationPresent(RequestParam.class)) {
+            if (value==null && parameter.getParameter().isAnnotationPresent(RequestParam.class)) {
                 String defaultValue = paramType.getDeclaredAnnotation(RequestParam.class).defaultValue();
                 if (!defaultValue.equals(ValueConstants.DEFAULT_NONE)) {
                     value = defaultValue;
