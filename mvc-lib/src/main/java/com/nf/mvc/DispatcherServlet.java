@@ -7,6 +7,9 @@ import com.nf.mvc.argument.ComplexTypeMethodArguementResolver;
 import com.nf.mvc.argument.MultipartFileMethodArgumentResolver;
 import com.nf.mvc.argument.RequestBodyMethodArguementResolver;
 import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
+import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
+import com.nf.mvc.exception.LogHandlerExceptionResolver;
+import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.util.ScanUtils;
@@ -18,8 +21,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.nf.mvc.handler.HandlerHelper.empty;
 
 public class DispatcherServlet extends HttpServlet {
     /** 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置 */
@@ -27,6 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
+    private List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
     //region 初始化逻辑
     @Override
@@ -43,8 +50,12 @@ public class DispatcherServlet extends HttpServlet {
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
+        initExceptionResolvers();
 
+    }
 
+    private void initMvcContext(ScanResult scanResult) {
+        MvcContext.getMvcContext().config(scanResult);
     }
 
     private void initArgumentResolvers(){
@@ -74,10 +85,6 @@ public class DispatcherServlet extends HttpServlet {
         return MvcContext.getMvcContext().getCustomArgumentResolvers();
     }
 
-    private void initMvcContext(ScanResult scanResult) {
-        MvcContext.getMvcContext().config(scanResult);
-    }
-
     private void initHandlerMappings() {
         //优先添加用户自定义的HandlerMapping
         List<HandlerMapping> customHandlerMappings = getCustomHandlerMappings();
@@ -102,7 +109,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapters() {
-
         //优先添加用户自定义的HandlerAdapter
         List<HandlerAdapter> customHandlerAdapters = getCustomHandlerAdapters();
         //mvc框架自身的HandlerAdapter优先级更低，后注册
@@ -125,6 +131,31 @@ public class DispatcherServlet extends HttpServlet {
         // handlerAdapters.add(new MethodNameHandlerAdapter());
         return adapters;
     }
+
+    private void initExceptionResolvers() {
+        //优先添加用户自定义的HandlerMapping
+        List<HandlerExceptionResolver> customExceptionResolvers = getCustomExceptionResolvers();
+        //mvc框架自身的HandlerMapping优先级更低，后注册
+        List<HandlerExceptionResolver> defaultExceptionResolvers = getDefaultExceptionResolvers();
+
+        exceptionResolvers.addAll(customExceptionResolvers);
+        exceptionResolvers.addAll(defaultExceptionResolvers);
+        //把定制+默认的所有HandlerMapping组件添加到上下文中
+        MvcContext.getMvcContext().setExceptionResolvers(exceptionResolvers);
+    }
+
+    protected List<HandlerExceptionResolver> getCustomExceptionResolvers() {
+        return MvcContext.getMvcContext().getCustomExceptionResolvers();
+    }
+
+    protected List<HandlerExceptionResolver> getDefaultExceptionResolvers() {
+        List<HandlerExceptionResolver> resolvers = new ArrayList<>();
+        //resolvers.add(new LogHandlerExceptionResolver());
+        //resolvers.add(new PrintStackTraceHandlerExceptionResolver());
+        resolvers.add(new ExceptionHandlerExceptionResolver());
+        return resolvers;
+    }
+
 
     private String getScanPackage(ServletConfig config) {
         String pkg = config.getInitParameter(COMPONENT_SCAN);
@@ -151,20 +182,30 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(req, resp);
+        Object handler = null;
         try {
-            Object handler = getHandler(req);
+             handler = getHandler(req);
             if (handler != null) {
                 doService(req, resp, handler);
             } else {
                 noHandlerFound(req, resp);
             }
-        }catch (ServletException | IOException ex) {
-            throw ex;
         } catch (Exception ex) {
-            System.out.println("对请求进行处理时出错------" + ex.getMessage());
+
+            //System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，现在什么都没做" + ex.getMessage());
+            //ex.printStackTrace();
         }
     }
 
+    protected ViewResult resolveException(HttpServletRequest req,HttpServletResponse resp,Object handler,Exception ex){
+        for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
+            Object result = exceptionResolver.resolveException(req, resp, handler, ex);
+            if(result!=null){
+                return (ViewResult) result;
+            }
+        }
+        return empty();
+    }
     /**
      * 设置编码的方法是在service方法里面第一个调用，如果已经从req
      * 对象中获取数据了，再设置这个编码是无效
@@ -188,8 +229,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void doService(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        HandlerAdapter adapter = getHandlerAdapter(handler);
-        ViewResult viewResult = adapter.handle(req, resp, handler);
+        ViewResult viewResult;
+        try {
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            viewResult = adapter.handle(req, resp, handler);
+        } catch (Exception ex) {
+            ArithmeticException realEx = (ArithmeticException) ((InvocationTargetException)ex).getTargetException();
+             viewResult = resolveException(req, resp, handler, realEx);
+        }
         render(req, resp, viewResult);
     }
 

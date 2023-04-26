@@ -18,11 +18,11 @@ public class HandlerMethod extends HandlerClass {
         this(handlerMethod.getDeclaringClass(), handlerMethod);
     }
 
-    public HandlerMethod(Method handlerMethod, Object handlerObject) {
+    /*public HandlerMethod(Method handlerMethod, Object handlerObject) {
         this(handlerObject, handlerMethod);
     }
-
-    private HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
+*/
+    public HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
         super(handlerClass);
         this.handlerMethod = handlerMethod;
         initMethodParameters();

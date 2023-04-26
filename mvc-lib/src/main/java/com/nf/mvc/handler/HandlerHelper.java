@@ -3,6 +3,10 @@ package com.nf.mvc.handler;
 import com.nf.mvc.view.*;
 
 public class HandlerHelper {
+    public static VoidViewResult empty() {
+        return new VoidViewResult();
+    }
+
     public static JsonViewResult json(Object obj) {
         return new JsonViewResult(obj);
     }

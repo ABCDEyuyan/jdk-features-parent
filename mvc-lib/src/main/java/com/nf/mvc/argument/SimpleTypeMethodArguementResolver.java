@@ -54,7 +54,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
             }
 
             if (value==null && parameter.getParameter().isAnnotationPresent(RequestParam.class)) {
-                String defaultValue = paramType.getDeclaredAnnotation(RequestParam.class).defaultValue();
+                String defaultValue = parameter.getParameter().getDeclaredAnnotation(RequestParam.class).defaultValue();
                 if (!defaultValue.equals(ValueConstants.DEFAULT_NONE)) {
                     value = defaultValue;
                 }
