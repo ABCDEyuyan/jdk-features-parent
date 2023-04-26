@@ -208,6 +208,11 @@ public abstract class ReflectionUtils {
                 Map.class.isAssignableFrom(type);
     }
 
+    public static boolean isListOrSet(Class<?> type) {
+        return List.class.isAssignableFrom(type) ||
+                Set.class.isAssignableFrom(type);
+    }
+
     /**
      * 如果是基本类型、包装类型或者date，number等等就认为是简单类型
      * @param type

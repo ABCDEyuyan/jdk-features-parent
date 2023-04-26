@@ -57,4 +57,19 @@ public class ProductController {
         System.out.println("emp = " + emp);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
+
+    @RequestMapping("/json2")
+    public JsonViewResult json2(@RequestBody List<Emp> emps){
+        System.out.println("emps.size() = " + emps.size());
+        emps.forEach(System.out::println);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
+
+    @RequestMapping("/json3")
+    public JsonViewResult json3(@RequestBody Emp emp,@RequestBody List<Emp> emps){
+        System.out.println("emp = " + emp);
+        System.out.println("emps.size() = " + emps.size());
+        emps.forEach(System.out::println);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
 }

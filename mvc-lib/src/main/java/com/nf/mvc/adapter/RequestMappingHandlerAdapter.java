@@ -65,7 +65,6 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     private Object resolveArgument(MethodParameter parameter, HttpServletRequest req) throws Exception {
-        Class<?> parameterType = parameter.getParamType();
         for (MethodArgumentResolver resolver : argumentResolvers) {
             if (resolver.supports(parameter)) {
                 return resolver.resolveArgument(parameter, req);

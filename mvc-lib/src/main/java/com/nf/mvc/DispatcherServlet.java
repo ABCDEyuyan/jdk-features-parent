@@ -194,7 +194,7 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
-            System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，现在什么都没做" + ex.getMessage());
+            System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -213,14 +213,15 @@ public class DispatcherServlet extends HttpServlet {
         render(req, resp, viewResult);
     }
 
-    protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) {
+    protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception{
         for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
             Object result = exceptionResolver.resolveException(req, resp, handler, ex);
             if (result != null) {
                 return (ViewResult) result;
             }
         }
-        return empty();
+        /*表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出*/
+       throw ex;
     }
 
     /**

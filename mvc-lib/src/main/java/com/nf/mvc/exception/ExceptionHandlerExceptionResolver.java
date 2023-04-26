@@ -37,10 +37,11 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
                     Object instance = method.getDeclaringClass().getConstructor().newInstance();
                     handleResult = method.invoke(instance, exposedException);
                     return handleViewResult(handleResult);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+                } catch (Exception e) {
+                    /* 进入到这里就是异常处理方法本身的执行出了错，通过返回null的形式，
+                    就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是同一个异常对象*/
+                    return null;
                 }
-                break;
             }
         }
         return null;
