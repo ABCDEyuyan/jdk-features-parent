@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
  * https://www.baeldung.com/jackson-serialize-dates(有关于日期的处理教程）
  * https://www.baeldung.com/jackson
  */
-public class ObjectMapperUtils {
+public interface ObjectMapperUtils {
     public static ObjectMapper getObjectMapper(){
         ObjectMapper objectMapper = new ObjectMapper();
         //需要在pom中添加jackson-datatype-jsr310依赖，以便让其支持jdk8的相关时间API的支持

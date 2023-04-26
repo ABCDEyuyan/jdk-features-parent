@@ -1,6 +1,6 @@
 package com.nf.mvc.util;
 
-public class ExceptionUtils {
+public interface ExceptionUtils {
     /**
      *
      * 此方法只要参数不是一个null的就不会返回一个null的异常
