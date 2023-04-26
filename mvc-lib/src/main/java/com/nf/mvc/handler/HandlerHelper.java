@@ -1,5 +1,6 @@
 package com.nf.mvc.handler;
 
+import com.nf.mvc.ViewResult;
 import com.nf.mvc.view.*;
 
 public class HandlerHelper {
@@ -26,7 +27,10 @@ public class HandlerHelper {
     public static RedirectViewResult redirect(String url) {
         return new RedirectViewResult(url);
     }
+
     public static FileViewResult file(String realPath) {
         return new FileViewResult(realPath);
     }
+
+
 }

@@ -4,15 +4,11 @@ import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.file.MultipartFile;
 import com.nf.mvc.file.StandardMultipartFile;
 import com.nf.mvc.util.FileCopyUtils;
-import com.nf.mvc.util.StreamUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class MultipartFileMethodArgumentResolver implements MethodArgumentResolver {
@@ -40,26 +36,22 @@ public class MultipartFileMethodArgumentResolver implements MethodArgumentResolv
 
     }
 
-    private <T> List<T> handleMultiFile(Collection<Part> parts, Class<T> fileType) throws IOException, ServletException {
-
-        List<T> files = new ArrayList<>();
+    private List<?> handleMultiFile(Collection<Part> parts, Class<?> fileType) {
+        List<?> files = new ArrayList<>();
         for (Part part : parts) {
             handleSingleFile(part, fileType);
         }
         return files;
     }
 
-    private <T> T handleSingleFile(Part part, Class<T> paramType) throws IOException, ServletException {
-
+    private Object handleSingleFile(Part part, Class<?> paramType) {
         if (Part.class == paramType) {
-            return (T) part;
+            return part;
         } else {
             String disposition = part.getHeader(FileCopyUtils.CONTENT_DISPOSITION);
             String filename = getFileName(disposition);
-            StandardMultipartFile multipartFile = new StandardMultipartFile(part, filename);
-            return (T) multipartFile;
+            return new StandardMultipartFile(part, filename);
         }
-
     }
 
     private String getFileName(String disposition) {

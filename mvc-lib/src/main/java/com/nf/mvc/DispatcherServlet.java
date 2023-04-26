@@ -8,8 +8,6 @@ import com.nf.mvc.argument.MultipartFileMethodArgumentResolver;
 import com.nf.mvc.argument.RequestBodyMethodArguementResolver;
 import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
-import com.nf.mvc.exception.LogHandlerExceptionResolver;
-import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.util.ScanUtils;
@@ -21,14 +19,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.nf.mvc.handler.HandlerHelper.empty;
 
 public class DispatcherServlet extends HttpServlet {
-    /** 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置 */
+    /**
+     * 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置
+     */
     private static final String COMPONENT_SCAN = "componentScan";
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
@@ -58,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
         MvcContext.getMvcContext().config(scanResult);
     }
 
-    private void initArgumentResolvers(){
+    private void initArgumentResolvers() {
 
         List<MethodArgumentResolver> customArgumentResolvers = getCustomArgumentResolvers();
 
@@ -182,33 +181,52 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(req, resp);
-        Object handler = null;
+        doService(req, resp);
+    }
+
+    protected void doService(HttpServletRequest req, HttpServletResponse resp) {
+        Object handler;
         try {
-             handler = getHandler(req);
+            handler = getHandler(req);
             if (handler != null) {
-                doService(req, resp, handler);
+                doDispatch(req, resp, handler);
             } else {
                 noHandlerFound(req, resp);
             }
-        } catch (Exception ex) {
-
-            //System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，现在什么都没做" + ex.getMessage());
-            //ex.printStackTrace();
+        } catch (Throwable ex) {
+            System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，现在什么都没做" + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
-    protected ViewResult resolveException(HttpServletRequest req,HttpServletResponse resp,Object handler,Exception ex){
+    protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Throwable {
+        ViewResult viewResult;
+        try {
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            viewResult = adapter.handle(req, resp, handler);
+        } catch (Exception ex) {
+            //这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
+            //这个异常处理也只是处理了Handler整个执行层面的异常，
+            // 视图渲染层面的异常是没有处理的，要处理的话可以在doService方法里处理
+            viewResult = resolveException(req, resp, handler, ex);
+        }
+        render(req, resp, viewResult);
+    }
+
+    protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) {
         for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
             Object result = exceptionResolver.resolveException(req, resp, handler, ex);
-            if(result!=null){
+            if (result != null) {
                 return (ViewResult) result;
             }
         }
         return empty();
     }
+
     /**
      * 设置编码的方法是在service方法里面第一个调用，如果已经从req
      * 对象中获取数据了，再设置这个编码是无效
+     *
      * @param req
      * @param resp
      * @throws Exception
@@ -228,29 +246,17 @@ public class DispatcherServlet extends HttpServlet {
         return null;
     }
 
-    protected void doService(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        ViewResult viewResult;
-        try {
-            HandlerAdapter adapter = getHandlerAdapter(handler);
-            viewResult = adapter.handle(req, resp, handler);
-        } catch (Exception ex) {
-           // ArithmeticException realEx = (ArithmeticException) ((InvocationTargetException)ex).getTargetException();
-             viewResult = resolveException(req, resp, handler, ex);
-        }
-        render(req, resp, viewResult);
-    }
-
     protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         //我们获取容器中本来就有的默认servlet来处理静态资源
         //容器中默认servlet是有能力处理静态资源
         //默认servlet的名字，在很多容器中就是叫default，但有些容器不叫default
         //常用的tomcat，jetty这些容器中就是叫default
-        req.getServletContext().getNamedDispatcher("default").forward(req,resp);
+        req.getServletContext().getNamedDispatcher("default").forward(req, resp);
     }
 
     protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) throws Exception {
-            viewResult.render(req, resp);
+        viewResult.render(req, resp);
     }
 
     protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
