@@ -3,6 +3,8 @@ package mvcdemo.controller;
 import com.nf.mvc.exception.ExceptionHandler;
 import com.nf.mvc.view.JsonViewResult;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public JsonViewResult handleRuntime(RuntimeException re){
@@ -15,4 +17,6 @@ public class GlobalExceptionHandler {
         System.out.println("suan shu re = " + re);
         return new JsonViewResult(new ResponseVO(10002,"sdfa","算数--"));
     }
+
+
 }

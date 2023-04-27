@@ -33,9 +33,11 @@ public class RequestBodyMethodArguementResolver implements MethodArgumentResolve
         Class<?> paramType = parameter.getParamType();
         if (isListOrSet(paramType)) {
             ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameter().getParameterizedType();
+            //假定方法参数是List<Emp>的话，那么下面的actualTypeArgument变量指的就是Emp
             Class<?> actualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
             CollectionType collectionType = null;
             if (List.class == paramType) {
+                //可以理解为实例化一个集合，比如new ArrayList<Emp>();
                 collectionType = TypeFactory.defaultInstance().constructCollectionType(List.class, actualTypeArgument);
             } else if (Set.class == paramType) {
                 collectionType = TypeFactory.defaultInstance().constructCollectionType(Set.class, actualTypeArgument);
@@ -45,7 +47,4 @@ public class RequestBodyMethodArguementResolver implements MethodArgumentResolve
             return fromJson(request.getInputStream(), paramType);
         }
     }
-}
-
-class Emp {
 }

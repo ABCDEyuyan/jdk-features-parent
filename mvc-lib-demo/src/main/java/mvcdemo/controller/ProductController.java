@@ -58,13 +58,18 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
+
     @RequestMapping("/json2")
     public JsonViewResult json2(@RequestBody List<Emp> emps){
+        //language=JSON
+        String json = "[{\"id\":100,\"name\": \"abc\"},{\"id\": 200,\"name\": \"def\"\n" +
+                "}]";
         System.out.println("emps.size() = " + emps.size());
         emps.forEach(System.out::println);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
+    /**因为反序列化是从请求流中读取数据的 */
     @RequestMapping("/json3")
     public JsonViewResult json3(@RequestBody Emp emp,@RequestBody List<Emp> emps){
         System.out.println("emp = " + emp);

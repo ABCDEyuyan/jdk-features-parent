@@ -173,6 +173,10 @@ public class DispatcherServlet extends HttpServlet {
      * 如果都放在一起，就会导致本方法代码很长，不容易看懂，
      * 所以，最好是把其中一个个的核心逻辑用单独的方法封装起来
      *
+     * service的方法，由于是重写父类型的方法，其签名是没有办法改变
+     * 比如改成throws Throwable，这是不行的
+     *
+     * 所以就增加了一个doService的方法，以便有机会改doService的签名
      * @param req
      * @param resp
      * @throws ServletException
@@ -184,9 +188,19 @@ public class DispatcherServlet extends HttpServlet {
         doService(req, resp);
     }
 
+    /**
+     * 因为我们是模仿spring mvc，mvc里面它只是对Handler的执行进行了
+     * 全局异常的处理，也就是HandlerMapping，HandlerAdapter，以及Handler
+     * 本身的异常才会处理
+     *
+     * 但是render的流程是没有进行异常处理
+     * @param req
+     * @param resp
+     */
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
         Object handler;
         try {
+            //这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的
             handler = getHandler(req);
             if (handler != null) {
                 doDispatch(req, resp, handler);
@@ -194,6 +208,8 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
+            //spring mvc在这个地方是做了额外的异常处理的
+            //下面的代码不应该这些写printStackTrace，这里写上主要是我们开发测试用的
             System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
             ex.printStackTrace();
         }

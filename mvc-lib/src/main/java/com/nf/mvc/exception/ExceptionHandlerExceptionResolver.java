@@ -4,6 +4,7 @@ import com.nf.mvc.HandlerExceptionResolver;
 import com.nf.mvc.MvcContext;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.handler.HandlerMethod;
+import com.nf.mvc.util.ReflectionUtils;
 import com.nf.mvc.view.PlainViewResult;
 import com.nf.mvc.view.VoidViewResult;
 
@@ -34,7 +35,8 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
             Class<?> exceptionClass = method.getDeclaredAnnotation(ExceptionHandler.class).value();
             if (exceptionClass.isAssignableFrom(exposedException.getClass())) {
                 try {
-                    Object instance = method.getDeclaringClass().getConstructor().newInstance();
+                    Object instance = ReflectionUtils.newInstance(method.getDeclaringClass());
+                    /*从这里可以看出，我们的全局异常处理只能有一个参数，而且必须有,参数的类型就是异常*/
                     handleResult = method.invoke(instance, exposedException);
                     return handleViewResult(handleResult);
                 } catch (Exception e) {
@@ -46,6 +48,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
         }
         return null;
     }
+
 
 
     private void scanHandleExMethods() {
