@@ -30,4 +30,14 @@ public class SomeClass {
     public void m5(int[] names) {
 
     }
+
+    public void m6(Integer[] names6) {
+
+    }
+
+    public void m7(Integer[] names7) {
+        for (Integer name : names7) {
+
+        }
+    }
 }

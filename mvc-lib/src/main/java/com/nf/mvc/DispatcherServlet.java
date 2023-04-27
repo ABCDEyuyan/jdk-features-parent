@@ -7,7 +7,9 @@ import com.nf.mvc.argument.*;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
+import com.nf.mvc.support.HttpHeaders;
 import com.nf.mvc.support.HttpMethod;
+import com.nf.mvc.util.CorsUtils;
 import com.nf.mvc.util.ScanUtils;
 import io.github.classgraph.ScanResult;
 
@@ -19,8 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.nf.mvc.handler.HandlerHelper.empty;
 
 public class DispatcherServlet extends HttpServlet {
     /**
@@ -171,11 +171,12 @@ public class DispatcherServlet extends HttpServlet {
      * 方法通常会包含很多核心逻辑步骤，如果每一个逻辑步骤都有一些零散的代码
      * 如果都放在一起，就会导致本方法代码很长，不容易看懂，
      * 所以，最好是把其中一个个的核心逻辑用单独的方法封装起来
-     *
+     * <p>
      * service的方法，由于是重写父类型的方法，其签名是没有办法改变
      * 比如改成throws Throwable，这是不行的
-     *
+     * <p>
      * 所以就增加了一个doService的方法，以便有机会改doService的签名
+     *
      * @param req
      * @param resp
      * @throws ServletException
@@ -184,7 +185,11 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(req, resp);
-        allowCors(req,resp,new CorsConfiguration());
+        processCors(req, resp, new CorsConfiguration());
+        /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
+        if (CorsUtils.isPreFlightRequest(req)) {
+            return;
+        }
         doService(req, resp);
     }
 
@@ -192,8 +197,9 @@ public class DispatcherServlet extends HttpServlet {
      * 因为我们是模仿spring mvc，mvc里面它只是对Handler的执行进行了
      * 全局异常的处理，也就是HandlerMapping，HandlerAdapter，以及Handler
      * 本身的异常才会处理
-     *
+     * <p>
      * 但是render的流程是没有进行异常处理
+     *
      * @param req
      * @param resp
      */
@@ -203,7 +209,7 @@ public class DispatcherServlet extends HttpServlet {
         context.setRequest(req).setResponse(resp);
         try {
 
-            //这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的
+            /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的*/
             handler = getHandler(req);
             if (handler != null) {
                 doDispatch(req, resp, handler);
@@ -211,11 +217,11 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
-            //spring mvc在这个地方是做了额外的异常处理的
-            //下面的代码不应该这些写printStackTrace，这里写上主要是我们开发测试用的
+            /*spring mvc在这个地方是做了额外的异常处理的
+            下面的代码不应该这些写printStackTrace，这里写上主要是我们开发测试用的*/
             System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
             ex.printStackTrace();
-        }finally {
+        } finally {
             /*保存到ThreadLoca一定要清掉，所以放在finally是合理的*/
             context.clear();
         }
@@ -227,15 +233,15 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter adapter = getHandlerAdapter(handler);
             viewResult = adapter.handle(req, resp, handler);
         } catch (Exception ex) {
-            //这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
-            //这个异常处理也只是处理了Handler整个执行层面的异常，
-            // 视图渲染层面的异常是没有处理的，要处理的话可以在doService方法里处理
+            /*这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
+            这个异常处理也只是处理了Handler整个执行层面的异常，
+             视图渲染层面的异常是没有处理的，要处理的话可以在doService方法里处理*/
             viewResult = resolveException(req, resp, handler, ex);
         }
         render(req, resp, viewResult);
     }
 
-    protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception{
+    protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception {
         for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
             Object result = exceptionResolver.resolveException(req, resp, handler, ex);
             if (result != null) {
@@ -243,7 +249,7 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         /*表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出*/
-       throw ex;
+        throw ex;
     }
 
     /**
@@ -291,26 +297,81 @@ public class DispatcherServlet extends HttpServlet {
         throw new ServletException("此Handler没有对应的adapter去处理，请在DispatcherServlet中进行额外的配置");
     }
 
-    protected void allowCors(HttpServletRequest req,HttpServletResponse resp,CorsConfiguration configuration){
+    /**
+     * 这里没有用到cors配置，纯粹的直接允许跨域请求
+     * @param req
+     * @param resp
+     * @param configuration
+     */
+    protected void processCors(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
         // 解决跨域请求问题
-        String origin = req.getHeader (CorsConfiguration.ORIGIN);
-        if (origin == null) {
-            origin = req.getHeader (CorsConfiguration.REFERER);
-        }
-        // 允许指定域访问跨域资源
-        resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_ORIGIN,origin);
-        // 允许客户端携带跨域cookie，此时origin值不能为“*”，只能为指定单一域名
-        resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_CREDENTIALS,CorsConfiguration.TRUE);
+        String origin = req.getHeader(HttpHeaders.ORIGIN);
 
-        if (HttpMethod.OPTIONS.matches(req.getMethod ())) {
-            String allowMethod = req.getHeader (CorsConfiguration.ACCESS_CONTROL_REQUEST_METHOD);
-            String allowHeaders = req.getHeader (CorsConfiguration.ACCESS_CONTROL_REQUEST_HEADERS);
+        // 允许指定域访问跨域资源
+        resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+        // 允许客户端携带跨域cookie，此时origin值不能为“*”，只能为指定单一域名
+        resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+
+        if (HttpMethod.OPTIONS.matches(req.getMethod())) {
+            String allowMethod = req.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD);
+            String allowHeaders = req.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
             // 浏览器缓存预检请求结果时间,单位:秒
-            resp.setHeader(CorsConfiguration.ACCESS_CONTROL_MAX_AGE, CorsConfiguration.CACHE_86400);
+            resp.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "86400");
             // 允许浏览器在预检请求成功之后发送的实际请求方法名
-            resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_METHODS, allowMethod);
+            resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowMethod);
             // 允许浏览器发送的请求消息头
-            resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_HEADERS, allowHeaders);
+            resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, allowHeaders);
+        }
+    }
+
+    /**
+     * TODO：还没有应用上这个cors处理代码
+     * 参考spring 的DefaultCorsProcessor
+     * <p>在预检请求下，才会设置的项
+     * <ul>
+     *     <li>setAccessControlMaxAge</li>
+     *     <li>setAccessControlAllowHeaders</li>
+     *     <li>setAccessControlAllowMethods</li>
+     * </ul>
+     * </p>
+     *
+     * <p>
+     *     不管是不是预检请求都会设置的项有
+     *     <ul>
+     *         <li>setAccessControlAllowOrigin</li>
+     *         <li>setAccessControlAllowCredentials</li>
+     *     </ul>
+     * </p>
+     * @param req
+     * @param resp
+     * @param configuration
+     */
+    protected void processCors2(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
+           // 允许指定域访问跨域资源
+        List<String> origins = configuration.getAllowedOrigins();
+        for (String origin : origins) {
+            resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+        }
+
+        // 允许客户端携带跨域cookie，此时origin值不能为“*”，只能为指定单一域名
+        resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, Boolean.toString(configuration.getAllowCredentials()));
+
+        if (HttpMethod.OPTIONS.matches(req.getMethod())) {
+            String allowMethod = req.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD);
+            String allowHeaders = req.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
+            // 浏览器缓存预检请求结果时间,单位:秒
+            resp.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, Long.toString(configuration.getMaxAge()));
+            // 允许浏览器在预检请求成功之后发送的实际请求方法名
+            List<String> allowedMethods = configuration.getAllowedMethods();
+            for (String allowedMethod : allowedMethods) {
+                resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowMethod);
+            }
+
+            // 允许浏览器发送的请求消息头
+            List<String> allowedHeaders = configuration.getAllowedHeaders();
+            for (String allowedHeader : allowedHeaders) {
+                resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, allowHeaders);
+            }
         }
     }
     //endregion

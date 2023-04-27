@@ -12,7 +12,6 @@ import java.util.List;
 
 public class MvcContext {
 
-    private final OrderComparator orderComparator = new OrderComparator();
     private static final MvcContext instance = new MvcContext();
 
     private ScanResult scanResult;
@@ -98,22 +97,22 @@ public class MvcContext {
     }
 
     public List<HandlerMapping> getCustomHandlerMappings() {
-        Collections.sort(customHandlerMappings, orderComparator);
+        Collections.sort(customHandlerMappings, new OrderComparator<>());
         return Collections.unmodifiableList(customHandlerMappings);
     }
 
     public List<HandlerAdapter> getCustomHandlerAdapters() {
-        Collections.sort(customHandlerAdapters, orderComparator);
+        Collections.sort(customHandlerAdapters, new OrderComparator<>());
         return Collections.unmodifiableList(customHandlerAdapters);
     }
 
     public List<MethodArgumentResolver> getCustomArgumentResolvers() {
-        Collections.sort(customArgumentResolvers, orderComparator);
+        Collections.sort(customArgumentResolvers, new OrderComparator<>());
         return Collections.unmodifiableList(customArgumentResolvers);
     }
 
     public List<HandlerExceptionResolver> getCustomExceptionResolvers() {
-        Collections.sort(customExceptionResolvers, orderComparator);
+        Collections.sort(customExceptionResolvers, new OrderComparator<>());
         return Collections.unmodifiableList(customExceptionResolvers);
     }
 

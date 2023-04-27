@@ -1,58 +1,69 @@
 package com.nf.mvc;
 
+import com.nf.mvc.support.HttpMethod;
+import com.nf.mvc.util.CollectionUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class CorsConfiguration {
-    public static final String ALL = "*";
 
-    public static final String ORIGIN = "Origin";
+    private List<String> allowedOrigins = new ArrayList<>();
 
-    public static final String REFERER = "Referer";
+    private List<String> allowedMethods = new ArrayList<>();
 
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
+    private List<String> allowedHeaders = new ArrayList<>();
 
-    public static final String CACHE_86400 = "86400";
+    private Boolean allowCredentials = false;
 
-    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-
-    public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
-
-    public static final String ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";
-
-    public static final String ACCESS_CONTROL_REQUEST_HEADERS = "Access-Control-Request-Headers";
-
-    public static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
-
-    public static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-
-    public static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+    private Long maxAge = 3600l;
 
     public void setAllowedOrigins(String... origins) {
+        CollectionUtils.mergeArrayIntoCollection(origins, allowedOrigins);
     }
 
     public List<String> getAllowedOrigins() {
-        return null;
+        return this.allowedOrigins;
     }
 
     public void setAllowCredentials(Boolean allowCredentials) {
+        this.allowCredentials = allowCredentials;
+    }
 
+    public Boolean getAllowCredentials() {
+        return allowCredentials;
     }
 
     public void setAllowedHeaders(String... allowedHeaders) {
-
+        CollectionUtils.mergeArrayIntoCollection(allowedHeaders, this.allowedHeaders);
     }
 
-    public boolean getAllowedHeaders() {
-        return false;
+    public List<String> getAllowedHeaders() {
+        return this.allowedHeaders;
     }
 
     public void setAllowedMethods(String... allowedMethods) {
-
+        CollectionUtils.mergeArrayIntoCollection(allowedMethods, this.allowedMethods);
     }
 
     public List<String> getAllowedMethods() {
         return null;
     }
+
+    public Long getMaxAge() {
+        return this.maxAge;
+    }
+
+    public void setMaxAge(Long maxAge) {
+        this.maxAge = maxAge;
+    }
+
+    public void applyDefaultConfiguration(){
+        setAllowedOrigins("*");
+        setAllowCredentials(true);
+        setAllowedMethods(HttpMethod.OPTIONS.name(),HttpMethod.GET.name(),HttpMethod.POST.name(),HttpMethod.DELETE.name(),HttpMethod.PUT.name());
+        setAllowedHeaders("*");
+    }
+
 
 }

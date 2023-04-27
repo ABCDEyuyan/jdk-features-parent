@@ -44,6 +44,20 @@ public class ParameterNameTest {
         }
     }
 
+    @Test
+    public void testIntegerArray1() throws Exception{
+        Class<SomeClass> clz = SomeClass.class;
+        Method m1 = clz.getDeclaredMethod("m6", Integer[].class);
+        List<String> paramNames = ReflectionUtils.getParamNames(clz, "m6");
+        paramNames.forEach(System.out::println);
+    }
 
+    @Test
+    public void testIntegerArray2() throws Exception{
+        Class<SomeClass> clz = SomeClass.class;
+        Method m1 = clz.getDeclaredMethod("m7", Integer[].class);
+        List<String> paramNames = ReflectionUtils.getParamNames(clz, "m7");
+        paramNames.forEach(System.out::println);
+    }
 
 }
