@@ -15,8 +15,8 @@ public class ForEx {
         try {
             m1();
         } catch (Exception e) {
-            throw new RuntimeException("asdfasd");
-           // throw new RuntimeException(e);
+            //throw new IllegalArgumentException("asdfasd");
+            throw new IllegalArgumentException(e);
         }
     }
 }
