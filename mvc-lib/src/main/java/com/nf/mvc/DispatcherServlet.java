@@ -3,10 +3,7 @@ package com.nf.mvc;
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
-import com.nf.mvc.argument.ComplexTypeMethodArguementResolver;
-import com.nf.mvc.argument.MultipartFileMethodArgumentResolver;
-import com.nf.mvc.argument.RequestBodyMethodArguementResolver;
-import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
+import com.nf.mvc.argument.*;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
@@ -72,8 +69,9 @@ public class DispatcherServlet extends HttpServlet {
 
     protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
         List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
-        //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
+        argumentResolvers.add(new ServletApiMethodArgumentResolver());
         argumentResolvers.add(new MultipartFileMethodArgumentResolver());
+        //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArguementResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
         argumentResolvers.add(new ComplexTypeMethodArguementResolver());
@@ -201,7 +199,10 @@ public class DispatcherServlet extends HttpServlet {
      */
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
         Object handler;
+        HandlerContext context = HandlerContext.getContext();
+        context.setRequest(req).setResponse(resp);
         try {
+
             //这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的
             handler = getHandler(req);
             if (handler != null) {
@@ -214,6 +215,9 @@ public class DispatcherServlet extends HttpServlet {
             //下面的代码不应该这些写printStackTrace，这里写上主要是我们开发测试用的
             System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
             ex.printStackTrace();
+        }finally {
+            /*保存到ThreadLoca一定要清掉，所以放在finally是合理的*/
+            context.clear();
         }
     }
 
@@ -307,7 +311,6 @@ public class DispatcherServlet extends HttpServlet {
             resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_METHODS, allowMethod);
             // 允许浏览器发送的请求消息头
             resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_HEADERS, allowHeaders);
-            return;
         }
     }
     //endregion

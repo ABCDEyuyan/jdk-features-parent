@@ -1,10 +1,12 @@
 package mvcdemo.controller;
 
+import com.nf.mvc.HandlerContext;
 import com.nf.mvc.argument.RequestBody;
 import com.nf.mvc.argument.RequestParam;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +14,20 @@ import java.util.List;
 public class ProductController {
 
     @RequestMapping("/list")
-    public void m1(){
+    public void m1(HttpServletRequest req){
+
+        System.out.println("req.hashCode() = " + req.hashCode());
+        System.out.println("HandlerContext.getContext().getRequest().hashCode() = " + HandlerContext.getContext().getRequest().hashCode());
+        System.out.println("req.getMethod() = " + req.getMethod());
+        System.out.println("m1 in proudct------");
+    }
+
+    @RequestMapping("/list2")
+    public void m2(){
+        String method = HandlerContext.getContext().getRequest().getMethod();
+
+        System.out.println("method = " + method);
+
         System.out.println("m1 in proudct------");
     }
 
