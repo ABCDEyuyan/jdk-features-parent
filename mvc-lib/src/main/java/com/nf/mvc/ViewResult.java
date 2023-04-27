@@ -19,7 +19,7 @@ public abstract class ViewResult {
      * @param handlerResult
      * @return
      */
-    public static ViewResult handleViewResult(Object handlerResult) {
+    public static ViewResult adaptHandlerResult(Object handlerResult) {
         ViewResult viewResult;
         if (handlerResult == null) {
             /* 这种情况表示handler方法执行返回null或者方法的签名本身就是返回void，

@@ -10,6 +10,7 @@ import com.nf.mvc.argument.SimpleTypeMethodArguementResolver;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
+import com.nf.mvc.support.HttpMethod;
 import com.nf.mvc.util.ScanUtils;
 import io.github.classgraph.ScanResult;
 
@@ -185,6 +186,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(req, resp);
+        allowCors(req,resp,new CorsConfiguration());
         doService(req, resp);
     }
 
@@ -285,5 +287,28 @@ public class DispatcherServlet extends HttpServlet {
         throw new ServletException("此Handler没有对应的adapter去处理，请在DispatcherServlet中进行额外的配置");
     }
 
+    protected void allowCors(HttpServletRequest req,HttpServletResponse resp,CorsConfiguration configuration){
+        // 解决跨域请求问题
+        String origin = req.getHeader (CorsConfiguration.ORIGIN);
+        if (origin == null) {
+            origin = req.getHeader (CorsConfiguration.REFERER);
+        }
+        // 允许指定域访问跨域资源
+        resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_ORIGIN,origin);
+        // 允许客户端携带跨域cookie，此时origin值不能为“*”，只能为指定单一域名
+        resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_CREDENTIALS,CorsConfiguration.TRUE);
+
+        if (HttpMethod.OPTIONS.matches(req.getMethod ())) {
+            String allowMethod = req.getHeader (CorsConfiguration.ACCESS_CONTROL_REQUEST_METHOD);
+            String allowHeaders = req.getHeader (CorsConfiguration.ACCESS_CONTROL_REQUEST_HEADERS);
+            // 浏览器缓存预检请求结果时间,单位:秒
+            resp.setHeader(CorsConfiguration.ACCESS_CONTROL_MAX_AGE, CorsConfiguration.CACHE_86400);
+            // 允许浏览器在预检请求成功之后发送的实际请求方法名
+            resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_METHODS, allowMethod);
+            // 允许浏览器发送的请求消息头
+            resp.setHeader(CorsConfiguration.ACCESS_CONTROL_ALLOW_HEADERS, allowHeaders);
+            return;
+        }
+    }
     //endregion
 }

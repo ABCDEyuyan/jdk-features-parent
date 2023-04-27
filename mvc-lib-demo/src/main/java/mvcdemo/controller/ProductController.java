@@ -8,7 +8,7 @@ import com.nf.mvc.view.JsonViewResult;
 import java.util.Arrays;
 import java.util.List;
 
-@RequestMapping("/prodUct")
+@RequestMapping("/product")
 public class ProductController {
 
     @RequestMapping("/list")

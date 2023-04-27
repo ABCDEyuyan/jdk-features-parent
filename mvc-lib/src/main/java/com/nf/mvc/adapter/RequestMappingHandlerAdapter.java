@@ -6,17 +6,13 @@ import com.nf.mvc.MvcContext;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerMethod;
-import com.nf.mvc.util.ReflectionUtils;
-import com.nf.mvc.view.PlainViewResult;
-import com.nf.mvc.view.VoidViewResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.List;
 
-import static com.nf.mvc.ViewResult.handleViewResult;
+import static com.nf.mvc.ViewResult.adaptHandlerResult;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
@@ -49,7 +45,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         //所以handler的方法执行之后，可能返回别的类型，或者void
         Object handlerResult = method.invoke(instance, paramValues);
 
-        return handleViewResult(handlerResult);
+        return adaptHandlerResult(handlerResult);
 
     }
 

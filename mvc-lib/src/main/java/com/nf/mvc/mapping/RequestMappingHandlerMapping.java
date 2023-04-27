@@ -3,6 +3,8 @@ package com.nf.mvc.mapping;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
 import com.nf.mvc.handler.HandlerMethod;
+import com.nf.mvc.support.EqualPathMatcher;
+import com.nf.mvc.support.PathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
@@ -14,6 +16,10 @@ import java.util.Map;
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private Map<String, HandlerMethod> handlers = new HashMap<>();
+
+    private String name="RequestMappingHandlerMapping";
+    private PathMatcher pathMatcher = new EqualPathMatcher();
+
     public RequestMappingHandlerMapping() {
         resolveHandlers();
     }
@@ -53,7 +59,22 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
      */
     private String getUrl(AnnotatedElement element) {
         return element.isAnnotationPresent(RequestMapping.class) ?
-                element.getDeclaredAnnotation(RequestMapping.class).value().toLowerCase() : "";
+                element.getDeclaredAnnotation(RequestMapping.class).value() : "";
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPathMatcher(PathMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public PathMatcher getPathMatcher() {
+        return pathMatcher;
+    }
 }

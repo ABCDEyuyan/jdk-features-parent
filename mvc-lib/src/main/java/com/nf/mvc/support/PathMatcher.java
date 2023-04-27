@@ -1,4 +1,5 @@
 package com.nf.mvc.support;
-//TODO:pathmatcher
+
 public interface PathMatcher {
+    boolean isMatch(final String pattern, final String path);
 }

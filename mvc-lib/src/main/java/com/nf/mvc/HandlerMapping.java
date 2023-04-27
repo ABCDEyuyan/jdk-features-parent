@@ -18,6 +18,6 @@ public interface HandlerMapping {
 
     default String getRequestUrl(HttpServletRequest request) {
         String contextPath = request.getContextPath();
-        return request.getRequestURI().substring(contextPath.length()).toLowerCase();
+        return request.getRequestURI().substring(contextPath.length());
     }
 }
