@@ -3,7 +3,6 @@ package com.nf.mvc.util;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
-import nonapi.io.github.classgraph.utils.Assert;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * 此类的代码参考了spring 的ClassUtils，ReflectionUtils,BeanUtils
@@ -158,6 +156,9 @@ public abstract class ReflectionUtils {
 
     /**
      * 是简单类型或者简单类型的数组就认为是一个简单属性
+     * 比如int，Integer这种就是简单类型（SimpleType）
+     * 是一个数组，并且数组的成员（Component）是简单类型，就认为是一个简单属性
+     * 比如int[],Integer[],String[]就认为是简单属性，但Emp[]不是简单属性，因为其成员Emp不是简单类型
      * @param type
      * @return
      */
@@ -165,6 +166,15 @@ public abstract class ReflectionUtils {
         return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
     }
 
+    /**
+     * 通常指的就是我们自己写的pojo类，比如Emp
+     * 判断是”不严谨“的，比如我们自己写的一个Servlet的类，它也是返回true
+     *
+     * 这个方法的初衷是想让我们自己写的pojo类才返回true
+     * 我们的pojo类通常不继承任何父类，就是普通的属性的封装
+     * @param type
+     * @return
+     */
     public static boolean isComplexProperty(Class<?> type) {
         return isSimpleProperty(type)==false && isCollection(type)==false;
     }
@@ -174,10 +184,20 @@ public abstract class ReflectionUtils {
      * @param type
      * @return
      */
-    public static boolean isSimpleArrayType(Class<?> type) {
+    public static boolean isSimpleTypeArray(Class<?> type) {
         return  type.isArray() && isSimpleType(type.getComponentType());
     }
 
+
+    public static boolean isSimpleCollection(Class<?> type) {
+        return isAssignable(List.class,type) ||
+                isAssignable(Set.class,type) ||
+                isAssignable(Map.class,type);
+    }
+
+    public static boolean isSimpleTypeCollection(Class<?> collectionType, Class<?> actualTypeParam) {
+        return isSimpleCollection(collectionType) && isSimpleType(actualTypeParam);
+    }
     /**
      * 如果是Collection以及Map的子类型，就认为是一个集合
      * @param type
@@ -186,6 +206,11 @@ public abstract class ReflectionUtils {
     public static boolean isCollection(Class<?> type) {
         return Collection.class.isAssignableFrom(type) ||
                 Map.class.isAssignableFrom(type);
+    }
+
+    public static boolean isListOrSet(Class<?> type) {
+        return List.class.isAssignableFrom(type) ||
+                Set.class.isAssignableFrom(type);
     }
 
     /**
@@ -219,6 +244,11 @@ public abstract class ReflectionUtils {
         return primitiveWrapperTypeMap.containsKey(clazz);
     }
 
+
+    public static boolean isPrimitive(Class<?> clazz) {
+        return clazz.isPrimitive();
+    }
+
     /**
      * 判断一个类是否是简单类型或者简单类型对应的包装类型
      * @param clazz
@@ -249,11 +279,11 @@ public abstract class ReflectionUtils {
             return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
         }
     }
-    public static boolean isAssignableToAll(Class<?> lhsType, Class<?>... rhsTypes) {
-       boolean isAssignable = true;
+    public static boolean isAssignableToAny(Class<?> lhsType, Class<?>... rhsTypes) {
+       boolean isAssignable = false;
         for (Class<?> rhsType : rhsTypes) {
             isAssignable =  isAssignable(rhsType,lhsType);
-            if (isAssignable == false) {
+            if (isAssignable == true) {
                 break;
             }
         }

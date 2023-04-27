@@ -6,12 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalTimeTypeConverter implements WebTypeConverter<LocalTime> {
-
-    @Override
-    public boolean supports(Class<LocalTime> paramType) {
-        return paramType==LocalTime.class;
-    }
+public class LocalTimeTypeConverter implements WebTypeConverter{
 
     @Override
     public LocalTime convert(String paramValue) throws Exception {

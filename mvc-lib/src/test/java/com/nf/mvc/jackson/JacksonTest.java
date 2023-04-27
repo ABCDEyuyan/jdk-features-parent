@@ -3,7 +3,7 @@ package com.nf.mvc.jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import java.time.LocalDate;
-import static com.nf.mvc.util.ObjectMapperUtils.getObjectMapper;
+import static com.nf.mvc.util.JacksonUtils.getObjectMapper;
 
 public class JacksonTest {
     @Test

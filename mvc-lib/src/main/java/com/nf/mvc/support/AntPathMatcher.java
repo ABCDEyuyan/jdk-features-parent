@@ -23,7 +23,7 @@ package com.nf.mvc.support;
  * 而trimToken主要是时候忽略一些空白字符的情况
  * 参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）
  */
-public class AntPathMatcher {
+public class AntPathMatcher implements PathMatcher{
 
     private static final char ASTERISK = '*';
     private static final char QUESTION = '?';
@@ -63,6 +63,7 @@ public class AntPathMatcher {
         return false;
     }
 
+    @Override
     public boolean isMatch(final String pattern, final String path) {
         if (pattern.isEmpty()) {
             return path.isEmpty();

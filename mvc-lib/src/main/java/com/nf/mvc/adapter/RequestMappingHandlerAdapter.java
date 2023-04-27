@@ -6,15 +6,13 @@ import com.nf.mvc.MvcContext;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerMethod;
-import com.nf.mvc.util.ReflectionUtils;
-import com.nf.mvc.view.PlainViewResult;
-import com.nf.mvc.view.VoidViewResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.List;
+
+import static com.nf.mvc.ViewResult.adaptHandlerResult;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
@@ -32,7 +30,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerMethod &&
-                ((HandlerMethod)handler).getHandlerMethod()!=null;
+                ((HandlerMethod) handler).getHandlerMethod() != null;
     }
 
     @Override
@@ -45,9 +43,9 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         Object[] paramValues = resolveParamValues(req, handlerMethod);
         //handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
         //所以handler的方法执行之后，可能返回别的类型，或者void
-        Object handlerResult = method.invoke(instance,paramValues);
+        Object handlerResult = method.invoke(instance, paramValues);
 
-        return handleViewResult(handlerResult);
+        return adaptHandlerResult(handlerResult);
 
     }
 
@@ -57,31 +55,15 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
         for (int i = 0; i < parameterCount; i++) {
             MethodParameter parameter = handlerMethod.getMethodParameters()[i];
-            paramValues[i]= resolveArgument(parameter, req);
+            paramValues[i] = resolveArgument(parameter, req);
         }
         return paramValues;
     }
 
-    private ViewResult handleViewResult(Object handlerResult) {
-        ViewResult viewResult ;
-        if(handlerResult ==null){
-            //这种情况表示handler方法执行返回null或者方法的签名本身就是返回void
-            viewResult = new VoidViewResult();
-        } else if (handlerResult instanceof ViewResult) {
-            viewResult = (ViewResult) handlerResult;
-        }else{
-            viewResult = new PlainViewResult(handlerResult.toString());
-        }
-
-        return viewResult;
-    }
-
-
     private Object resolveArgument(MethodParameter parameter, HttpServletRequest req) throws Exception {
-        Class<?> parameterType = parameter.getParamType();
         for (MethodArgumentResolver resolver : argumentResolvers) {
             if (resolver.supports(parameter)) {
-                return resolver.resolveArgument(parameter,req);
+                return resolver.resolveArgument(parameter, req);
             }
         }
         return null;

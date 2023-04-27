@@ -1,17 +1,12 @@
 package com.nf.mvc.view;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nf.mvc.ViewResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
 
-import static com.nf.mvc.util.ObjectMapperUtils.getObjectMapper;
+import static com.nf.mvc.util.JacksonUtils.getObjectMapper;
 
 
 public class JsonViewResult extends ViewResult {
