@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-     Map<String, Object> map = new HashMap();
+     Map<String, Object> map = new HashMap<>();
      map.put("id", 100);
      map.put("name","abc");
      Object o = mapToBean(map, A.class);

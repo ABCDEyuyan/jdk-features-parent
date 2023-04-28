@@ -5,6 +5,9 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -288,5 +291,20 @@ public abstract class ReflectionUtils {
             }
         }
         return isAssignable;
+    }
+
+    /**
+     * 此方法是用来获取方法泛型参数的类型实参的
+     * @param parameter
+     * @return
+     */
+    public static Class[] getActualArgument(Parameter parameter) {
+        ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameterizedType();
+        Type[] types = parameterizedType.getActualTypeArguments();
+        Class[] actualTypeArguments = new Class[types.length];
+        for (int i = 0; i < types.length; i++) {
+            actualTypeArguments[i] = (Class)types[i];
+        }
+        return actualTypeArguments;
     }
 }

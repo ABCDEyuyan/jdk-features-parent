@@ -9,7 +9,7 @@ public class Main {
 //        a.m1();
 
 
-        A b = new B();
-        b.m1();
+      /*  A b = new B();
+        b.m1();*/
     }
 }

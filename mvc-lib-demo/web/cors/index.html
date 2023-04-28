@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="button" id="btnCors" value="简单请求" />
+    <input type="button" id="btnCors2" value="复杂请求" />
+    <script src="jquery.js"></script>
+
+    <script>
+      $(function () {
+        $('#btnCors').click(function () {
+          $.getJSON(
+            'http://localhost:8080/mvc/product/insert?id=100&name=abc',
+            function (data) {
+              console.log(data)
+            }
+          )
+        })
+
+        $('#btnCors2').click(function () {
+          $.ajax({
+            url: 'http://localhost:8080/mvc/product/insert?id=100&name=abc',
+            method: 'delete',
+            success: function (data) {
+              console.log(data)
+            },
+          })
+        })
+      })
+    </script>
+  </body>
+</html>
