@@ -1,5 +1,6 @@
 package com.nf.mvc;
 
+import com.nf.mvc.util.ReflectionUtils;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
@@ -106,4 +107,15 @@ public class ReflectionTest {
         System.out.println(g2);
     }
 
+    @Test
+    public void testParameterActualArgument() throws Exception{
+        Class<SomeClass> aClass = SomeClass.class;
+        Method m2 = aClass.getDeclaredMethod("m2", List.class);
+
+        Parameter parameter = m2.getParameters()[0];
+        Class[] actualArguments = ReflectionUtils.getActualArgument(parameter);
+        for (Class argument : actualArguments) {
+            System.out.println(argument);
+        }
+    }
 }
