@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public abstract class ObjectUtils {
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
     public static Object[] toObjectArray( Object source) {
         if (source instanceof Object[]) {
             return (Object[]) source;

@@ -10,6 +10,7 @@ import javax.servlet.http.Part;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static com.nf.mvc.handler.HandlerHelper.file;
 import static com.nf.mvc.handler.HandlerHelper.json;
@@ -34,14 +35,14 @@ public class FileController {
         return "ok";
     }
 
-    @RequestMapping("/upload2")
-    public String upload(MultipartFile[] multipartFile) throws Exception {
+    @RequestMapping("/upload2") //TODO:第二个参数名字得到的file，而不是parts，bug
+    public String upload(MultipartFile[] multipartFile, List<Part> parts) throws Exception {
         for (MultipartFile file : multipartFile) {
             String uploadedFilename = file.getOriginalFilename();
             Path path = Paths.get("D:/tmp", uploadedFilename);
             file.transferTo(path);
         }
-
+        System.out.println(parts.size());
 
         return "ok";
     }
