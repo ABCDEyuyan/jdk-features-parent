@@ -1,5 +1,6 @@
 package mvcdemo.controller;
 
+import com.nf.mvc.HandlerContext;
 import com.nf.mvc.file.MultipartFile;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.FileViewResult;
@@ -22,11 +23,26 @@ public class FileController {
 
 
     //一定要对Dispatcherservlet设置multipart config
+    //方法参数是Part或者MultipartFile
+
     @RequestMapping("/upload")
     public String upload(MultipartFile multipartFile, Part file) throws Exception {
         String uploadedFilename = multipartFile.getOriginalFilename();
         Path path = Paths.get("D:/tmp", uploadedFilename);
         multipartFile.transferTo(path);
+
+        return "ok";
+    }
+
+    @RequestMapping("/upload2")
+    public String upload(MultipartFile[] multipartFile) throws Exception {
+        for (MultipartFile file : multipartFile) {
+            String uploadedFilename = file.getOriginalFilename();
+            Path path = Paths.get("D:/tmp", uploadedFilename);
+            file.transferTo(path);
+        }
+
+
         return "ok";
     }
 }
