@@ -3,6 +3,7 @@ package com.nf.mvc.util;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
+import javassist.bytecode.MethodInfo;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -73,6 +74,10 @@ public abstract class ReflectionUtils {
     }
     /**
      *
+     * 参考
+     * https://blog.csdn.net/hehuanchun0311/article/details/79755266
+     * 与https://blog.csdn.net/wwzmvp/article/details/116302782
+     * http://lzxz1234.github.io/java/2014/07/25/Get-Method-Parameter-Names-With-Javassist.html
      * @param clazz:方法所在的类
      * @param methodName：方法的名字
      * @param paramTypes：方法的参数类型，以便支持重载
@@ -81,11 +86,8 @@ public abstract class ReflectionUtils {
     public static List<String> getParamNamesWithParamType(Class<?> clazz, String methodName, Class... paramTypes) {
         List<String> paramNames = new ArrayList<>();
         ClassPool pool = ClassPool.getDefault();
-        //不加下面的insertClassPath这行代码会出现ClassNotFound异常，解决办法
-        // 参考https://blog.csdn.net/hehuanchun0311/article/details/79755266与https://blog.csdn.net/wwzmvp/article/details/116302782
-        //但第二篇文章中说的更换javassist版本经测试并没有解决问题，所以采用下面的方案
-
-        //含义是告诉javassist也去RefelctionUtils类所在的类路径下去查找类
+        /*不加下面的insertClassPath这行代码会出现ClassNotFound异常，解决办法如下
+        含义是告诉javassist也去RefelctionUtils类所在的类路径下去查找类*/
         pool.insertClassPath(new ClassClassPath(ReflectionUtils.class));
         try {
             CtClass ctClass = pool.getCtClass(clazz.getName());
@@ -104,19 +106,41 @@ public abstract class ReflectionUtils {
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             if (attr != null) {
-                int len = ctMethod.getParameterTypes().length;
-                // 非静态的成员函数的第一个参数是this
-                int pos = Modifier.isStatic(ctMethod.getModifiers()) ? 0 : 1;
-                for (int i = 0; i < len; i++) {
-                    paramNames.add(attr.variableName(i + pos));
+                TreeMap<Integer, String> sortMap = new TreeMap<Integer, String>();
+                for (int i = 0; i < attr.tableLength(); i++) {
+                    sortMap.put(attr.index(i), attr.variableName(i));
                 }
-
+                int pos = Modifier.isStatic(ctMethod.getModifiers()) ? 0 : 1;
+                paramNames =  Arrays.asList(Arrays.copyOfRange(sortMap.values().toArray(new String[0]), pos, paramNames.size() + pos+1));
             }
             return paramNames;
         } catch (NotFoundException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String[] getMethodParameterNames(Method method) throws Exception {
+      /*  ClassPool pool = ClassPool.getDefault();
+
+        CtClass cc = pool.getCtClass(method.getDeclaringClass());
+        CtClass[] parameterCtClasses = new CtClass[method.getParameterTypes().length];
+        for (int i = 0; i < parameterCtClasses.length; i++)
+            parameterCtClasses[i] = pool.getCtClass(method.getParameterTypes()[i]);
+
+        String[] parameterNames = new String[parameterCtClasses.length];
+        CtMethod cm = cc.getDeclaredMethod(method.getName(), parameterCtClasses);
+        MethodInfo methodInfo = cm.getMethodInfo();
+        CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+        LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
+
+        //省略前面代码部分
+        TreeMap<Integer, String> sortMap = new TreeMap<Integer, String>();
+        for (int i = 0; i < attr.tableLength(); i++)
+            sortMap.put(attr.index(i), attr.variableName(i));
+        int pos = Modifier.isStatic(cm.getModifiers()) ? 0 : 1;
+        parameterNames = Arrays.copyOfRange(sortMap.values().toArray(new String[0]), pos, parameterNames.length + pos);*/
+        return null;
     }
 
 

@@ -37,7 +37,7 @@ public class SomeClass {
 
     public void m7(Integer[] names7) {
         for (Integer name : names7) {
-           // System.out.println("name = " + name);
+            System.out.println("name = " + name);
         }
     }
 }
