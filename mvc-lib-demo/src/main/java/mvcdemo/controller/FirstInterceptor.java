@@ -9,7 +9,7 @@ public class FirstInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("first 1111---");
-        return  false;
+        return  true;
     }
 
     @Override
