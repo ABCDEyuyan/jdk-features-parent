@@ -22,4 +22,9 @@ public class RequestMappingConfigurer {
     public String getName() {
         return name;
     }
+
+    public void config(RequestMappingHandlerMapping handlerMapping) {
+        handlerMapping.setName(this.name);
+        handlerMapping.setPathMatcher(this.pathMatcher);
+    }
 }

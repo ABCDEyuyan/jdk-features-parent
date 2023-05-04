@@ -51,9 +51,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = getRequestUrl(request);
-        HandlerExecutionChain chain = new HandlerExecutionChain(handlers.get(requestUrl), getInterceptors(request));
-        return  chain;
-
+        HandlerMethod handler = handlers.get(requestUrl);
+        return handler==null?null:new HandlerExecutionChain(handler, getInterceptors(request));
     }
 
     /**

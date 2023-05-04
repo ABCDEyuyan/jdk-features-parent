@@ -47,11 +47,9 @@ public class NameConventionHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws ServletException {
-        String uri = getRequestUrl(request);
-        HandlerExecutionChain chain = new HandlerExecutionChain(handlers.get(uri), getInterceptors(request));
-        return  chain;
-
+        String requestUrl = getRequestUrl(request);
+        Object handler = handlers.get(requestUrl);
+        return handler==null?null:new HandlerExecutionChain(handler, getInterceptors(request));
     }
-
 
 }
