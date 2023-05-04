@@ -45,12 +45,25 @@ public class DispatcherServlet extends HttpServlet {
         ScanResult scanResult = ScanUtils.scan(scanPackage);
 
         initMvcContext(scanResult);
+        initMvc();
+        configMvc();
+
+    }
+
+    private void initMvc() {
         //参数解析器因为被Adapter使用，所以要在adapter初始化之前进行
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
         initExceptionResolvers();
+    }
 
+    private void configMvc() {
+        //TODO:待实现
+//        configArgumentResolvers();
+//        configHandlerMappings();
+//        configHandlerAdapters();
+//        configExceptionResolvers();
     }
 
     private void initMvcContext(ScanResult scanResult) {
@@ -211,7 +224,8 @@ public class DispatcherServlet extends HttpServlet {
         context.setRequest(req).setResponse(resp);
         try {
 
-            /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的*/
+            /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的
+            * Hanlder的异常解析处理是在doDispatch方法中实现的*/
             chain = getHandler(req);
             if (chain != null) {
                 doDispatch(req, resp, chain);
