@@ -51,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initMvc() {
-        //参数解析器因为被Adapter使用，所以要在adapter初始化之前进行
+        //参数解析器因为被Adapter使用，所以要在adapter初始化之前进行(TODO:能否把这个顺序依赖剔除掉)
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
@@ -248,6 +248,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             //这里返回false，直接return，结束后续流程
             if (!chain.applyPreHandle(req, resp)) {
+                chain.applyPostHandle(req, resp);
                 return;
             }
 
