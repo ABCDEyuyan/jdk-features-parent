@@ -9,6 +9,12 @@ public abstract class CollectionUtils {
 
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
+    /**
+     * 合并数组（第一个参数）的成员到集合（第二个参数）里面去
+     * @param array
+     * @param collection
+     * @param <E>
+     */
     public static <E> void mergeArrayIntoCollection(Object array, Collection<E> collection) {
         Object[] arr = ObjectUtils.toObjectArray(array);
         for (Object elem : arr) {

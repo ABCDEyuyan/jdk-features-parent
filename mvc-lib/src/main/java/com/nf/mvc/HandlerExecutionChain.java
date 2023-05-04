@@ -2,6 +2,8 @@ package com.nf.mvc;
 
 import com.nf.mvc.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +58,29 @@ public class HandlerExecutionChain {
     public List<HandlerInterceptor> getInterceptorList() {
         return (!this.interceptorList.isEmpty() ? Collections.unmodifiableList(this.interceptorList) :
                 Collections.emptyList());
+    }
+
+    public boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response)
+            throws Exception{
+
+        for (int i = 0; i < interceptorList.size(); i++) {
+            HandlerInterceptor interceptor = interceptorList.get(i);
+            if (interceptor.preHandle(request, response, handler) == false) {
+                return false;
+            }
+            interceptorIndex = i;
+        }
+
+        return true;
+    }
+
+
+    public void applyPostHandle(HttpServletRequest request, HttpServletResponse response)
+            throws Exception{
+        for (int i = interceptorIndex; i >= 0; i--) {
+            HandlerInterceptor interceptor = interceptorList.get(i);
+            interceptor.postHandle(request,response,handler);
+        }
     }
 
 

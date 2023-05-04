@@ -26,6 +26,7 @@ public class MvcContext {
     private List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
+    private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
 
     private MvcContext() {
     }
@@ -82,6 +83,7 @@ public class MvcContext {
         resolveClass(scanedClass, HandlerAdapter.class, customHandlerAdapters);
         resolveClass(scanedClass, MethodArgumentResolver.class, customArgumentResolvers);
         resolveClass(scanedClass, HandlerExceptionResolver.class, customExceptionResolvers);
+        resolveClass(scanedClass, HandlerInterceptor.class, customInterceptors);
 
     }
 
@@ -114,6 +116,11 @@ public class MvcContext {
     public List<HandlerExceptionResolver> getCustomExceptionResolvers() {
         Collections.sort(customExceptionResolvers, new OrderComparator<>());
         return Collections.unmodifiableList(customExceptionResolvers);
+    }
+
+    public List<HandlerInterceptor> getCustomHandlerInterceptors() {
+        Collections.sort(customExceptionResolvers, new OrderComparator<>());
+        return Collections.unmodifiableList(customInterceptors);
     }
 
     /**

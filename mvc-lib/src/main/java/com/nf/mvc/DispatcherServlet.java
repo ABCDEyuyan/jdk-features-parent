@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nf.mvc.handler.HandlerHelper.empty;
+
 public class DispatcherServlet extends HttpServlet {
     /**
      * 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置
@@ -204,15 +206,15 @@ public class DispatcherServlet extends HttpServlet {
      * @param resp
      */
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
-        Object handler;
+        HandlerExecutionChain chain;
         HandlerContext context = HandlerContext.getContext();
         context.setRequest(req).setResponse(resp);
         try {
 
             /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的*/
-            handler = getHandler(req);
-            if (handler != null) {
-                doDispatch(req, resp, handler);
+            chain = getHandler(req);
+            if (chain != null) {
+                doDispatch(req, resp, chain);
             } else {
                 noHandlerFound(req, resp);
             }
@@ -227,16 +229,21 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Throwable {
-        ViewResult viewResult;
+    protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, HandlerExecutionChain chain) throws Throwable {
+        ViewResult viewResult =empty();
         try {
-            HandlerAdapter adapter = getHandlerAdapter(handler);
-            viewResult = adapter.handle(req, resp, handler);
+            boolean pass = chain.applyPreHandle(req, resp);
+            if (pass) {
+                Object handler = chain.getHandler();
+                HandlerAdapter adapter = getHandlerAdapter(handler);
+                viewResult = adapter.handle(req, resp, handler);
+            }
+            chain.applyPostHandle(req,resp);
         } catch (Exception ex) {
             /*这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
             这个异常处理也只是处理了Handler整个执行层面的异常，
              视图渲染层面的异常是没有处理的，要处理的话可以在doService方法里处理*/
-            viewResult = resolveException(req, resp, handler, ex);
+            viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
         render(req, resp, viewResult);
     }
@@ -265,11 +272,11 @@ public class DispatcherServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
     }
 
-    protected Object getHandler(HttpServletRequest request) throws Exception {
+    protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         for (HandlerMapping mapping : handlerMappings) {
-            Object handler = mapping.getHandler(request);
-            if (handler != null) {
-                return handler;
+            HandlerExecutionChain chain = mapping.getHandler(request);
+            if (chain != null) {
+                return chain;
             }
         }
         return null;
@@ -299,6 +306,7 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 这里没有用到cors配置，纯粹的直接允许跨域请求
+     *
      * @param req
      * @param resp
      * @param configuration
@@ -336,18 +344,19 @@ public class DispatcherServlet extends HttpServlet {
      * </p>
      *
      * <p>
-     *     不管是不是预检请求都会设置的项有
+     * 不管是不是预检请求都会设置的项有
      *     <ul>
      *         <li>setAccessControlAllowOrigin</li>
      *         <li>setAccessControlAllowCredentials</li>
      *     </ul>
      * </p>
+     *
      * @param req
      * @param resp
      * @param configuration
      */
     protected void processCors2(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
-           // 允许指定域访问跨域资源
+        // 允许指定域访问跨域资源
         List<String> origins = configuration.getAllowedOrigins();
         for (String origin : origins) {
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);

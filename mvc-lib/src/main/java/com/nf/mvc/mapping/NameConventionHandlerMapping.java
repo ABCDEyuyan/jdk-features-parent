@@ -1,5 +1,7 @@
 package com.nf.mvc.mapping;
 
+import com.nf.mvc.HandlerExecutionChain;
+import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.HandlerMapping;
@@ -45,9 +47,14 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) throws ServletException {
+    public HandlerExecutionChain getHandler(HttpServletRequest request) throws ServletException {
         String uri = getRequestUrl(request);
-        return handlers.get(uri);
+        Object handler =  handlers.get(uri);
+        List<HandlerInterceptor> interceptorList = MvcContext.getMvcContext().getCustomHandlerInterceptors();
+
+        HandlerExecutionChain chain = new HandlerExecutionChain(handler,interceptorList);
+        return  chain;
+
     }
 
 
