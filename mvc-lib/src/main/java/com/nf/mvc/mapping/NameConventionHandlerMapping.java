@@ -39,7 +39,6 @@ public class NameConventionHandlerMapping implements HandlerMapping {
                 handlers.put(url.toLowerCase(), handlerClass);
             }
         }
-
     }
 
     private String generateHandleUrl(String simpleName) {
@@ -49,10 +48,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws ServletException {
         String uri = getRequestUrl(request);
-        Object handler =  handlers.get(uri);
-        List<HandlerInterceptor> interceptorList = MvcContext.getMvcContext().getCustomHandlerInterceptors();
-
-        HandlerExecutionChain chain = new HandlerExecutionChain(handler,interceptorList);
+        HandlerExecutionChain chain = new HandlerExecutionChain(handlers.get(uri), getInterceptors(request));
         return  chain;
 
     }

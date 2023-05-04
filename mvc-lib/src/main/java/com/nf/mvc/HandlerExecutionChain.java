@@ -65,7 +65,7 @@ public class HandlerExecutionChain {
 
         for (int i = 0; i < interceptorList.size(); i++) {
             HandlerInterceptor interceptor = interceptorList.get(i);
-            if (interceptor.preHandle(request, response, handler) == false) {
+            if (!interceptor.preHandle(request, response, handler)) {
                 return false;
             }
             interceptorIndex = i;

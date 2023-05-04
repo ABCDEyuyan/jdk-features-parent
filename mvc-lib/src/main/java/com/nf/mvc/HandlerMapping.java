@@ -3,6 +3,7 @@ package com.nf.mvc;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,5 +20,9 @@ public interface HandlerMapping {
     default String getRequestUrl(HttpServletRequest request) {
         String contextPath = request.getContextPath();
         return request.getRequestURI().substring(contextPath.length());
+    }
+
+    default List<HandlerInterceptor> getInterceptors(HttpServletRequest request){
+        return MvcContext.getMvcContext().getCustomHandlerInterceptors();
     }
 }
