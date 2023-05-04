@@ -1,5 +1,7 @@
 package com.nf.mvc.mapping;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.nf.mvc.HandlerExecutionChain;
 import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.HandlerMapping;
@@ -21,6 +23,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private String name="RequestMappingHandlerMapping";
     private PathMatcher pathMatcher = new EqualPathMatcher();
+//TODO:缓存处理
+    Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
+            .initialCapacity(10)
+            .maximumSize(100)
+            .build();
 
     public RequestMappingHandlerMapping() {
         resolveHandlers();

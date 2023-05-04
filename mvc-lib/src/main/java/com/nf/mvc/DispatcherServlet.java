@@ -302,10 +302,8 @@ public class DispatcherServlet extends HttpServlet {
 
     protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        //我们获取容器中本来就有的默认servlet来处理静态资源
-        //容器中默认servlet是有能力处理静态资源
-        //默认servlet的名字，在很多容器中就是叫default，但有些容器不叫default
-        //常用的tomcat，jetty这些容器中就是叫default
+        /*利用default servlet来处理当前请求找不到handler的情况，默认servlet也可以处理静态资源，
+        具体见spring mvc的DefaultServletHttpRequestHandler类*/
         req.getServletContext().getNamedDispatcher("default").forward(req, resp);
     }
 
