@@ -26,8 +26,10 @@ public class MvcContext {
     private List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
-    private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
+    private List<WebMvcConfigurer> customConfigurers = new ArrayList<>();
 
+    //TODO:支持path的话，改成map比较好一些
+    private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
     private MvcContext() {
     }
 
@@ -84,6 +86,7 @@ public class MvcContext {
         resolveClass(scanedClass, MethodArgumentResolver.class, customArgumentResolvers);
         resolveClass(scanedClass, HandlerExceptionResolver.class, customExceptionResolvers);
         resolveClass(scanedClass, HandlerInterceptor.class, customInterceptors);
+        resolveClass(scanedClass, WebMvcConfigurer.class, customConfigurers);
 
     }
 
@@ -119,8 +122,13 @@ public class MvcContext {
     }
 
     public List<HandlerInterceptor> getCustomHandlerInterceptors() {
-        Collections.sort(customExceptionResolvers, new OrderComparator<>());
+        Collections.sort(customInterceptors, new OrderComparator<>());
         return Collections.unmodifiableList(customInterceptors);
+    }
+
+    public List<WebMvcConfigurer> getCustomWebMvcConfigurer() {
+        Collections.sort(customConfigurers, new OrderComparator<>());
+        return Collections.unmodifiableList(customConfigurers);
     }
 
     /**
