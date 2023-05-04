@@ -230,15 +230,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, HandlerExecutionChain chain) throws Throwable {
-        ViewResult viewResult =empty();
+        ViewResult viewResult;
         try {
-            boolean pass = chain.applyPreHandle(req, resp);
-            if (pass) {
-                Object handler = chain.getHandler();
-                HandlerAdapter adapter = getHandlerAdapter(handler);
-                viewResult = adapter.handle(req, resp, handler);
+            //这里返回false，直接return，结束后续流程
+            if (!chain.applyPreHandle(req, resp)) {
+                return;
             }
-            chain.applyPostHandle(req,resp);
+
+            Object handler = chain.getHandler();
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+            viewResult = adapter.handle(req, resp, handler);
+
+            chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
             /*这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
             这个异常处理也只是处理了Handler整个执行层面的异常，
