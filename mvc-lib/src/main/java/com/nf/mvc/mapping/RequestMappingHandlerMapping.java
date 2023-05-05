@@ -23,7 +23,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private String name="RequestMappingHandlerMapping";
     private PathMatcher pathMatcher = new EqualPathMatcher();
-//TODO:缓存处理
+
     Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
@@ -58,8 +58,14 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = getRequestUrl(request);
-        HandlerMethod handler = handlers.get(requestUrl);
-        return handler==null?null:new HandlerExecutionChain(handler, getInterceptors(request));
+        HandlerExecutionChain chain = cache.get(requestUrl,k->{
+            HandlerMethod handler = handlers.get(requestUrl);
+            if (handler != null) {
+               return new HandlerExecutionChain(handler, getInterceptors(request));
+            }
+            return null;
+        });
+        return chain;
     }
 
     /**

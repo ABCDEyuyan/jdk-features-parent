@@ -4,6 +4,7 @@ import com.nf.mvc.HandlerAdapter;
 import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.MvcContext;
 import com.nf.mvc.ViewResult;
+import com.nf.mvc.argument.HandlerMethodArgumentResolverComposite;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerMethod;
 
@@ -16,16 +17,12 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
-    private List<MethodArgumentResolver> argumentResolvers;
+    private final HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
 
     public RequestMappingHandlerAdapter() {
-
-        this(MvcContext.getMvcContext().getArgumentResolvers());
+        resolvers.addResolvers(MvcContext.getMvcContext().getArgumentResolvers());
     }
 
-    public RequestMappingHandlerAdapter(List<MethodArgumentResolver> argumentResolvers) {
-        this.argumentResolvers = argumentResolvers;
-    }
 
     @Override
     public boolean supports(Object handler) {
@@ -61,11 +58,11 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     private Object resolveArgument(MethodParameter parameter, HttpServletRequest req) throws Exception {
-        for (MethodArgumentResolver resolver : argumentResolvers) {
-            if (resolver.supports(parameter)) {
-                return resolver.resolveArgument(parameter, req);
-            }
+        if (resolvers.supports(parameter)) {
+            return resolvers.resolveArgument(parameter,req);
         }
         return null;
+
+
     }
 }
