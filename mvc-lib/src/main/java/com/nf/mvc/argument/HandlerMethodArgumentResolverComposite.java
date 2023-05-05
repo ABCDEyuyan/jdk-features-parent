@@ -1,6 +1,7 @@
 package com.nf.mvc.argument;
 
 import com.nf.mvc.MethodArgumentResolver;
+import com.nf.mvc.MvcContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -76,5 +77,15 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
             }
         }
         return result;
+    }
+
+    /**
+     * 此方法创建的实例已经是包含框架提供的解析器与用户提供的解析器了，你可以在此基础上额外再添加一些解析器
+     * @return
+     */
+    public static HandlerMethodArgumentResolverComposite defaultInstance(){
+        return new HandlerMethodArgumentResolverComposite()
+                .addResolvers(MvcContext.getMvcContext().getArgumentResolvers());
+
     }
 }

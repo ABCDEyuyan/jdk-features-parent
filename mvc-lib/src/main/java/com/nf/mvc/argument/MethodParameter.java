@@ -1,5 +1,7 @@
 package com.nf.mvc.argument;
 
+import com.nf.mvc.util.ObjectUtils;
+
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -54,5 +56,24 @@ public class MethodParameter {
 
     public Class<?> getContainingClass() {
         return containingClass;
+    }
+
+    @Override
+    public boolean equals( Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof MethodParameter)) {
+            return false;
+        }
+        MethodParameter otherParam = (MethodParameter) other;
+        return (getContainingClass() == otherParam.getContainingClass()  &&
+                this.parameterIndex == otherParam.parameterIndex &&
+                this.getMethod().equals(otherParam.getMethod()));
+    }
+
+    @Override
+    public int hashCode() {
+        return (31 * this.getMethod().hashCode() + this.parameterIndex);
     }
 }

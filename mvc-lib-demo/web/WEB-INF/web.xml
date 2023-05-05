@@ -8,7 +8,7 @@
         <servlet-name>mvcdemo</servlet-name>
         <servlet-class>com.nf.mvc.DispatcherServlet</servlet-class>
         <init-param>
-            <param-name>componentScan</param-name>
+            <param-name>base-package</param-name>
             <param-value>mvcdemo.controller</param-value>
         </init-param>
         <load-on-startup>111</load-on-startup>

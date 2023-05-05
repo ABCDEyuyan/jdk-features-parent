@@ -22,13 +22,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nf.mvc.handler.HandlerHelper.empty;
-
 public class DispatcherServlet extends HttpServlet {
     /**
-     * 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置
+     * 此选项是用来配置要扫描的类所在的基础包的，在DispatcherServlet的init-param里面进行配置
      */
-    private static final String COMPONENT_SCAN = "componentScan";
+    private static final String BASE_PACKAGE = "base-package";
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
@@ -40,10 +38,9 @@ public class DispatcherServlet extends HttpServlet {
         //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());
 
         //获取要扫描的类所在的包的名字
-        String scanPackage = getScanPackage(config);
+        String basePackage = getBasePackage(config);
         //去执行类扫描的功能
-        ScanResult scanResult = ScanUtils.scan(scanPackage);
-
+        ScanResult scanResult = ScanUtils.scan(basePackage);
         initMvcContext(scanResult);
         initMvc();
         configMvc();
@@ -51,7 +48,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initMvc() {
-        //参数解析器因为被Adapter使用，所以要在adapter初始化之前进行(TODO:能否把这个顺序依赖剔除掉)
+        /* 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行 */
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
@@ -170,8 +167,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
 
-    private String getScanPackage(ServletConfig config) {
-        String pkg = config.getInitParameter(COMPONENT_SCAN);
+    private String getBasePackage(ServletConfig config) {
+        String pkg = config.getInitParameter(BASE_PACKAGE);
 
         if (pkg == null || pkg.isEmpty()) {
             throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它扩展组件所在的包---");

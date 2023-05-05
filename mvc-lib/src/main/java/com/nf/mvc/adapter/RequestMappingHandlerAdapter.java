@@ -17,12 +17,17 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
-    private final HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
+    private static final HandlerMethodArgumentResolverComposite defaultResolvers = HandlerMethodArgumentResolverComposite.defaultInstance();
+
+    private final HandlerMethodArgumentResolverComposite resolvers ;
 
     public RequestMappingHandlerAdapter() {
-        resolvers.addResolvers(MvcContext.getMvcContext().getArgumentResolvers());
+       this.resolvers = defaultResolvers;
     }
 
+    public RequestMappingHandlerAdapter(HandlerMethodArgumentResolverComposite resolvers) {
+        this.resolvers = resolvers;
+    }
 
     @Override
     public boolean supports(Object handler) {
@@ -38,8 +43,8 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         Method method = handlerMethod.getHandlerMethod();
 
         Object[] paramValues = resolveParamValues(req, handlerMethod);
-        //handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
-        //所以handler的方法执行之后，可能返回别的类型，或者void
+        /*handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
+         所以handler的方法执行之后，可能返回别的类型，或者void */
         Object handlerResult = method.invoke(instance, paramValues);
 
         return adaptHandlerResult(handlerResult);

@@ -58,6 +58,9 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = getRequestUrl(request);
+        /* get方法的第二个参数是在缓存中没有对应的key值执行的函数，其返回值会自动放置到缓存中
+        * 如果返回值是null，那么不会放置到缓存中。
+        * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
         HandlerExecutionChain chain = cache.get(requestUrl,k->{
             HandlerMethod handler = handlers.get(requestUrl);
             if (handler != null) {
