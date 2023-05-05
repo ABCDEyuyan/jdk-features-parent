@@ -7,6 +7,7 @@ import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
 import com.nf.mvc.handler.HandlerMethod;
+import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.support.EqualPathMatcher;
 import com.nf.mvc.support.PathMatcher;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
+
+    private static final PathMatcher defaultPathMatcher = new AntPathMatcher.Builder().build();
 
     private Map<String, HandlerMethod> handlers = new HashMap<>();
 
