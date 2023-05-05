@@ -90,7 +90,7 @@ public class MethodInvoker {
     }
 
     public Object invoke_backup(Object instance, Method method, String prefix, Map<String, String> source) throws Exception {
-        List<String> paramNames = ReflectionUtils.getParamNames(instance.getClass(), method.getName());
+        List<String> paramNames = ReflectionUtils.getParameterNames(method);
         if (prefix.isEmpty() == false) {
             for (int i = 0; i < paramNames.size(); i++) {
                 paramNames.set(i, prefix + "." + paramNames.get(i));

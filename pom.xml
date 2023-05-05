@@ -25,4 +25,21 @@
 
     </properties>
 
+    <build>
+        <plugins>
+            <!--用反射的方式方式获取参数名，需要进行下面的编译器设定-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <!-- Original answer -->
+                  <!--  <compilerArgument>-parameters</compilerArgument>-->
+                    <!-- Or, if you use the plugin version >= 3.6.2 -->
+                    <parameters>true</parameters>
+                    <testCompilerArgument>-parameters</testCompilerArgument>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

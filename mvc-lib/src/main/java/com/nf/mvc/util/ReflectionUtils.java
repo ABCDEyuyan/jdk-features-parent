@@ -86,6 +86,7 @@ public abstract class ReflectionUtils {
      * @param paramTypes：方法的参数类型，以便支持重载
      * @return 方法各个参数的名字（依据参数位置顺序依次返回）
      */
+    @Deprecated
     public static List<String> getParamNamesWithParamType(Class<?> clazz, String methodName, Class... paramTypes) {
         List<String> paramNames = new ArrayList<>();
         ClassPool pool = ClassPool.getDefault();
@@ -127,8 +128,25 @@ public abstract class ReflectionUtils {
         }
     }
 
+    @Deprecated
     public static List<String> getParamNames(Class<?> clazz, String methodName) {
         return getParamNamesWithParamType(clazz, methodName);
+    }
+
+    public static List<String> getParameterNames(Method method) {
+        Parameter[] parameters = method.getParameters();
+        List<String> parameterNames = new ArrayList<>();
+
+        for (Parameter parameter : parameters) {
+            if(!parameter.isNamePresent()) {
+                throw new IllegalArgumentException("编译的时候需要指定-parameters选项，见https://stackoverflow.com/questions/2237803/can-i-obtain-method-parameter-name-using-java-reflection");
+            }
+
+            String parameterName = parameter.getName();
+            parameterNames.add(parameterName);
+        }
+
+        return parameterNames;
     }
 
     /**

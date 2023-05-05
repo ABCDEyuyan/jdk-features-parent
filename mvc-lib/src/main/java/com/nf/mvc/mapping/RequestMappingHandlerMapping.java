@@ -24,7 +24,6 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private Map<String, HandlerMethod> handlers = new HashMap<>();
 
-    private String name="RequestMappingHandlerMapping";
     private PathMatcher pathMatcher = new EqualPathMatcher();
 
     Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
@@ -75,25 +74,16 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     /**
-     *
      * @param element AnnotatedElement类型代表着所有可以放置注解的元素，比如类，方法参数，字段等
-     * @return
+     * @return 返回RequestMapping注解中指定的url值
      */
     private String getUrl(AnnotatedElement element) {
         return element.isAnnotationPresent(RequestMapping.class) ?
                 element.getDeclaredAnnotation(RequestMapping.class).value() : "";
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setPathMatcher(PathMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public PathMatcher getPathMatcher() {

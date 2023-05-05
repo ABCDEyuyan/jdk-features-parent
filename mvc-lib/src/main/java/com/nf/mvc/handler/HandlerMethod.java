@@ -36,8 +36,7 @@ public class HandlerMethod extends HandlerClass {
 
 
     private void initMethodParameters() {
-
-        List<String> paramNames = ReflectionUtils.getParamNames(getHandlerClass(), getMethodName());
+        List<String> paramNames = ReflectionUtils.getParameterNames(handlerMethod);
         int parameterCount = handlerMethod.getParameterCount();
         methodParameters = new MethodParameter[parameterCount];
         for (int i = 0; i < parameterCount; i++) {
