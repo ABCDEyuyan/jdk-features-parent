@@ -139,7 +139,7 @@ public abstract class ReflectionUtils {
 
         for (Parameter parameter : parameters) {
             if(!parameter.isNamePresent()) {
-                throw new IllegalArgumentException("编译的时候需要指定-parameters选项，见https://stackoverflow.com/questions/2237803/can-i-obtain-method-parameter-name-using-java-reflection");
+                throw new IllegalArgumentException("编译的时候需要指定-parameters选项");
             }
 
             String parameterName = parameter.getName();
