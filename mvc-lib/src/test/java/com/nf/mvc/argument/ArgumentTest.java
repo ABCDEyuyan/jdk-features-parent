@@ -36,7 +36,7 @@ public class ArgumentTest {
         for (Method method : methods) {
             System.out.println("method.getName() = " + method.getName());
             int paramCount = method.getParameterCount();
-            List<String> paramNames = ReflectionUtils.getParamNames(controllerClass, method.getName());
+            List<String> paramNames = ReflectionUtils.getParameterNames(method);
             Parameter[] parameters = method.getParameters();
 
             Object[] paramValues = new Object[paramCount];

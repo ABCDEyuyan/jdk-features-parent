@@ -4,6 +4,7 @@ import com.nf.mvc.HandlerAdapter;
 import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.MvcContext;
 import com.nf.mvc.ViewResult;
+import com.nf.mvc.argument.HandlerMethodArgumentResolverComposite;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerMethod;
 
@@ -16,15 +17,16 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
-    private List<MethodArgumentResolver> argumentResolvers;
+    private static final HandlerMethodArgumentResolverComposite defaultResolvers = HandlerMethodArgumentResolverComposite.defaultInstance();
+
+    private final HandlerMethodArgumentResolverComposite resolvers ;
 
     public RequestMappingHandlerAdapter() {
-
-        this(MvcContext.getMvcContext().getArgumentResolvers());
+       this.resolvers = defaultResolvers;
     }
 
-    public RequestMappingHandlerAdapter(List<MethodArgumentResolver> argumentResolvers) {
-        this.argumentResolvers = argumentResolvers;
+    public RequestMappingHandlerAdapter(HandlerMethodArgumentResolverComposite resolvers) {
+        this.resolvers = resolvers;
     }
 
     @Override
@@ -41,8 +43,8 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         Method method = handlerMethod.getHandlerMethod();
 
         Object[] paramValues = resolveParamValues(req, handlerMethod);
-        //handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
-        //所以handler的方法执行之后，可能返回别的类型，或者void
+        /*handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
+         所以handler的方法执行之后，可能返回别的类型，或者void */
         Object handlerResult = method.invoke(instance, paramValues);
 
         return adaptHandlerResult(handlerResult);
@@ -61,11 +63,11 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     private Object resolveArgument(MethodParameter parameter, HttpServletRequest req) throws Exception {
-        for (MethodArgumentResolver resolver : argumentResolvers) {
-            if (resolver.supports(parameter)) {
-                return resolver.resolveArgument(parameter, req);
-            }
+        if (resolvers.supports(parameter)) {
+            return resolvers.resolveArgument(parameter,req);
         }
         return null;
+
+
     }
 }

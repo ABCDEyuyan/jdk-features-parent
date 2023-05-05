@@ -103,7 +103,7 @@ public class MethodInvokerOptimize {
      * @throws Exception
      */
     private Object doInvoke(Object instance, Method method, Map<String, ? extends Object> source, Stack<String> prefixStack) throws Exception {
-        List<String> paramNames = ReflectionUtils.getParamNames(method.getDeclaringClass(), method.getName());
+        List<String> paramNames = ReflectionUtils.getParameterNames(method);
         //处理参数的前缀，如果需要加前缀的话，就把参数名改掉，添加上前缀
         handleParamPrefix(prefixStack, paramNames);
 

@@ -24,9 +24,9 @@ import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
     /**
-     * 此选项是用来配置要扫描的类所在的包的，在DispatcherServlet的init-param里面进行配置
+     * 此选项是用来配置要扫描的类所在的基础包的，在DispatcherServlet的init-param里面进行配置
      */
-    private static final String COMPONENT_SCAN = "componentScan";
+    private static final String BASE_PACKAGE = "base-package";
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
@@ -38,17 +38,29 @@ public class DispatcherServlet extends HttpServlet {
         //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());
 
         //获取要扫描的类所在的包的名字
-        String scanPackage = getScanPackage(config);
+        String basePackage = getBasePackage(config);
         //去执行类扫描的功能
-        ScanResult scanResult = ScanUtils.scan(scanPackage);
-
+        ScanResult scanResult = ScanUtils.scan(basePackage);
         initMvcContext(scanResult);
-        //参数解析器因为被Adapter使用，所以要在adapter初始化之前进行
+        initMvc();
+        configMvc();
+
+    }
+
+    private void initMvc() {
+        /* 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行 */
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
         initExceptionResolvers();
+    }
 
+    private void configMvc() {
+        //TODO:待实现
+//        configArgumentResolvers();
+//        configHandlerMappings();
+//        configHandlerAdapters();
+//        configExceptionResolvers();
     }
 
     private void initMvcContext(ScanResult scanResult) {
@@ -155,8 +167,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
 
-    private String getScanPackage(ServletConfig config) {
-        String pkg = config.getInitParameter(COMPONENT_SCAN);
+    private String getBasePackage(ServletConfig config) {
+        String pkg = config.getInitParameter(BASE_PACKAGE);
 
         if (pkg == null || pkg.isEmpty()) {
             throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它扩展组件所在的包---");
@@ -204,15 +216,16 @@ public class DispatcherServlet extends HttpServlet {
      * @param resp
      */
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
-        Object handler;
+        HandlerExecutionChain chain;
         HandlerContext context = HandlerContext.getContext();
         context.setRequest(req).setResponse(resp);
         try {
 
-            /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的*/
-            handler = getHandler(req);
-            if (handler != null) {
-                doDispatch(req, resp, handler);
+            /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的
+            * Hanlder的异常解析处理是在doDispatch方法中实现的*/
+            chain = getHandler(req);
+            if (chain != null) {
+                doDispatch(req, resp, chain);
             } else {
                 noHandlerFound(req, resp);
             }
@@ -227,18 +240,30 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Throwable {
+    protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, HandlerExecutionChain chain) throws Throwable {
         ViewResult viewResult;
         try {
-            HandlerAdapter adapter = getHandlerAdapter(handler);
-            viewResult = adapter.handle(req, resp, handler);
+            //这里返回false，直接return，结束后续流程
+            if (!chain.applyPreHandle(req, resp)) {
+                chain.applyPostHandle(req, resp);
+                return;
+            }
+
+            viewResult = executeHandler(req, resp, chain.getHandler());
+
+            chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
             /*这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
             这个异常处理也只是处理了Handler整个执行层面的异常，
              视图渲染层面的异常是没有处理的，要处理的话可以在doService方法里处理*/
-            viewResult = resolveException(req, resp, handler, ex);
+            viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
         render(req, resp, viewResult);
+    }
+
+    protected ViewResult executeHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        HandlerAdapter adapter = getHandlerAdapter(handler);
+        return adapter.handle(req, resp, handler);
     }
 
     protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception {
@@ -265,11 +290,11 @@ public class DispatcherServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
     }
 
-    protected Object getHandler(HttpServletRequest request) throws Exception {
+    protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         for (HandlerMapping mapping : handlerMappings) {
-            Object handler = mapping.getHandler(request);
-            if (handler != null) {
-                return handler;
+            HandlerExecutionChain chain = mapping.getHandler(request);
+            if (chain != null) {
+                return chain;
             }
         }
         return null;
@@ -277,10 +302,8 @@ public class DispatcherServlet extends HttpServlet {
 
     protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        //我们获取容器中本来就有的默认servlet来处理静态资源
-        //容器中默认servlet是有能力处理静态资源
-        //默认servlet的名字，在很多容器中就是叫default，但有些容器不叫default
-        //常用的tomcat，jetty这些容器中就是叫default
+        /*利用default servlet来处理当前请求找不到handler的情况，默认servlet也可以处理静态资源，
+        具体见spring mvc的DefaultServletHttpRequestHandler类*/
         req.getServletContext().getNamedDispatcher("default").forward(req, resp);
     }
 
@@ -299,6 +322,7 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 这里没有用到cors配置，纯粹的直接允许跨域请求
+     *
      * @param req
      * @param resp
      * @param configuration
@@ -336,18 +360,19 @@ public class DispatcherServlet extends HttpServlet {
      * </p>
      *
      * <p>
-     *     不管是不是预检请求都会设置的项有
+     * 不管是不是预检请求都会设置的项有
      *     <ul>
      *         <li>setAccessControlAllowOrigin</li>
      *         <li>setAccessControlAllowCredentials</li>
      *     </ul>
      * </p>
+     *
      * @param req
      * @param resp
      * @param configuration
      */
     protected void processCors2(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
-           // 允许指定域访问跨域资源
+        // 允许指定域访问跨域资源
         List<String> origins = configuration.getAllowedOrigins();
         for (String origin : origins) {
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);

@@ -35,7 +35,7 @@ public class FileController {
         return "ok";
     }
 
-    @RequestMapping("/upload2") //TODO:第二个参数名字得到的file，而不是parts，bug
+    @RequestMapping("/upload2")
     public String upload(MultipartFile[] multipartFile, List<Part> parts) throws Exception {
         for (MultipartFile file : multipartFile) {
             String uploadedFilename = file.getOriginalFilename();

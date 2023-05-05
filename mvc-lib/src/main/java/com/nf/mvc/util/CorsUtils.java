@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import static com.nf.mvc.support.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static com.nf.mvc.support.HttpHeaders.ORIGIN;
 
+/**
+ * 此类参考了spring的CorsUtils类
+ */
 public abstract class CorsUtils {
 
 	/**
@@ -15,12 +18,8 @@ public abstract class CorsUtils {
 	 * header presence and ensuring that origins are different.
 	 */
 	public static boolean isCorsRequest(HttpServletRequest request) {
-		String origin = request.getHeader(ORIGIN);
-		if (origin == null) {
-			return false;
-		}
-		return true;
-		//TODO:更好的实现是下面这样,但spring中这些url解析的类太多了，复制不过来。。。简化为只要有origin就表示是跨域请求
+		return request.getHeader(ORIGIN) == null?false:true;
+		/*更好的实现是下面这样,但spring中这些url解析的类太多了，复制不过来。。。简化为只要有origin就表示是跨域请求*/
 		/*UriComponents originUrl = UriComponentsBuilder.fromOriginHeader(origin).build();
 		String scheme = request.getScheme();
 		String host = request.getServerName();
@@ -30,7 +29,6 @@ public abstract class CorsUtils {
 				getPort(scheme, port) == getPort(originUrl.getScheme(), originUrl.getPort()));*/
 
 	}
-
 
 	/**
 	 * 判断是否是"预检请求"

@@ -3,6 +3,7 @@ package com.nf.mvc;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -14,10 +15,14 @@ public interface HandlerMapping {
      * @return 是一个请求处理者（或者执行链）
      * @throws Exception
      */
-    Object getHandler(HttpServletRequest request) throws Exception;
+    HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception;
 
     default String getRequestUrl(HttpServletRequest request) {
         String contextPath = request.getContextPath();
         return request.getRequestURI().substring(contextPath.length());
+    }
+
+    default List<HandlerInterceptor> getInterceptors(HttpServletRequest request){
+        return MvcContext.getMvcContext().getCustomHandlerInterceptors();
     }
 }
