@@ -81,11 +81,11 @@ public class MvcContext {
      * @param scanedClass
      */
     private void resolveMvcClass(Class<?> scanedClass) {
+        resolveClass(scanedClass, MethodArgumentResolver.class, customArgumentResolvers);
+        resolveClass(scanedClass, HandlerInterceptor.class, customInterceptors);
         resolveClass(scanedClass, HandlerMapping.class, customHandlerMappings);
         resolveClass(scanedClass, HandlerAdapter.class, customHandlerAdapters);
-        resolveClass(scanedClass, MethodArgumentResolver.class, customArgumentResolvers);
         resolveClass(scanedClass, HandlerExceptionResolver.class, customExceptionResolvers);
-        resolveClass(scanedClass, HandlerInterceptor.class, customInterceptors);
         resolveClass(scanedClass, WebMvcConfigurer.class, customConfigurers);
 
     }

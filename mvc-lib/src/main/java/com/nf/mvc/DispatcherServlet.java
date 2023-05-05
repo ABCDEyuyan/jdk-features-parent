@@ -249,9 +249,7 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
 
-            Object handler = chain.getHandler();
-            HandlerAdapter adapter = getHandlerAdapter(handler);
-            viewResult = adapter.handle(req, resp, handler);
+            viewResult = executeHandler(req, resp, chain.getHandler());
 
             chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
@@ -261,6 +259,11 @@ public class DispatcherServlet extends HttpServlet {
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
         render(req, resp, viewResult);
+    }
+
+    protected ViewResult executeHandler(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+        HandlerAdapter adapter = getHandlerAdapter(handler);
+        return adapter.handle(req, resp, handler);
     }
 
     protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception {
