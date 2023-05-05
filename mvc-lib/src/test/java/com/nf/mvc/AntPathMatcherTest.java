@@ -1,7 +1,11 @@
 package com.nf.mvc;
 
 import com.nf.mvc.support.AntPathMatcher;
+import com.nf.mvc.support.MultiValueMapAdapter;
+import org.checkerframework.checker.units.qual.K;
 import org.junit.Test;
+
+import java.util.*;
 
 /**
  * https://blog.csdn.net/justry_deng/article/details/123641133
@@ -47,5 +51,26 @@ public class AntPathMatcherTest {
         System.out.println(pathMatcher2.isMatch("a/*", "a/b0/c"));//false
         System.out.println(pathMatcher2.isMatch("a/*/c", "a/b0/c"));//true
         System.out.println(pathMatcher2.isMatch("a/*/c/d", "a/b0/c"));//false
+    }
+
+    @Test
+    public void testAntComparator(){
+        AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();
+        Comparator<String> patternComparator = pathMatcher.getPatternComparator("/insert/a");
+        Map<String, Integer> handlers = new HashMap<>();
+        handlers.put("/**", 1);
+        handlers.put("/*", 2);
+        handlers.put("/insert/**", 3);
+        handlers.put("/insert/*", 4);
+        handlers.put("/insert/a", 5);
+        handlers.put("/insert/b", 6);
+
+        TreeMap<String, Integer> treeMap = new TreeMap( patternComparator);
+        treeMap.putAll(handlers);
+        treeMap.entrySet().forEach(System.out::println);
+        System.out.println("===================");
+        handlers.entrySet().forEach(System.out::println);
+
+
     }
 }

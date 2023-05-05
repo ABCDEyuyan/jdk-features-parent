@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.nf.mvc.util;
+package com.nf.mvc.support;
+
+import com.nf.mvc.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
