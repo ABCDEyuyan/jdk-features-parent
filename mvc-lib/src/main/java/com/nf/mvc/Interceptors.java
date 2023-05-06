@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * 默认采用ant地址模式
  *
  * <p>通过value属性指定要拦截的地址，默认值是拦截所有的地址<br/>
- * 通过excludePattern属性指定不拦截的地址，默认值是空
+ * 通过excludePattern属性指定不拦截的地址，默认值是空，意思就是没有要排除的地址
  * </p>
  *
  * <p>如果includePattern与excludePattern设置有冲突以排除设置为准</p>

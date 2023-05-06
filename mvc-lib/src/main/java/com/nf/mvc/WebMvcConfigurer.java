@@ -32,7 +32,7 @@ public interface WebMvcConfigurer {
     }
 
     default void configureCors(CorsConfiguration configuration) {
-
+        configuration.applyDefaultConfiguration();
     }
 
 }
