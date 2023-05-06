@@ -19,6 +19,6 @@ public class MyConfigurer implements WebMvcConfigurer {
 
     @Override
     public void configureCors(CorsConfiguration configuration) {
-        configuration.setAllowedOrigins("http://localhost:5500");
+        configuration.setAllowedOrigins("http://localhost:5500").setAllowedOrigins("http://127.0.0.1:5500");
     }
 }

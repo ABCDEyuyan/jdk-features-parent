@@ -110,6 +110,8 @@ public class DispatcherServlet extends HttpServlet {
     public void configGlobalCors() {
         MvcContext mvcContext = MvcContext.getMvcContext();
         WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        //先设定默认设置，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
+        corsConfiguration.applyDefaultConfiguration();
         mvcConfigurer.configureCors(corsConfiguration);
     }
 
@@ -249,10 +251,10 @@ public class DispatcherServlet extends HttpServlet {
         setEncoding(req, resp);
         if (CorsUtils.isCorsRequest(req)) {
             processCors(req, resp, corsConfiguration);
-        }
-        /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
-        if (CorsUtils.isPreFlightRequest(req)) {
-            return;
+            /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
+            if (CorsUtils.isPreFlightRequest(req)) {
+                return;
+            }
         }
         doService(req, resp);
     }
