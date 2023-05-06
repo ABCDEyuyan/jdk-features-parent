@@ -5,16 +5,14 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.nf.mvc.*;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.AntPathMatcher;
+import com.nf.mvc.support.EqualIgnoreCasePathMatcher;
 import com.nf.mvc.support.EqualPathMatcher;
 import com.nf.mvc.support.PathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
@@ -22,7 +20,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private Map<String, HandlerMethod> handlers = new HashMap<>();
 
-    private PathMatcher pathMatcher = new EqualPathMatcher();
+    private PathMatcher pathMatcher = new EqualIgnoreCasePathMatcher();
 
     Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
@@ -62,7 +60,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         * 如果返回值是null，那么不会放置到缓存中。
         * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
         HandlerExecutionChain chain = cache.get(requestUrl,k->{
-            HandlerMethod handler = handlers.get(requestUrl);
+            HandlerMethod handler = getHandlerInternal(requestUrl);
             if (handler != null) {
                return new HandlerExecutionChain(handler, getInterceptors(request));
             }
@@ -71,6 +69,17 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return chain;
     }
 
+    protected HandlerMethod getHandlerInternal(String requestUrl) {
+        HandlerMethod handler=null;
+        Set<String> keys = handlers.keySet();
+        for (String key : keys) {
+            if (getPathMatcher().isMatch(key, requestUrl)) {
+                handler = handlers.get(key);
+                break;
+            }
+        }
+        return handler;
+    }
     /**
      * @param element AnnotatedElement类型代表着所有可以放置注解的元素，比如类，方法参数，字段等
      * @return 返回RequestMapping注解中指定的url值

@@ -1,7 +1,6 @@
 package com.nf.mvc;
 
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
-
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.*;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
@@ -27,10 +26,10 @@ public class DispatcherServlet extends HttpServlet {
      * 此选项是用来配置要扫描的类所在的基础包的，在DispatcherServlet的init-param里面进行配置
      */
     private static final String BASE_PACKAGE = "base-package";
-    private List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-    private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
-    private List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
+    private final List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
     //region 初始化逻辑
     @Override
@@ -56,11 +55,51 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void configMvc() {
-        //TODO:待实现
-//        configArgumentResolvers();
-//        configHandlerMappings();
-//        configHandlerAdapters();
-//        configExceptionResolvers();
+
+        configArgumentResolvers();
+        configHandlerMappings();
+        configHandlerAdapters();
+        configExceptionResolvers();
+    }
+
+    private void configArgumentResolvers() {
+        MvcContext mvcContext = MvcContext.getMvcContext();
+        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+
+        List<MethodArgumentResolver> argumentResolvers = mvcContext.getArgumentResolvers();
+
+        for (MethodArgumentResolver resolver : argumentResolvers) {
+            mvcConfigurer.configureArgumentResolver(resolver);
+        }
+    }
+
+    private void configHandlerMappings() {
+        MvcContext mvcContext = MvcContext.getMvcContext();
+        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        List<HandlerMapping> handlerMappings = mvcContext.getHandlerMappings();
+
+        for (HandlerMapping mapping : handlerMappings) {
+            mvcConfigurer.configureHandlerMapping(mapping);
+        }
+    }
+
+    private void configHandlerAdapters() {
+        MvcContext mvcContext = MvcContext.getMvcContext();
+        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        List<HandlerAdapter> handlerAdapters = mvcContext.getHandlerAdapters();
+
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            mvcConfigurer.configureHandlerAdapter(handlerAdapter);
+        }
+    }
+
+    private void configExceptionResolvers() {
+        MvcContext mvcContext = MvcContext.getMvcContext();
+        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        List<HandlerExceptionResolver> resolvers = mvcContext.getExceptionResolvers();
+        for (HandlerExceptionResolver resolver : resolvers) {
+            mvcConfigurer.configureExceptionResolver(resolver);
+        }
     }
 
     private void initMvcContext(ScanResult scanResult) {
@@ -222,7 +261,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
 
             /*这行代码也表明HandlerMapping在查找Handler的过程中出了异常是没有被我们的异常解析器处理的
-            * Hanlder的异常解析处理是在doDispatch方法中实现的*/
+             * Hanlder的异常解析处理是在doDispatch方法中实现的*/
             chain = getHandler(req);
             if (chain != null) {
                 doDispatch(req, resp, chain);
