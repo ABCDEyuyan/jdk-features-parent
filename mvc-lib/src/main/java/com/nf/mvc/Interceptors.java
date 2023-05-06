@@ -1,4 +1,4 @@
-package com.nf.mvc.view;
+package com.nf.mvc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
  * <p>通过value属性指定要拦截的地址，默认值是拦截所有的地址<br/>
  * 通过excludePattern属性指定不拦截的地址，默认值是空
  * </p>
+ *
+ * <p>如果includePattern与excludePattern设置有冲突以排除设置为准</p>
  * @see com.nf.mvc.HandlerInterceptor
  * @see com.nf.mvc.support.AntPathMatcher
  */

@@ -140,6 +140,10 @@ public class AntPathMatcher implements PathMatcher{
         return pointer;
     }
 
+    public Comparator<String> getPatternComparator(String path) {
+        return new AntPatternComparator(path);
+    }
+
     private boolean equal(final char pathChar, final char patternChar) {
         if (ignoreCase) {
             return pathChar == patternChar ||

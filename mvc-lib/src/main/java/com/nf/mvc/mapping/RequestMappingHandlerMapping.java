@@ -2,10 +2,7 @@ package com.nf.mvc.mapping;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.nf.mvc.HandlerExecutionChain;
-import com.nf.mvc.HandlerInterceptor;
-import com.nf.mvc.HandlerMapping;
-import com.nf.mvc.MvcContext;
+import com.nf.mvc.*;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.support.EqualPathMatcher;
@@ -14,6 +11,7 @@ import com.nf.mvc.support.PathMatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +79,44 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return element.isAnnotationPresent(RequestMapping.class) ?
                 element.getDeclaredAnnotation(RequestMapping.class).value() : "";
     }
+
+    @Override
+    public List<HandlerInterceptor> getInterceptors(HttpServletRequest request) {
+        List<HandlerInterceptor> result = new ArrayList<>();
+        List<HandlerInterceptor> interceptors = MvcContext.getMvcContext().getCustomHandlerInterceptors();
+        String requestUrl = getRequestUrl(request);
+        for (HandlerInterceptor interceptor : interceptors) {
+            Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
+            if (interceptorClass.isAnnotationPresent(Interceptors.class)) {
+                Interceptors annotation = interceptorClass.getDeclaredAnnotation(Interceptors.class);
+                String[] includesPattern = annotation.value();
+                String[] excludesPattern = annotation.excludePattern();
+                if (shouldApply(requestUrl,includesPattern ) == true && shouldApply(requestUrl,excludesPattern) == false) {
+                    result.add(interceptor);
+                }
+            }else{
+                //没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
+                result.add(interceptor);
+            }
+        }
+
+        return result;
+    }
+
+    protected boolean shouldApply(String requestUrl,String... patterns) {
+        boolean shouldApply = false;
+        if (patterns == null ) {
+            return false;
+        }
+        for (String pattern : patterns) {
+            shouldApply= getPathMatcher().isMatch(pattern, requestUrl);
+            if (shouldApply) {
+                break;
+            }
+        }
+        return shouldApply;
+    }
+
 
     public void setPathMatcher(PathMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;

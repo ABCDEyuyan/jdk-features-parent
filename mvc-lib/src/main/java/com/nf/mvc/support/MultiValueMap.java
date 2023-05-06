@@ -1,4 +1,4 @@
-package com.nf.mvc.util;
+package com.nf.mvc.support;
 
 import java.util.List;
 import java.util.Map;

@@ -1,8 +1,6 @@
 package com.nf.mvc;
 
 import com.nf.mvc.support.OrderComparator;
-import com.nf.mvc.util.LinkedMultiValueMap;
-import com.nf.mvc.util.MultiValueMap;
 import com.nf.mvc.util.ReflectionUtils;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
@@ -28,11 +26,9 @@ public class MvcContext {
     private List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
+    private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
     private List<WebMvcConfigurer> customConfigurers = new ArrayList<>();
 
-    //TODO:支持path的话，改成map比较好一些
-    private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
-    //private MultiValueMap<String, HandlerInterceptor> customInterceptors = new LinkedMultiValueMap<>(32);
     private MvcContext() {
     }
 
@@ -79,16 +75,16 @@ public class MvcContext {
     }
 
     /**
-     * 解析类是否是mvc框架扩展用的类，主要有4类接口的实现类归属于框架扩展类
+     * 解析扫描到的类是否是mvc框架扩展用的类，主要有4类接口的实现类归属于框架扩展类
      *
      * @param scannedClass
      */
     private void resolveMvcClass(Class<?> scannedClass) {
         resolveClass(scannedClass, MethodArgumentResolver.class, customArgumentResolvers);
-        resolveClass(scannedClass, HandlerInterceptor.class, customInterceptors);
         resolveClass(scannedClass, HandlerMapping.class, customHandlerMappings);
         resolveClass(scannedClass, HandlerAdapter.class, customHandlerAdapters);
         resolveClass(scannedClass, HandlerExceptionResolver.class, customExceptionResolvers);
+        resolveClass(scannedClass, HandlerInterceptor.class, customInterceptors);
         resolveClass(scannedClass, WebMvcConfigurer.class, customConfigurers);
 
     }
