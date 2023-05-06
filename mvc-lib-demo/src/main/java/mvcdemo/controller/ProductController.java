@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
-@RequestMapping("/product")
+@RequestMapping("/prodUct")
 public class ProductController {
 
     @RequestMapping("/list")

@@ -47,7 +47,6 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
         return this;
     }
 
-
     @Override
     public boolean supports(MethodParameter parameter) {
         return getArgumentResolver(parameter) !=null;

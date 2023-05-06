@@ -15,7 +15,19 @@ import com.nf.mvc.mapping.RequestMappingHandlerMapping;
  * </p>
  */
 public interface WebMvcConfigurer {
-    default void configureRequestHandlerMapping(RequestMappingHandlerMapping handlerMapping) {
+    default void configureHandlerMapping(HandlerMapping handlerMapping) {
+
+    }
+
+    default void configureHandlerAdapter(HandlerAdapter adapter) {
+
+    }
+
+    default void configureArgumentResolver(MethodArgumentResolver argumentResolver) {
+
+    }
+
+    default void configureExceptionResolver(HandlerExceptionResolver exceptionResolver) {
 
     }
 

@@ -41,13 +41,15 @@ public class MvcContext {
      * 影响就不是很好，所以就改成default修饰符，只能在本包
      * 或子包中访问，基本上就是mvc框架内可以访问
      * <p>
-     * 我设计的mvc框架，是有以下几个扩展点
-     * DispatcherServlet
-     * HandlerMapping
-     * HandlerAdapter
-     * MethodArgumentResolver
-     * HandlerExceptionResolver
-     * ViewResult
+     * 我设计的mvc框架，是有以下几个扩展点:
+     * <ul>
+     * <li>DispatcherServlet</li>
+     * <li>HandlerMapping</li>
+     * <li>HandlerAdapter</li>
+     * <li>MethodArgumentResolver</li>
+     * <li>HandlerExceptionResolver</li>
+     * <li>ViewResult</li>
+     * </ul>
      * <p>
      * 但只有HandlerMapping、HandlerAdapter、MethodArgumentResolver、HandlerExceptionResolver
      * 这四个接口是用通过扫描的形式获取的。
@@ -121,9 +123,11 @@ public class MvcContext {
         return Collections.unmodifiableList(customInterceptors);
     }
 
-    public List<WebMvcConfigurer> getCustomWebMvcConfigurer() {
-        Collections.sort(customConfigurers, new OrderComparator<>());
-        return Collections.unmodifiableList(customConfigurers);
+    public WebMvcConfigurer getCustomWebMvcConfigurer() {
+        if (customConfigurers.size() !=1) {
+            throw new IllegalStateException("配置器应该只写一个");
+        }
+        return customConfigurers.get(0);
     }
 
     /**

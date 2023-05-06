@@ -5,6 +5,7 @@ import com.nf.mvc.util.ObjectUtils;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Objects;
 
 public class MethodParameter {
     private final Method method;
@@ -60,12 +61,16 @@ public class MethodParameter {
 
     @Override
     public boolean equals( Object other) {
+        //1.自己与其它是同一个（==）对象，那么肯定相等
         if (this == other) {
             return true;
         }
+        //2.别人跟我根本不是同一个类型。所以就一定不相等
         if (!(other instanceof MethodParameter)) {
             return false;
         }
+        //3.代码到这里，就意味着绝不是同一个对象，但类型是一样的
+        //参数位置一样，所在方法一样，所在类一样
         MethodParameter otherParam = (MethodParameter) other;
         return (getContainingClass() == otherParam.getContainingClass()  &&
                 this.parameterIndex == otherParam.parameterIndex &&
