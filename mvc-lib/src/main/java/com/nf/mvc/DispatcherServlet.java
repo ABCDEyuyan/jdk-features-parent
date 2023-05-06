@@ -407,7 +407,9 @@ public class DispatcherServlet extends HttpServlet {
         if (HttpMethod.OPTIONS.matches(req.getMethod())) {
             // 浏览器缓存预检请求结果时间,单位:秒
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, Long.toString(configuration.getMaxAge()));
-            // 允许浏览器在预检请求成功之后发送的实际请求方法名，在MDN中只说要用逗号分隔即可，但通常都是逗号+空格隔开
+            // 允许浏览器在预检请求成功之后发送的实际请求方法名，
+            // 在MDN中只说要用逗号分隔即可，https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Allow-Methods
+            // 但其举的例子是逗号后有一个空格，spring的HttpHeaders类的toCommaDelimitedString也是这样的
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, StringUtils.toCommaDelimitedString(configuration.getAllowedMethods(), ", "));
             // 允许浏览器发送的请求消息头
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, StringUtils.toCommaDelimitedString(configuration.getAllowedHeaders(), ", "));
