@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -392,21 +393,35 @@ public class DispatcherServlet extends HttpServlet {
      * @param configuration
      */
     protected void processCors(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
-        // 允许指定域访问跨域资源
+
         String requestOrigin = req.getHeader(HttpHeaders.ORIGIN);
         String allowOrigin = configuration.checkOrigin(requestOrigin);
+        if (allowOrigin == null) {
+            rejectRequest(resp);
+            return;
+        }
+        //设置允许跨域请求的源
         resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, allowOrigin);
-        // 注意：允许客户端携带跨域cookie，此时origin值不能为“*”，只能为指定单一域名
         resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, Boolean.toString(configuration.getAllowCredentials()));
 
         if (HttpMethod.OPTIONS.matches(req.getMethod())) {
             // 浏览器缓存预检请求结果时间,单位:秒
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, Long.toString(configuration.getMaxAge()));
-            // 允许浏览器在预检请求成功之后发送的实际请求方法名
+            // 允许浏览器在预检请求成功之后发送的实际请求方法名，在MDN中只说要用逗号分隔即可，但通常都是逗号+空格隔开
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, StringUtils.toCommaDelimitedString(configuration.getAllowedMethods(), ", "));
             // 允许浏览器发送的请求消息头
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, StringUtils.toCommaDelimitedString(configuration.getAllowedHeaders(), ", "));
 
+        }
+    }
+
+    protected void rejectRequest(HttpServletResponse response)  {
+        try {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getOutputStream().write("Invalid CORS request".getBytes(StandardCharsets.UTF_8));
+            response.flushBuffer();
+        } catch (IOException e) {
+            throw new IllegalStateException("跨域处理失败");
         }
     }
     //endregion
