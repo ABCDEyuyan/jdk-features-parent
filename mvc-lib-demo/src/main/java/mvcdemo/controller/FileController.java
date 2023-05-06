@@ -43,7 +43,6 @@ public class FileController {
             file.transferTo(path);
         }
         System.out.println(parts.size());
-
         return "ok";
     }
 }
