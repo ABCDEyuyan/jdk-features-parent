@@ -20,7 +20,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private Map<String, HandlerMethod> handlers = new HashMap<>();
 
-    private PathMatcher pathMatcher = new EqualPathMatcher();
+    private PathMatcher pathMatcher = new AntPathMatcher.Builder().build();
 
     Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
