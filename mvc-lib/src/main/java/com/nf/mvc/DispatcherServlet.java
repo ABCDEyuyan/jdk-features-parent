@@ -247,7 +247,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(req, resp);
-        processCors(req, resp, corsConfiguration);
+        if (CorsUtils.isCorsRequest(req)) {
+            processCors(req, resp, corsConfiguration);
+        }
         /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
         if (CorsUtils.isPreFlightRequest(req)) {
             return;
@@ -393,7 +395,6 @@ public class DispatcherServlet extends HttpServlet {
      * @param configuration
      */
     protected void processCors(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
-
         String requestOrigin = req.getHeader(HttpHeaders.ORIGIN);
         String allowOrigin = configuration.checkOrigin(requestOrigin);
         if (allowOrigin == null) {

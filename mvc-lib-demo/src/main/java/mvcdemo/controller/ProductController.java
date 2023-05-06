@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
-@RequestMapping("/prodUct")
+@RequestMapping("/product")
 public class ProductController {
 
     @RequestMapping("/list")
@@ -22,7 +22,7 @@ public class ProductController {
         System.out.println("m1 in proudct------");
     }
 
-    @RequestMapping("/list2")
+    @RequestMapping("/**")
     public void m2(){
         String method = HandlerContext.getContext().getRequest().getMethod();
 
