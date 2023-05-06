@@ -138,7 +138,7 @@ public class DispatcherServlet extends HttpServlet {
         //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArguementResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
-        argumentResolvers.add(new ComplexTypeMethodArguementResolver());
+        argumentResolvers.add(new ComplexTypeMethodArgumentResolver());
 
         return argumentResolvers;
     }

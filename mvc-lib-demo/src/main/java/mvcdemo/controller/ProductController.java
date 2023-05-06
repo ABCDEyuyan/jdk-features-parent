@@ -66,6 +66,14 @@ public class ProductController {
 
     }
 
+    @RequestMapping("/complex")
+    public JsonViewResult complex( Emp2 emp){
+
+        System.out.println("emp = " + emp);
+        return new JsonViewResult(new ResponseVO(200,"ok",emp));
+    }
+
+
     @RequestMapping("/json")
     public JsonViewResult json(@RequestBody Emp emp){
 
