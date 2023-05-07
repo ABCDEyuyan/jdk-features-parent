@@ -69,6 +69,9 @@ public class CorsConfiguration {
         return this;
     }
 
+    /**
+     * 应用默认的跨域设置，origin设置为*，允许的方法设置GET,POST,DELETE,PUT,OPTIONS,不允许携带私密信息，允许的头部设置为*
+     */
     public void applyDefaultConfiguration(){
         setAllowedOrigins(ALL);
         setAllowCredentials(false);
@@ -76,6 +79,15 @@ public class CorsConfiguration {
         setAllowedHeaders(ALL);
     }
 
+    /**
+     * 清理默认的跨域设置，orgin是空，允许的方法也不设置，允许的头也没有任何设置
+     */
+    public void clearDefaultConfiguration(){
+        this.allowedOrigins.clear();
+        setAllowCredentials(false);
+        this.allowedMethods.clear();
+        this.allowedHeaders.clear();
+    }
 
     public String checkOrigin( String origin) {
         if (!StringUtils.hasText(origin)) {

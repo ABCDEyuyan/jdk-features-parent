@@ -7,6 +7,7 @@ import com.nf.mvc.ViewResult;
 import com.nf.mvc.argument.HandlerMethodArgumentResolverComposite;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerMethod;
+import com.nf.mvc.support.MethodInvoker;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,14 +20,16 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     private static final HandlerMethodArgumentResolverComposite defaultResolvers = HandlerMethodArgumentResolverComposite.defaultInstance();
 
-    private final HandlerMethodArgumentResolverComposite resolvers ;
+    private final HandlerMethodArgumentResolverComposite resolvers;
+    private final MethodInvoker methodInvoker;
 
     public RequestMappingHandlerAdapter() {
-       this.resolvers = defaultResolvers;
+        this(defaultResolvers);
     }
 
     public RequestMappingHandlerAdapter(HandlerMethodArgumentResolverComposite resolvers) {
         this.resolvers = resolvers;
+        methodInvoker = new MethodInvoker(resolvers);
     }
 
     @Override
@@ -35,39 +38,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
                 ((HandlerMethod) handler).getHandlerMethod() != null;
     }
 
-    @Override
     public ViewResult handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Object instance = handlerMethod.getInstance();
-
         Method method = handlerMethod.getHandlerMethod();
 
-        Object[] paramValues = resolveParamValues(req, handlerMethod);
-        /*handler的方法没有要求一定要返回ViewResult（通常会返回ViewResult）
-         所以handler的方法执行之后，可能返回别的类型，或者void */
-        Object handlerResult = method.invoke(instance, paramValues);
-
+        Object handlerResult = methodInvoker.invoke(instance, method, req);
         return adaptHandlerResult(handlerResult);
-
-    }
-
-    private Object[] resolveParamValues(HttpServletRequest req, HandlerMethod handlerMethod) throws Exception {
-        int parameterCount = handlerMethod.getParameterCount();
-        Object[] paramValues = new Object[parameterCount];
-
-        for (int i = 0; i < parameterCount; i++) {
-            MethodParameter parameter = handlerMethod.getMethodParameters()[i];
-            paramValues[i] = resolveArgument(parameter, req);
-        }
-        return paramValues;
-    }
-
-    private Object resolveArgument(MethodParameter parameter, HttpServletRequest req) throws Exception {
-        if (resolvers.supports(parameter)) {
-            return resolvers.resolveArgument(parameter,req);
-        }
-        return null;
-
 
     }
 }

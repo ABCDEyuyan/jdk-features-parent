@@ -110,6 +110,8 @@ public class DispatcherServlet extends HttpServlet {
     public void configGlobalCors() {
         MvcContext mvcContext = MvcContext.getMvcContext();
         WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        //先设定默认设置，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
+        corsConfiguration.applyDefaultConfiguration();
         mvcConfigurer.configureCors(corsConfiguration);
     }
 
@@ -136,7 +138,7 @@ public class DispatcherServlet extends HttpServlet {
         //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArguementResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
-        argumentResolvers.add(new ComplexTypeMethodArguementResolver());
+        argumentResolvers.add(new ComplexTypeMethodArgumentResolver());
 
         return argumentResolvers;
     }
@@ -247,10 +249,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncoding(req, resp);
-        processCors(req, resp, corsConfiguration);
-        /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
-        if (CorsUtils.isPreFlightRequest(req)) {
-            return;
+        if (CorsUtils.isCorsRequest(req)) {
+            processCors(req, resp, corsConfiguration);
+            /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
+            if (CorsUtils.isPreFlightRequest(req)) {
+                return;
+            }
         }
         doService(req, resp);
     }
@@ -393,7 +397,6 @@ public class DispatcherServlet extends HttpServlet {
      * @param configuration
      */
     protected void processCors(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
-
         String requestOrigin = req.getHeader(HttpHeaders.ORIGIN);
         String allowOrigin = configuration.checkOrigin(requestOrigin);
         if (allowOrigin == null) {
