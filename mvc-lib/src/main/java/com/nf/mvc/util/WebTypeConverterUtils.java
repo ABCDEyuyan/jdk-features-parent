@@ -66,7 +66,6 @@ public abstract class WebTypeConverterUtils {
         try {
             return typeConverter.convert(requestParamValue);
         } catch (Exception exception) {
-            exception.printStackTrace();
             //出现了转换异常就返回null，交由MethodArgumentResolver去处理这些null的问题，比如赋值为注解指定的默认值
             return null;
         }
@@ -74,9 +73,9 @@ public abstract class WebTypeConverterUtils {
     }
 
     public static Object toSimpleTypeArray(Class<?> componentType, String[] requestParamValues) throws Exception {
-
         //不要写这样的代码，因为实例化后可能是一个int[]或者double[],是不能转换为Object[]的
         //Object[] values = (Object[]) Array.newInstance(componentType, requestParamValues.length);
+
         Object array = Array.newInstance(componentType, requestParamValues.length);
         for (int i = 0; i < requestParamValues.length; i++) {
             Array.set(array, i, toSimpleTypeValue(componentType, requestParamValues[i]));
@@ -85,29 +84,22 @@ public abstract class WebTypeConverterUtils {
     }
 
     /**
-     * 只处理了List与Set集合，其它集合暂不支持
+     * 只处理了List，其它集合暂不支持
      * @param paramType        参数类型，比如List<String>,List<Integer>这样的类型
      * @param paramGenericType :泛型实参类型，这里只处理简单类型，不处理复杂类型
      * @return
      * @throws Exception
      */
-    public static <T> Collection<T> toCollection(Class<?> paramType, Class<T> paramGenericType, String[] requestParamValues) throws Exception {
-
-        if (ReflectionUtils.isSimpleTypeCollection(paramType, paramGenericType) == false) {
+    public static <T> Collection<T> toSimpleTypeList(Class<?> paramType, Class<T> paramGenericType, String[] requestParamValues) throws Exception {
+        if (ReflectionUtils.isSimpleTypeList(paramType, paramGenericType) == false) {
             throw new UnsupportedOperationException("不支持对此泛型类型为:" + paramType.getName() + " 其实参类型为：" + paramGenericType + "的类型转换");
         }
-
-        Collection<T> collection = null;
+        List<T> list = new ArrayList<>();
         Object array = toSimpleTypeArray(paramGenericType, requestParamValues);
-        if (List.class.isAssignableFrom(paramType)) {
-            collection = new ArrayList<>();
-        } else if (Set.class.isAssignableFrom(paramType)) {
-            collection = new HashSet<>();
-        }
         for (int i = 0; i < requestParamValues.length; i++) {
-            collection.add((T) Array.get(array, i));
+            list.add((T) Array.get(array, i));
         }
-        return collection;
+        return list;
     }
 
 }
