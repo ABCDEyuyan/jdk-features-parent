@@ -50,7 +50,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
             //toSimpleTypeValue方法的实现，是转换出了异常就返回null
             value = WebTypeConverterUtils.toSimpleTypeValue(paramType, request.getParameter(paramName));
             if (value == null && ReflectionUtils.isPrimitive(paramType)) {
-                throw new IllegalArgumentException("不能把null给简单类型");
+                throw new IllegalArgumentException("参数名:" + paramName +" 的值为null，不能把null给简单类型:" + paramType.getName());
             }
 
             if (value==null && parameter.getParameter().isAnnotationPresent(RequestParam.class)) {
