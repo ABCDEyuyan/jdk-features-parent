@@ -71,8 +71,12 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     protected HandlerMethod getHandlerInternal(String requestUrl) {
         HandlerMethod handler=null;
+
         Set<String> keys = handlers.keySet();
-        for (String key : keys) {
+        List<String> patternKeys = new ArrayList<>(keys);
+        Collections.sort(patternKeys,getPathMatcher().getPatternComparator(requestUrl));
+
+        for (String key : patternKeys) {
             if (getPathMatcher().isMatch(key, requestUrl)) {
                 handler = handlers.get(key);
                 break;

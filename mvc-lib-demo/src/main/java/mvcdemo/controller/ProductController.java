@@ -21,14 +21,14 @@ public class ProductController {
         System.out.println("req.getMethod() = " + req.getMethod());
         System.out.println("m1 in proudct------");
     }
-//TODO:解决优先级问题，测试/product/delete时，发现总是访问这个地址
-    //@RequestMapping("/**")
-    public void m2(){
+
+    @RequestMapping("/**")
+    public void wildcardTest(){
         String method = HandlerContext.getContext().getRequest().getMethod();
 
         System.out.println("method = " + method);
 
-        System.out.println("m1 in proudct------");
+        System.out.println("/** 的优先级测试------");
     }
 
     @RequestMapping("/insert")
