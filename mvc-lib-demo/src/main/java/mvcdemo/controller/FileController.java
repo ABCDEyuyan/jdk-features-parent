@@ -27,16 +27,27 @@ public class FileController {
     //方法参数是Part或者MultipartFile
 
     @RequestMapping("/upload")
-    public String upload(MultipartFile multipartFile, Part file) throws Exception {
+    public String upload(MultipartFile multipartFile, Part part) throws Exception {
+        System.out.println("=============简单文件上传测试==============");
+        if (multipartFile == null || part == null) {
+            return "kong";
+        }
+        System.out.println("multipartFile.getName() = " + multipartFile.getName());
+        System.out.println("part.getName() = " + part.getName());
+        System.out.println("multipartFile.getOriginalFilename() = " + multipartFile.getOriginalFilename());
+        System.out.println("part.getSubmittedFileName() = " + part.getSubmittedFileName());
+
         String uploadedFilename = multipartFile.getOriginalFilename();
         Path path = Paths.get("D:/tmp", uploadedFilename);
         multipartFile.transferTo(path);
+
 
         return "ok";
     }
 
     @RequestMapping("/upload2")
     public String upload(MultipartFile[] multipartFile, List<Part> parts) throws Exception {
+        System.out.println("=============复杂文件上传测试==============");
         for (MultipartFile file : multipartFile) {
             String uploadedFilename = file.getOriginalFilename();
             Path path = Paths.get("D:/tmp", uploadedFilename);

@@ -31,7 +31,9 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         //请求中根本没有对应参数名的请求数据时，source可能就是null的，因而objectArray也是空数组
-        Object source = getSource(parameter, request);
+        //这里不直接依据source为null值return结束方法的执行，是因为简单类型参数解析器还需要对这些null值进行一些额外的逻辑处理
+        Object[] source = getSource(parameter, request);
+        //如果source为null，会返回一个长度为0的空数组
         Object[] objectArray = ObjectUtils.toObjectArray(source);
         int length = Array.getLength(objectArray);
         if (isSupportedType(parameter)) {
@@ -52,12 +54,18 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         return null;
     }
 
-
     protected abstract boolean supportsInternal(Class<?> type);
 
     protected abstract Object resolveArgumentInternal(Class<?> type, Object parameterValue,MethodParameter methodParameter) throws Exception;
 
-    protected abstract Object getSource(MethodParameter methodParameter, HttpServletRequest request);
+    /**
+     * 此方法用来获取请求中的数据源的，数据源主要是request.getParameterValues(name)与request.getParts()两大类<br/>
+     * 这里通过这个方法抽象化了2种不同的数据获取方式
+     * @param methodParameter
+     * @param request
+     * @return
+     */
+    protected abstract Object[] getSource(MethodParameter methodParameter, HttpServletRequest request);
 
     private boolean isSupportedType(MethodParameter methodParameter) {
         return supportsInternal(methodParameter.getParamType());
