@@ -66,7 +66,8 @@ public abstract class WebTypeConverterUtils {
         try {
             return typeConverter.convert(requestParamValue);
         } catch (Exception exception) {
-            //出现了转换异常就返回null，交由MethodArgumentResolver去处理这些null的问题，比如赋值为注解指定的默认值
+            // 出异常可能是转换失败，比如不能把字符串转换为整数，把null（request.getParameter获取一个不存在的key时）转换为整数等
+            //所以，这里没有选择抛出异常，而是出现了转换异常就返回null，交由MethodArgumentResolver去处理这些null的问题，比如赋值为注解指定的默认值
             return null;
         }
 
