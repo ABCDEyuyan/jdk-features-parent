@@ -50,7 +50,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
 
 
     private void scanHandleExMethods() {
-        List<Class<?>> classList = MvcContext.getMvcContext().getAllScanedClasses();
+        List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
 
         for (Class<?> clz : classList) {
             Method[] methods = clz.getDeclaredMethods();

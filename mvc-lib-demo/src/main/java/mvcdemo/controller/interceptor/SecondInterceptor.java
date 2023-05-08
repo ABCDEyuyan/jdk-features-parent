@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 public class SecondInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("second 1111---");
+        System.out.println("second pre---");
         return  true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("second 2222---");
+        System.out.println("second post---");
         
     }
 }

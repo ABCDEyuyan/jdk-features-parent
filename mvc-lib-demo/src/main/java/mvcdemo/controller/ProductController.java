@@ -15,16 +15,17 @@ public class ProductController {
 
     @RequestMapping("/simple")
     public JsonViewResult simple(@RequestParam(defaultValue = "100")int id,@RequestParam(defaultValue = "abc",value = "username") String name){
-        System.out.println("简单类型测试");
+        System.out.println("=========简单类型测试============");
         System.out.println("id = " + id);
         System.out.println("name = " + name);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
+
     }
 
     //  http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id3s=300&id3s=400
     @RequestMapping("/simple2")
     public JsonViewResult simple2(Integer[] ids, List<Integer> id2s,int[] id3s){
-        System.out.println("====简单类型数组，list测试-");
+        System.out.println("===============简单类型数组，list测试============");
         System.out.println("ids.length = " + ids.length);
         System.out.println("ids = " + Arrays.toString(ids));
         System.out.println("id2s.size() = " + id2s.size());
@@ -42,14 +43,14 @@ public class ProductController {
 
     @RequestMapping("/api")
     public void m1(HttpServletRequest req){
-        System.out.println("servlet API 参数解析器测试");
+        System.out.println("================servlet API 参数解析器测试==================");
         System.out.println("HandlerContext.getContext().getRequest().hashCode() = " + HandlerContext.getContext().getRequest().hashCode());
 
     }
 
     @RequestMapping("/body")
     public JsonViewResult json(@RequestBody Emp emp){
-        System.out.println("RequestBody的参数解析器测试");
+        System.out.println("====================RequestBody的参数解析器测试 pojo类==================");
         System.out.println("emp = " + emp);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
@@ -57,6 +58,8 @@ public class ProductController {
 
     @RequestMapping("/body2")
     public JsonViewResult json2(@RequestBody List<Emp> emps){
+        System.out.println("====================RequestBody的参数解析器测试 List pojo类==================");
+
         //language=JSON
         String json = "[{\"id\":100,\"name\": \"abc\"},{\"id\": 200,\"name\": \"def\"\n" +
                 "}]";
