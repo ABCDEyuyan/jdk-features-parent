@@ -17,18 +17,21 @@ public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodA
 
     @Override
     protected Object resolveArgumentInternal(Class<?> type, Object parameterValue,MethodParameter methodParameter) throws Exception {
-        Object value =  WebTypeConverterUtils.toSimpleTypeValue(type, parameterValue.toString());
-
-        if (value==null && methodParameter.getParameter().isAnnotationPresent(RequestParam.class)) {
-            String defaultValue = methodParameter.getParameter().getDeclaredAnnotation(RequestParam.class).defaultValue();
-            //用户可能只是利用RequestParam设置了参数名字，没有设置默认值
-            if (!defaultValue.equals(ValueConstants.DEFAULT_NONE)) {
-                value = defaultValue;
+        Object value =  parameterValue;
+        if (value == null) {
+            if ( methodParameter.getParameter().isAnnotationPresent(RequestParam.class)) {
+                String defaultValue = methodParameter.getParameter().getDeclaredAnnotation(RequestParam.class).defaultValue();
+                //用户可能只是利用RequestParam设置了参数名字，没有设置默认值
+                if (!defaultValue.equals(ValueConstants.DEFAULT_NONE)) {
+                    value = defaultValue;
+                }
             }
         }
-
         if (value == null && ReflectionUtils.isPrimitive(type)) {
             throw new IllegalArgumentException("参数名:" + methodParameter.getParamName() +" 的值为null，不能把null给简单类型:" + type);
+        }
+        if (value != null) {
+            value =  WebTypeConverterUtils.toSimpleTypeValue(type, value.toString());
         }
 
         return value;

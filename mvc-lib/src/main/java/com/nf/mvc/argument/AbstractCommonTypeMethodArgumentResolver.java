@@ -20,7 +20,6 @@ import java.util.function.Function;
  * @see MultipartFileMethodArgumentResolver
  * @see SimpleTypeMethodArguementResolver
  */
-//TODO:未完成，还没想清楚时候要写这个类？？
 public abstract class AbstractCommonTypeMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean supports(MethodParameter parameter) {
@@ -31,11 +30,12 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
+        //请求中根本没有对应参数名的请求数据时，source可能就是null的，因而objectArray也是空数组
         Object source = getSource(parameter, request);
         Object[] objectArray = ObjectUtils.toObjectArray(source);
         int length = Array.getLength(objectArray);
         if (isSupportedType(parameter)) {
-           return resolveArgumentInternal(parameter.getParamType(), objectArray[0],parameter);
+           return resolveArgumentInternal(parameter.getParamType(), length==0?null:objectArray[0],parameter);
         } else if (isSupportedTypeArray(parameter)) {
             Object array = Array.newInstance(parameter.getComponentType(), length);
             for (int i = 0; i < length; i++) {
