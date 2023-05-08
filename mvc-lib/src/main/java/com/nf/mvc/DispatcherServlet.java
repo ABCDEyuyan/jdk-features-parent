@@ -81,43 +81,23 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void configHandlerMappings(List<HandlerMapping> handlerMappings,WebMvcConfigurer mvcConfigurer) {
-        /*MvcContext mvcContext = MvcContext.getMvcContext();
-        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
-        List<HandlerMapping> handlerMappings = mvcContext.getHandlerMappings();
-
-        for (HandlerMapping mapping : handlerMappings) {
-            mvcConfigurer.configureHandlerMapping(mapping);
-        }*/
         executeMvcComponentsConfig(handlerMappings,mvcConfigurer::configureHandlerMapping);
     }
 
     protected void configHandlerAdapters(List<HandlerAdapter> handlerAdapters,WebMvcConfigurer mvcConfigurer) {
-    /*    MvcContext mvcContext = MvcContext.getMvcContext();
-        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
-        List<HandlerAdapter> handlerAdapters = mvcContext.getHandlerAdapters();
-
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            mvcConfigurer.configureHandlerAdapter(handlerAdapter);
-        }*/
         executeMvcComponentsConfig(handlerAdapters,mvcConfigurer::configureHandlerAdapter);
     }
 
     protected void configExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers,WebMvcConfigurer mvcConfigurer) {
-    /*    MvcContext mvcContext = MvcContext.getMvcContext();
-        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
-        List<HandlerExceptionResolver> resolvers = mvcContext.getExceptionResolvers();
-        for (HandlerExceptionResolver resolver : resolvers) {
-            mvcConfigurer.configureExceptionResolver(resolver);
-        }*/
         executeMvcComponentsConfig(exceptionResolvers,mvcConfigurer::configureExceptionResolver);
     }
 
     protected void configGlobalCors(CorsConfiguration configuration,WebMvcConfigurer mvcConfigurer) {
-        //先设定默认设置，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
+        // 先设定默认设置，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
         configuration.applyDefaultConfiguration();
         mvcConfigurer.configureCors(configuration);
         // mvcConfigurer.configureCors(configuration) 这行代码你也可以换成像下面这样写
-        //executeMvcComponentsConfig(Arrays.asList(configuration),mvcConfigurer::configureCors);
+        // executeMvcComponentsConfig(Arrays.asList(configuration),mvcConfigurer::configureCors);
     }
 
     private <T> void executeMvcComponentsConfig(List<T> mvcComponents, Consumer<T> consumer) {
