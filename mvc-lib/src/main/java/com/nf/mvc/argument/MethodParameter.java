@@ -44,7 +44,16 @@ public class MethodParameter {
     }
 
     public String getParamName() {
-        return paramName;
+        // 参数上有注解，可能只是用来设置默认值，没有设置value
+        if(getParameter().isAnnotationPresent(RequestParam.class) ){
+            String value = getParameter().getDeclaredAnnotation(RequestParam.class).value();
+            // 没有设置value，value就会保留默认值，这个值我们不采用，仍然用方法的参数名（javassist解析出来的
+            // 如果你有注解，并且设置了value，我们才采用value属性的值作为参数名
+            if (value.equals(ValueConstants.DEFAULT_NONE) == false) {
+                this.paramName = value;
+            }
+        }
+        return this.paramName;
     }
 
     public Method getMethod() {

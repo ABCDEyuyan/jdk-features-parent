@@ -24,27 +24,29 @@ import java.util.function.Function;
 public abstract class AbstractCommonTypeMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean supports(MethodParameter parameter) {
-        return  isSupportedType(parameter) ||
+        return isSupportedType(parameter) ||
                 isSupportedTypeArray(parameter) ||
                 isSupportedTypeList(parameter);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
+        Object source = getSource(parameter, request);
+        Object[] objectArray = ObjectUtils.toObjectArray(source);
+        int length = Array.getLength(objectArray);
         if (isSupportedType(parameter)) {
-            return resolveArgumentInternal(parameter.getParamType(), getSource(request));
+           return resolveArgumentInternal(parameter.getParamType(), objectArray[0],parameter);
         } else if (isSupportedTypeArray(parameter)) {
-            Object source = getSource(request);
-            Object[] objectArray = ObjectUtils.toObjectArray(source);
-            int length = Array.getLength(objectArray);
             Object array = Array.newInstance(parameter.getComponentType(), length);
             for (int i = 0; i < length; i++) {
-                Array.set(array, i, resolveArgumentInternal(parameter.getComponentType(),Array.get(objectArray,i)));
+                Array.set(array, i, resolveArgumentInternal(parameter.getComponentType(), Array.get(objectArray, i),parameter));
             }
             return array;
         } else if (isSupportedTypeList(parameter)) {
             List list = new ArrayList();
-
+            for (int i = 0; i < length; i++) {
+                list.add(resolveArgumentInternal(parameter.getFirstActualTypeArgument(), Array.get(objectArray, i),parameter));
+            }
             return list;
         }
         return null;
@@ -53,9 +55,10 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     protected abstract boolean supportsInternal(Class<?> type);
 
-    protected abstract Object resolveArgumentInternal(Class<?> type, Object parameterValue) throws Exception;
+    protected abstract Object resolveArgumentInternal(Class<?> type, Object parameterValue,MethodParameter methodParameter) throws Exception;
 
-    protected abstract <T> T getSource(HttpServletRequest request);
+    protected abstract Object getSource(MethodParameter methodParameter, HttpServletRequest request);
+
     private boolean isSupportedType(MethodParameter methodParameter) {
         return supportsInternal(methodParameter.getParamType());
     }
