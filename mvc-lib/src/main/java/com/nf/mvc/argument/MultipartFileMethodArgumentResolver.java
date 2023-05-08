@@ -36,7 +36,6 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
     protected Object[] getSource(MethodParameter methodParameter, HttpServletRequest request) {
         Object[] source = null;
         try {
-            //source =  request.getParts().toArray();
             List<Part> matchedParts = new ArrayList<>();
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
@@ -50,19 +49,6 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
             //那么文件类型的参数就直接赋值为null即可，抛异常的话会中断控制器方法的执行
         }
         return source;
-    }
-
-    @Override
-    protected Object getSingleSource(Object[] sources,MethodParameter methodParameter) {
-        Part result = null;
-        for (Object source : sources) {
-            Part part = (Part) source;
-            if (part.getName().equals(methodParameter.getParamName())) {
-                result = part;
-                break;
-            }
-        }
-        return result;
     }
 
     protected boolean isFileType(Class<?> fileType) {

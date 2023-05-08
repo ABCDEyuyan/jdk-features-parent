@@ -42,8 +42,4 @@ public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodA
         return request.getParameterValues(methodParameter.getParamName());
     }
 
-    @Override
-    protected Object getSingleSource(Object[] sources,MethodParameter methodParameter) {
-        return sources[0];
-    }
 }
