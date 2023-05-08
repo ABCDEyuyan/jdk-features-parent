@@ -13,57 +13,24 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
 
-    @RequestMapping("/list")
-    public void m1(HttpServletRequest req){
-
-        System.out.println("req.hashCode() = " + req.hashCode());
-        System.out.println("HandlerContext.getContext().getRequest().hashCode() = " + HandlerContext.getContext().getRequest().hashCode());
-        System.out.println("req.getMethod() = " + req.getMethod());
-        System.out.println("m1 in proudct------");
-    }
-
-    @RequestMapping("/**")
-    public void wildcardTest(){
-        String method = HandlerContext.getContext().getRequest().getMethod();
-
-        System.out.println("method = " + method);
-
-        System.out.println("/** 的优先级测试------");
-    }
-
-    @RequestMapping("/insert")
-    public JsonViewResult insert(int id,String name){
-        //调用业务类，完成数据的插入
-        //ProductServiceImpl.insert(id,name)
-
-        System.out.println("====insert in product-");
+    @RequestMapping("/simple")
+    public JsonViewResult simple(@RequestParam(defaultValue = "100")int id,@RequestParam(defaultValue = "abc",value = "username") String name){
+        System.out.println("简单类型测试");
         System.out.println("id = " + id);
         System.out.println("name = " + name);
-
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
-//  http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id=123&name=abc
-    @RequestMapping("/delete")
-    public JsonViewResult delete(Integer[] ids, List<Integer> id2s,Emp emp){
-        System.out.println("====delete in product-");
+    //  http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id3s=300&id3s=400
+    @RequestMapping("/simple2")
+    public JsonViewResult simple2(Integer[] ids, List<Integer> id2s,int[] id3s){
+        System.out.println("====简单类型数组，list测试-");
         System.out.println("ids.length = " + ids.length);
         System.out.println("ids = " + Arrays.toString(ids));
         System.out.println("id2s.size() = " + id2s.size());
-        System.out.println("emp = " + emp);
+        System.out.println("id3s.length = " + id3s.length);
         id2s.forEach(System.out::println);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
-    }
-
-    @RequestMapping("/page")
-    public JsonViewResult page(@RequestParam("no") int pageNo,
-                                 @RequestParam(defaultValue = "5") String pageSize){
-
-        System.out.println("pageNo = " + pageNo);
-        System.out.println("pageSize = " + pageSize);
-        return new JsonViewResult(new ResponseVO(200,"ok",true));
-
-
     }
 
     @RequestMapping("/complex")
@@ -73,16 +40,22 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",emp));
     }
 
+    @RequestMapping("/api")
+    public void m1(HttpServletRequest req){
+        System.out.println("servlet API 参数解析器测试");
+        System.out.println("HandlerContext.getContext().getRequest().hashCode() = " + HandlerContext.getContext().getRequest().hashCode());
 
-    @RequestMapping("/json")
+    }
+
+    @RequestMapping("/body")
     public JsonViewResult json(@RequestBody Emp emp){
-
+        System.out.println("RequestBody的参数解析器测试");
         System.out.println("emp = " + emp);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
 
-    @RequestMapping("/json2")
+    @RequestMapping("/body2")
     public JsonViewResult json2(@RequestBody List<Emp> emps){
         //language=JSON
         String json = "[{\"id\":100,\"name\": \"abc\"},{\"id\": 200,\"name\": \"def\"\n" +
@@ -92,12 +65,19 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
-    /**因为反序列化是从请求流中读取数据的 */
-    @RequestMapping("/json3")
+    /**是不能像下面这样写的，第二个参数反序列化会爆请求流已关闭的错误，因为反序列化是从请求流中读取数据的 */
+    @RequestMapping("/body3")
     public JsonViewResult json3(@RequestBody Emp emp,@RequestBody List<Emp> emps){
         System.out.println("emp = " + emp);
         System.out.println("emps.size() = " + emps.size());
         emps.forEach(System.out::println);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
+
+    @RequestMapping("/**")
+    public void wildcardTest(){
+        String method = HandlerContext.getContext().getRequest().getMethod();
+        System.out.println("method = " + method);
+        System.out.println("/** 的优先级测试------");
     }
 }
