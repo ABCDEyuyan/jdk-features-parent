@@ -226,10 +226,21 @@ public abstract class ReflectionUtils {
                 isAssignable(Map.class, type);
     }
 
+    public static boolean isList(Class<?> type) {
+        return isAssignable(List.class, type);
+    }
+
+    public static boolean isSet(Class<?> type) {
+        return isAssignable(Set.class, type);
+    }
+
     public static boolean isSimpleTypeCollection(Class<?> collectionType, Class<?> actualTypeParam) {
         return isSimpleCollection(collectionType) && isSimpleType(actualTypeParam);
     }
 
+    public static boolean isSimpleTypeList(Class<?> listType, Class<?> actualTypeParam) {
+        return isList(listType) && isSimpleType(actualTypeParam);
+    }
     /**
      * 如果是Collection以及Map的子类型，就认为是一个集合
      *
@@ -239,11 +250,6 @@ public abstract class ReflectionUtils {
     public static boolean isCollection(Class<?> type) {
         return Collection.class.isAssignableFrom(type) ||
                 Map.class.isAssignableFrom(type);
-    }
-
-    public static boolean isListOrSet(Class<?> type) {
-        return List.class.isAssignableFrom(type) ||
-                Set.class.isAssignableFrom(type);
     }
 
     /**
@@ -329,7 +335,6 @@ public abstract class ReflectionUtils {
 
     /**
      * 此方法是用来获取方法泛型参数的类型实参的
-     *
      * @param parameter
      * @return
      */

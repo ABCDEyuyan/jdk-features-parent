@@ -1,10 +1,10 @@
 package com.nf.mvc.argument;
 
 import com.nf.mvc.util.ObjectUtils;
+import com.nf.mvc.util.ReflectionUtils;
 
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
+import java.util.List;
 import java.util.Objects;
 
 public class MethodParameter {
@@ -15,11 +15,11 @@ public class MethodParameter {
     private int parameterIndex;
     private Class<?> containingClass;
 
-    public MethodParameter(Method method, int parameterIndex,String paramName) {
-        this(method, parameterIndex, paramName,method.getDeclaringClass());
+    public MethodParameter(Method method, int parameterIndex, String paramName) {
+        this(method, parameterIndex, paramName, method.getDeclaringClass());
     }
 
-    public MethodParameter(Method method, int parameterIndex, String paramName,Class<?> containingClass) {
+    public MethodParameter(Method method, int parameterIndex, String paramName, Class<?> containingClass) {
         this.method = method;
         this.parameterIndex = parameterIndex;
         this.paramName = paramName;
@@ -59,8 +59,35 @@ public class MethodParameter {
         return containingClass;
     }
 
+    public boolean isArray() {
+        return getParamType().isArray();
+    }
+
+    public Class<?> getComponentType() {
+        if (isArray()) {
+            return getParamType().getComponentType();
+        }
+        throw new IllegalStateException("不是数组，无法获取组件类型");
+    }
+
+    public Class<?> getFirstActualTypeArgument() {
+        return getActualArguments()[0];
+    }
+
+    public boolean isList() {
+        return ReflectionUtils.isAssignable(List.class, getParamType());
+    }
+
+    /**
+     * 此方法是用来获取方法泛型参数的类型实参的
+     * @return
+     */
+    public  Class[] getActualArguments() {
+        return ReflectionUtils.getActualArgument(getParameter());
+    }
+
     @Override
-    public boolean equals( Object other) {
+    public boolean equals(Object other) {
         //1.自己与其它是同一个（==）对象，那么肯定相等
         if (this == other) {
             return true;
@@ -72,7 +99,7 @@ public class MethodParameter {
         //3.代码到这里，就意味着绝不是同一个对象，但类型是一样的
         //参数位置一样，所在方法一样，所在类一样
         MethodParameter otherParam = (MethodParameter) other;
-        return (getContainingClass() == otherParam.getContainingClass()  &&
+        return (getContainingClass() == otherParam.getContainingClass() &&
                 this.parameterIndex == otherParam.parameterIndex &&
                 this.getMethod().equals(otherParam.getMethod()));
     }

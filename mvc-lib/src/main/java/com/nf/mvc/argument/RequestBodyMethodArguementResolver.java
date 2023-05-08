@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.nf.mvc.util.JacksonUtils.fromJson;
-import static com.nf.mvc.util.JacksonUtils.getObjectMapper;
-import static com.nf.mvc.util.ReflectionUtils.isCollection;
-import static com.nf.mvc.util.ReflectionUtils.isListOrSet;
+import static com.nf.mvc.util.ReflectionUtils.isList;
 
 /**
  * 集合的反序列化参考了文章https://stackoverflow.com/questions/9829403/deserialize-json-to-arraylistpojo-using-jackson
@@ -31,17 +29,12 @@ public class RequestBodyMethodArguementResolver implements MethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         Class<?> paramType = parameter.getParamType();
-        if (isListOrSet(paramType)) {
+        if (isList(paramType)) {
             ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameter().getParameterizedType();
             //假定方法参数是List<Emp>的话，那么下面的actualTypeArgument变量指的就是Emp
             Class<?> actualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-            CollectionType collectionType = null;
-            if (List.class == paramType) {
-                //可以理解为实例化一个集合，比如new ArrayList<Emp>();
-                collectionType = TypeFactory.defaultInstance().constructCollectionType(List.class, actualTypeArgument);
-            } else if (Set.class == paramType) {
-                collectionType = TypeFactory.defaultInstance().constructCollectionType(Set.class, actualTypeArgument);
-            }
+            //可以理解为实例化一个集合，比如new ArrayList<Emp>();
+            CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(List.class, actualTypeArgument);
             return fromJson(request.getInputStream(), collectionType);
         } else {
             return fromJson(request.getInputStream(), paramType);

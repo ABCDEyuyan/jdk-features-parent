@@ -23,12 +23,12 @@ public class ProductController {
     }
 
     @RequestMapping("/**")
-    public void m2(){
+    public void wildcardTest(){
         String method = HandlerContext.getContext().getRequest().getMethod();
 
         System.out.println("method = " + method);
 
-        System.out.println("m1 in proudct------");
+        System.out.println("/** 的优先级测试------");
     }
 
     @RequestMapping("/insert")
@@ -43,7 +43,7 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
-//http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id=123&name=abc
+//  http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id=123&name=abc
     @RequestMapping("/delete")
     public JsonViewResult delete(Integer[] ids, List<Integer> id2s,Emp emp){
         System.out.println("====delete in product-");

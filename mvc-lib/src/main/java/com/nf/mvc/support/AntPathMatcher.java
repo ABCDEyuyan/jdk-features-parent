@@ -140,6 +140,7 @@ public class AntPathMatcher implements PathMatcher{
         return pointer;
     }
 
+    @Override
     public Comparator<String> getPatternComparator(String path) {
         return new AntPatternComparator(path);
     }

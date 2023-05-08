@@ -41,7 +41,7 @@ public class SimpleTypeMethodArguementResolver implements MethodArgumentResolver
             //获取集合泛型参数类型
             ParameterizedType type = (ParameterizedType) parameter.getParameter().getParameterizedType();
             Class<?> genericType = (Class) type.getActualTypeArguments()[0];
-            value = WebTypeConverterUtils.toCollection(paramType, genericType, request.getParameterValues(paramName));
+            value = WebTypeConverterUtils.toSimpleTypeList(paramType, genericType, request.getParameterValues(paramName));
         } else {
             //比如String name,简单类型解析要考虑RequestParam注解
             //如果出现转换异常？比如前端没有传递值，那么转成Integer这种类型就报异常
