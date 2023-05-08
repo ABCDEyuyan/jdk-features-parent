@@ -22,7 +22,7 @@ public class ProductController {
 
     }
 
-    //  http://localhost:8080/mvc/product/delete?ids=1&ids=2&id2s=100&id2s=200&id3s=300&id3s=400
+    //  http://localhost:8080/mvc/product/simple2?ids=1&ids=2&id2s=100&id2s=200&id3s=300&id3s=400
     @RequestMapping("/simple2")
     public JsonViewResult simple2(Integer[] ids, List<Integer> id2s,int[] id3s){
         System.out.println("===============简单类型数组，list测试============");
