@@ -5,8 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.nf.mvc.*;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.AntPathMatcher;
-import com.nf.mvc.support.EqualIgnoreCasePathMatcher;
-import com.nf.mvc.support.EqualPathMatcher;
 import com.nf.mvc.support.PathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +30,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     protected void resolveHandlers(){
-        List<Class<?>> classList = MvcContext.getMvcContext().getAllScanedClasses();
+        List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
 
         for (Class<?> clz : classList) {
             String urlInClass = getUrl(clz);

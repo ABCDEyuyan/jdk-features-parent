@@ -1,9 +1,7 @@
 package com.nf.mvc.mapping;
 
 import com.nf.mvc.HandlerExecutionChain;
-import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.handler.HandlerClass;
-import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
 
@@ -28,7 +26,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
 
     public NameConventionHandlerMapping() {
 
-        List<Class<?>> classList = MvcContext.getMvcContext().getAllScanedClasses();
+        List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
         for (Class<?> clz : classList) {
             //com.FirstController(类的全程）--->FirstController（简单名）
             String simpleName= clz.getSimpleName();
