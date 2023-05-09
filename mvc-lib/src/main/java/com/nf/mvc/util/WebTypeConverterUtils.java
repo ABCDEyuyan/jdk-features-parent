@@ -69,9 +69,9 @@ public abstract class WebTypeConverterUtils {
         try {
             return typeConverter.convert(requestParamValue);
         } catch (Exception exception) {
-            // 出异常可能是转换失败，比如不能把字符串转换为整数，把null（request.getParameter获取一个不存在的key时）转换为整数等
-            //所以，这里没有选择抛出异常，而是出现了转换异常就返回null，交由MethodArgumentResolver去处理这些null的问题，比如赋值为注解指定的默认值
-            return null;
+            // 这里选择抛出异常，因为在简单类型解析器中，只有值不为null并且已经提取了默认值之后才会进行类型转换
+            // 也就是说是有源数据进行类型转换的，如果出现异常，基本就是无法转换的情况，比如字符串转换为整数，所以这里往上抛异常,而不选择return null
+            throw new IllegalArgumentException("无法将数据:[" + requestParamValue + "]转换为类型:" + paramType.getName());
         }
 
     }

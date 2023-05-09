@@ -1,11 +1,10 @@
 package com.nf.mvc.argument;
 
-import com.nf.mvc.util.ObjectUtils;
 import com.nf.mvc.util.ReflectionUtils;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.List;
-import java.util.Objects;
 
 public class MethodParameter {
     private final Method method;
@@ -70,6 +69,17 @@ public class MethodParameter {
 
     public boolean isArray() {
         return getParamType().isArray();
+    }
+
+    public Object getDefaultValue() {
+        if ( getParameter().isAnnotationPresent(RequestParam.class)) {
+            String defaultValue = getParameter().getDeclaredAnnotation(RequestParam.class).defaultValue();
+            //用户可能只是利用RequestParam设置了参数名字，没有设置默认值
+            if (!defaultValue.equals(ValueConstants.DEFAULT_NONE)) {
+                return defaultValue;
+            }
+        }
+        return null;
     }
 
     public Class<?> getComponentType() {

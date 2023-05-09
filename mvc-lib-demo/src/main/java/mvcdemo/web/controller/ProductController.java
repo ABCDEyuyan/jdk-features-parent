@@ -30,7 +30,9 @@ public class ProductController {
         System.out.println("ids = " + Arrays.toString(ids));
         System.out.println("id2s.size() = " + id2s.size());
         System.out.println("id3s.length = " + id3s.length);
+        System.out.println("Arrays.toString(ids) = " + Arrays.toString(ids));
         id2s.forEach(System.out::println);
+        System.out.println("Arrays.toString(id3s) = " + Arrays.toString(id3s));
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
