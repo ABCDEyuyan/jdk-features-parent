@@ -19,6 +19,9 @@ public abstract class WebTypeConverterUtils {
      * web里面的数据都是字符串类型的，要转换的类型也就那么一些固定的简单类型（simpleType），可以采用这种写死的方式，因为没有变化
      * 如果要让mvc框架支持其它新的特定类型，比如MultipartFile这样你自己创造的新类型，那么你就直接添加新的MethodArgumentResolver实现即可
      * 设置一个初始的容量，可以避免一些不必要的多次扩容
+     * </p>
+     *
+     * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite}</p>
      */
 
     private static Map<Class<?>, WebTypeConverter> cachedConverters = new ConcurrentHashMap<>(32);

@@ -96,8 +96,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void configGlobalCors(CorsConfiguration configuration,WebMvcConfigurer mvcConfigurer) {
-        // 先设定默认设置，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
-        configuration.applyDefaultConfiguration();
+        // 不需要再调用默认设置，全局实例化时已经设置过了，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
+        //configuration.applyDefaultConfiguration();
         mvcConfigurer.configureCors(configuration);
         // mvcConfigurer.configureCors(configuration) 这行代码你也可以换成像下面这样写
         // executeMvcComponentsConfig(Arrays.asList(configuration),mvcConfigurer::configureCors);
