@@ -120,11 +120,11 @@ public class SqlExecutor extends AbstractSqlExecutor {
 
     }
 
-    public <T> T insert(String sql, ResultSetHandler<T> rsh, Object... params) throws SQLException {
+    public <T> T insert(String sql, ResultSetHandler<T> rsh, Object... params)  {
         return insert(this.prepareConnection(), true, sql, rsh, params);
     }
 
-    public <T> T insert(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params) throws SQLException {
+    public <T> T insert(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params) {
         return insert(conn, false, sql, rsh, params);
     }
 
