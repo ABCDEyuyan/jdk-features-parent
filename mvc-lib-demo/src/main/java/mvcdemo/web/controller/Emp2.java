@@ -1,4 +1,4 @@
-package mvcdemo.controller;
+package mvcdemo.web.controller;
 
 
 public class Emp2 {

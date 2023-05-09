@@ -1,4 +1,4 @@
-package mvcdemo.controller;
+package mvcdemo.web.controller;
 
 import com.nf.mvc.HandlerAdapter;
 import com.nf.mvc.handler.HandlerMethod;

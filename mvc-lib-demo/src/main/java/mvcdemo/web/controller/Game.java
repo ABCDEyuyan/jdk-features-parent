@@ -1,4 +1,4 @@
-package mvcdemo.controller;
+package mvcdemo.web.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -79,6 +79,12 @@ public class CorsConfiguration {
         setAllowedHeaders(ALL);
     }
 
+    public static CorsConfiguration defaultInstance(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.applyDefaultConfiguration();
+        return corsConfiguration;
+    }
+
     /**
      * 清理默认的跨域设置，orgin是空，允许的方法也不设置，允许的头也没有任何设置
      */

@@ -1,9 +1,7 @@
-package mvcdemo.controller;
+package mvcdemo.web.controller;
 
 import com.nf.mvc.exception.ExceptionHandler;
 import com.nf.mvc.view.JsonViewResult;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)

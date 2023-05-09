@@ -36,7 +36,9 @@ public class DispatcherServlet extends HttpServlet {
     private final List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
     private final List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
-    private final CorsConfiguration corsConfiguration = new CorsConfiguration();
+    // 用这种方式实例化是因为其调用了applyDefaultConfiguration方法，创建出来的对象是有了一些默认设置的
+    // 因为不管有没有配置器对跨域进行定制配置，都要全局进行跨域支持的处理
+    private final CorsConfiguration corsConfiguration =  CorsConfiguration.defaultInstance();
 
     //region 初始化逻辑
     @Override
@@ -73,6 +75,7 @@ public class DispatcherServlet extends HttpServlet {
         configHandlerMappings(MvcContext.getMvcContext().getHandlerMappings(),mvcConfigurer);
         configHandlerAdapters(MvcContext.getMvcContext().getHandlerAdapters(),mvcConfigurer);
         configExceptionResolvers(MvcContext.getMvcContext().getExceptionResolvers(),mvcConfigurer);
+        //由于corsConfiguration对象是有了默认值设置的实例，没有配置器的时候不配置cors也能用默认设置处理跨域
         configGlobalCors(this.corsConfiguration,mvcConfigurer);
     }
 
