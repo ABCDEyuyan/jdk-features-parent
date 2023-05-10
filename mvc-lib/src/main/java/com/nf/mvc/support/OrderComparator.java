@@ -5,10 +5,8 @@ import java.util.Comparator;
 public class OrderComparator<T> implements Comparator<T> {
 
     /**
-     * 自定义组件可以不加注解，不加注解等于其Order值是整数最大值
-     * 如果你加了Order注解，就以注解的指定的值为准
-     *
-     * 如果都不加注解，就是以扫描的顺序为准
+     * 这里的实现要用减号，不要用类似o1Order>o2Order?1:-1这种写法，因为不满足自反性，
+     * 见alibabajava开发手册的说明
      * @param o1
      * @param o2
      * @return

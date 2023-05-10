@@ -4,6 +4,8 @@ import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.*;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
+import com.nf.mvc.exception.LogHandlerExceptionResolver;
+import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.support.HttpHeaders;
@@ -204,8 +206,8 @@ public class DispatcherServlet extends HttpServlet {
 
     protected List<HandlerExceptionResolver> getDefaultExceptionResolvers() {
         List<HandlerExceptionResolver> resolvers = new ArrayList<>();
-        //resolvers.add(new LogHandlerExceptionResolver());
-        //resolvers.add(new PrintStackTraceHandlerExceptionResolver());
+        resolvers.add(new LogHandlerExceptionResolver());
+        resolvers.add(new PrintStackTraceHandlerExceptionResolver());
         resolvers.add(new ExceptionHandlerExceptionResolver());
         return resolvers;
     }
@@ -251,16 +253,7 @@ public class DispatcherServlet extends HttpServlet {
         doService(req, resp);
     }
 
-    /**
-     * 因为我们是模仿spring mvc，mvc里面它只是对Handler的执行进行了
-     * 全局异常的处理，也就是HandlerMapping，HandlerAdapter，以及Handler
-     * 本身的异常才会处理
-     * <p>
-     * 但是render的流程是没有进行异常处理
-     *
-     * @param req
-     * @param resp
-     */
+
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
         HandlerExecutionChain chain;
         HandlerContext context = HandlerContext.getContext();
@@ -276,12 +269,10 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
-            /*spring mvc在这个地方是做了额外的异常处理的
-            下面的代码不应该这些写printStackTrace，这里写上主要是我们开发测试用的*/
+            /* spring mvc在这个地方是做了额外的异常处理的 */
             System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
-            ex.printStackTrace();
         } finally {
-            /*保存到ThreadLoca一定要清掉，所以放在finally是合理的*/
+            /* 保存到ThreadLoca一定要清掉，所以放在finally是合理的 */
             context.clear();
         }
     }
@@ -299,9 +290,9 @@ public class DispatcherServlet extends HttpServlet {
 
             chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
-            /*这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理
-            这个异常处理也只是处理了Handler整个执行层面的异常，
-             视图渲染层面的异常是没有处理的，要处理的话可以在doService方法里处理*/
+            /*
+                这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
+             */
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
         render(req, resp, viewResult);
@@ -319,7 +310,7 @@ public class DispatcherServlet extends HttpServlet {
                 return (ViewResult) result;
             }
         }
-        /*表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出*/
+        /*表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出,会交给doService方法去处理*/
         throw ex;
     }
 
