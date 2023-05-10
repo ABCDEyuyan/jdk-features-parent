@@ -29,8 +29,22 @@ import javax.servlet.http.HttpServletResponse;
  *     如果要调整拦截器的顺序，就在拦截器类上添加{@link com.nf.mvc.support.Order}注解处理，值越大，顺序越靠后，
  *     不指定顺序，所有拦截器顺序是未定的。有一定随机性
  * </p>
+ * <p>
+ *     拦截器不放行（preHandle返回false），后续的Handler也不执行，更不会有渲染处理，那么如何给请求以响应呢？见{@link DispatcherServlet#doDispatch(HttpServletRequest, HttpServletResponse, HandlerExecutionChain)}
+ *     通常是直接利用{@link #preHandle(HttpServletRequest, HttpServletResponse, Object)}方法的response对象来发送响应,比如下面的代码：
+ *     <pre class="code">
+ *         &#64;Override
+ *         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+ *             throws Exception {
+ *                  ResponseVO vo = ...
+ *                  JacksonUtils.toJson(vo);
+ *                  return false;
+ *          }
+ *     </pre>
+ * </p>
  * @see Interceptors
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
+ * @see com.nf.mvc.util.JacksonUtils
  */
 public interface HandlerInterceptor {
     /**

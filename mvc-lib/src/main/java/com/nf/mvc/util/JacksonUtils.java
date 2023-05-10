@@ -12,9 +12,12 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 
 /**
- * 在https://juejin.cn/post/6844904166809157639有对jackson的入门教程
- * https://www.baeldung.com/jackson-serialize-dates(有关于日期的处理教程）
- * https://www.baeldung.com/jackson
+ * <p>
+ *     参考：
+ *     <a href="https://juejin.cn/post/6844904166809157639">jackson的入门教程</a>
+ *     <a href="https://www.baeldung.com/jackson-serialize-dates">日期的处理</a>
+ *     <a href="https://www.baeldung.com/jackson">jackson教程</a>
+ * </p>
  */
 public interface JacksonUtils {
     static ObjectMapper getObjectMapper() {
