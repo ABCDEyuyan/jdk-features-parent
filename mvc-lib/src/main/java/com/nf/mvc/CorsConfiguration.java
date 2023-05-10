@@ -70,7 +70,13 @@ public class CorsConfiguration {
     }
 
     /**
-     * 应用默认的跨域设置，origin设置为*，允许的方法设置GET,POST,DELETE,PUT,OPTIONS,不允许携带私密信息，允许的头部设置为*
+     * 应用默认的跨域设置，设置如下
+     * <ul>
+     *     <li>origin设置为*</li>
+     *     <li>允许的方法设置GET,POST,DELETE,PUT,OPTIONS</li>
+     *     <li>不允许携带私密信息</li>
+     *     <li>允许的头部设置为*</li>
+     * </ul>
      */
     public void applyDefaultConfiguration(){
         setAllowedOrigins(ALL);
