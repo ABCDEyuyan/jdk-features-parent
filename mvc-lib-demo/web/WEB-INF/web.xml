@@ -11,7 +11,7 @@
             <param-name>base-package</param-name>
             <param-value>mvcdemo.web</param-value>
         </init-param>
-        <load-on-startup>111</load-on-startup>
+        <load-on-startup>200</load-on-startup>
         <!--要设置在load-on-startup下面-->
         <multipart-config>
         </multipart-config>

@@ -28,6 +28,61 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * 此类是一个前端控制器，我也喜欢称其为总控器，此Servlet类是请求进入到我们的mvc框架的入口部分。
+ * <h3>基本使用</h3>
+ *<p>
+ *     用户通常应该只配置一个这样的Servlet，虽然理论上你可以配置多个这样的servlet，并且为其url-pattern设置值为：/
+ *     而为了让其支持文件上传，通常也要配置multipart-config，如果想让servlet容器启动时就执行DispatcherServlet的初始化逻辑，
+ *     通常也会配置load-on-startup选项,典型的配置如下:
+   {@code
+            <servlet>
+               <servlet-name>mvcdemo</servlet-name>
+               <servlet-class>com.nf.mvc.DispatcherServlet</servlet-class>
+               <init-param>
+                   <param-name>base-package</param-name>
+                   <param-value>mvcdemo.web</param-value>
+               </init-param>
+               <load-on-startup>200</load-on-startup>
+               <multipart-config>
+               </multipart-config>
+            </servlet>
+
+           <servlet-mapping>
+               <servlet-name>mvcdemo</servlet-name>
+               <url-pattern>/</url-pattern>
+           </servlet-mapping>
+      }
+ </p>
+ <h3>默认组件与自定义组件</h3>
+ <p>
+    整个mvc框架扩展用的组件分为框架提供的默认组件与用户提供的自定义组件，同类型的自定义组件优先级总是高于框架提供的的默认组件的，
+ 同类型的自定义组件的优先级可以通过Order注解调整，默认组件的配置通常通过实现{@link WebMvcConfigurer}接口的方式来调整
+ </p>
+<h3>组件的获取</h3>
+ <p>
+    用户自定义组件是通过类扫描的方式获取的，用户在配置DispatcherServlet的时候通过参数<i>{@code base-package }</i>指定扫描的基础包，
+ 框架会扫描指定包及其子包下的所有类型，并加载到jvm，所以，强烈建议指定的包，只包含web层面的一些组件，不要指定dao，service相关的类所在的包，
+ web层面的类型主要有如下一些类型
+     <ul>
+        <li>用户创建的后端控制器</li>
+        <li>用户创建的拦截器</li>
+        <li>用户创建的WebMvcConfigurer</li>
+     </ul>
+ </p>
+ <h3>核心组件的实例化</h3>
+ <p>
+    核心的mvc框架组件都是在此类的{@link #init(ServletConfig)}方法实例化并完成组合的。可以看任何一个以init开头的方法了解详情，
+    比如{@link #initHandlerMappings()}
+ </p>
+
+ <h3>cors</h3>
+ <p>
+ mvc框架只实现了全局跨域的处理，并没有对某个地址进行单独的跨域处理，所以，跨域的配置是影响到所有的url请求的，
+ 如果你不通过实现WebMvcConfigurer接口的方式配置跨域，那么它会采用默认值，具体的情况见{@link CorsConfiguration#applyDefaultConfiguration()}
+ 方法里面的设置
+ </p>
+ */
 public class DispatcherServlet extends HttpServlet {
     /**
      * 此选项是用来配置要扫描的类所在的基础包的，在DispatcherServlet的init-param里面进行配置
@@ -43,6 +98,31 @@ public class DispatcherServlet extends HttpServlet {
     private final CorsConfiguration corsConfiguration =  CorsConfiguration.defaultInstance();
 
     //region 初始化逻辑
+
+    /**
+     * <p>
+     *     单例：只有一个实例，原型：每次都会实例化一个对象出来。<br/>
+     *     关于单例与原型：
+     *     所有在DispatcherServlet类的初始化时创建出来的对象基本都是单例的，也就是只会实例化一个对象，主要的单例对象如下
+     *     <ol>
+     *        <li>DispatcherServlet</li>
+     *        <li>所有的HandlerMapping，包含默认与定制</li>
+     *        <li>所有的HandlerAdapter，包含默认与定制</li>
+     *        <li>所有的MethodArgumentResolver，包含默认与定制</li>
+     *        <li>所有的HandlerExceptionResolver，包含默认与定制</li>
+     *        <li>所有的定制拦截器HandlerInterceptor，mvc框架没有提供默认的拦截器实现</li>
+     *     </ol>
+     *     常见的原型对象有：
+     *     <ol>
+     *         <li>用户控制器类</li>
+     *         <li>MethodParameter</li>
+     *         <li>HandlerMethod</li>
+     *
+     *     </ol>
+     * </p>
+     * @param config
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());

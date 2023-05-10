@@ -56,6 +56,8 @@ import java.util.Stack;
  * </p>
  */
 public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver {
+    /* 这里添加volatile是为了防止指令重排序与内存可见性的目的添加的，防止new了对象之后还没有初始化完毕就返回，
+      不过jdk4之后这个问题已经修复，可以不用加这个关键字了 */
     private volatile HandlerMethodArgumentResolverComposite resolvers = null;
     @Override
     public boolean supports(MethodParameter parameter) {
@@ -212,18 +214,22 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
 
     /**
      * 此复杂类型的解析器利用其它的解析器来进行数据解析，所以要排除掉自己
+     *
+     * 参数解析器是单例的，但其运行在多线程环境下，下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性
      * @return
      */
-    private synchronized HandlerMethodArgumentResolverComposite getResolvers() {
+    private  HandlerMethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {
-            List<MethodArgumentResolver> argumentResolvers = MvcContext.getMvcContext().getArgumentResolvers();
-            HandlerMethodArgumentResolverComposite result = new HandlerMethodArgumentResolverComposite();
-            for (MethodArgumentResolver argumentResolver : argumentResolvers) {
-                if (!(argumentResolver instanceof ComplexTypeMethodArgumentResolver)) {
-                    result.addResolver(argumentResolver);
+            synchronized (ComplexTypeMethodArgumentResolver.class) {
+                List<MethodArgumentResolver> argumentResolvers = MvcContext.getMvcContext().getArgumentResolvers();
+                HandlerMethodArgumentResolverComposite result = new HandlerMethodArgumentResolverComposite();
+                for (MethodArgumentResolver argumentResolver : argumentResolvers) {
+                    if (!(argumentResolver instanceof ComplexTypeMethodArgumentResolver)) {
+                        result.addResolver(argumentResolver);
+                    }
                 }
+                resolvers = result;
             }
-            resolvers = result;
         }
 
         return resolvers;

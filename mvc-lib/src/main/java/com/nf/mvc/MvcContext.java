@@ -32,7 +32,6 @@ import java.util.List;
  *         <li>获取配置器，通过{@link #getCustomWebMvcConfigurer()}</li>
  *         <li>获取拦截器，通过{@link #getCustomHandlerInterceptors()} }</li>
  *     </ol>
- *
  * </p>
  * @see DispatcherServlet
  */
@@ -83,9 +82,6 @@ public class MvcContext {
      * <p>
      * 目前扫描的是各种各样的类，没有规定只扫描Handler，比如有HandlerMapping，也有HandlerAdapter以及Handler等
      * <p>
-     * //与DispatcherServlet类加载器是同一个
-     * //System.out.println("scanedClass.getClassLoader() = " + scanedClass.getClassLoader());
-     *
      * @param scanResult
      */
     void config(ScanResult scanResult) {
@@ -93,6 +89,8 @@ public class MvcContext {
         ClassInfoList allClasses = scanResult.getAllClasses();
         for (ClassInfo classInfo : allClasses) {
             Class<?> scanedClass = classInfo.loadClass();
+            // 下面的代码是测试用：与DispatcherServlet类加载器是同一个,见DispatcherServlet的init方法被注释的那行代码
+            //System.out.println("scanedClass.getClassLoader() = " + scanedClass.getClassLoader());
             resolveMvcClass(scanedClass);
             allScannedClasses.add(scanedClass);
         }
