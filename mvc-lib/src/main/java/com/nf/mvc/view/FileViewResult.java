@@ -1,21 +1,11 @@
 package com.nf.mvc.view;
 
-import com.nf.mvc.ViewResult;
-import com.nf.mvc.util.FileCopyUtils;
+
 import com.nf.mvc.util.StreamUtils;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
