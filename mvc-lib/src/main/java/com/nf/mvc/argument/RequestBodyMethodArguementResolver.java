@@ -1,18 +1,12 @@
 package com.nf.mvc.argument;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.nf.mvc.MethodArgumentResolver;
-import com.nf.mvc.util.JacksonUtils;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Set;
 
 import static com.nf.mvc.util.JacksonUtils.fromJson;
 import static com.nf.mvc.util.ReflectionUtils.isList;
@@ -28,7 +22,7 @@ public class RequestBodyMethodArguementResolver implements MethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-        Class<?> paramType = parameter.getParamType();
+        Class<?> paramType = parameter.getParameterType();
         if (isList(paramType)) {
             ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameter().getParameterizedType();
             //假定方法参数是List<Emp>的话，那么下面的actualTypeArgument变量指的就是Emp

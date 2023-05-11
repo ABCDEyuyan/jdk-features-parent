@@ -14,7 +14,7 @@ import java.util.List;
  * mvc框架的上下文类，通过此类主要是获取只读的框架类型信息，此类的内容是在{@link DispatcherServlet}
  * 初始化的时候就已经获取并实例化完毕，之后就不在变动了，也就是说这里的这些类型都是单例的
  * <p>
- *     此类是一个单例实现，想获取其实例，调用{@link #getMvcContext()} 即可
+ *     MvcContext类是一个单例实现，想获取其实例，调用{@link #getMvcContext()} 即可
  * </p>
  *
  * <p>
@@ -65,20 +65,8 @@ public class MvcContext {
      * 设置成public修饰符，框架使用者是可以直接修改这个扫描结果,这样不安全，
      * 所以就改成默认修饰符，这样就只能在本包或子包中访问，基本上就是mvc框架内可以访问
      * <p>
-     *  我设计的mvc框架，是有以下几个扩展点:
-     *  <ul>
-     *      <li>DispatcherServlet</li>
-     *      <li>HandlerMapping</li>
-     *      <li>HandlerAdapter</li>
-     *      <li>MethodArgumentResolver</li>
-     *      <li>HandlerExceptionResolver</li>
-     *      <li>ViewResult</li>
-     * </ul>
-     * <p>
-     * 但只有HandlerMapping、HandlerAdapter、MethodArgumentResolver、HandlerExceptionResolver
-     * 这四个接口的实现类是用通过扫描的形式获取的。
-     * <p>
-     * 在整个mvc框架中，这4类组件总是任何定制组件优先于默认组件，定制组件之间可以通过{@link com.nf.mvc.support.Order}注解调整顺序
+     * 在整个mvc框架中，这扩展用的组件总是任何定制组件优先于默认组件，定制组件之间可以通过{@link com.nf.mvc.support.Order}注解调整顺序
+     * </p>
      * <p>
      * 目前扫描的是各种各样的类，没有规定只扫描Handler，比如有HandlerMapping，也有HandlerAdapter以及Handler等
      * <p>
@@ -97,7 +85,7 @@ public class MvcContext {
     }
 
     /**
-     * 解析扫描到的类是否是mvc框架扩展用的类，主要有4类接口的实现类归属于框架扩展类
+     * 解析扫描到的类是否是mvc框架扩展用的类，主要有4类接口的实现类+ViewResult子类归属于框架扩展类
      * @param scannedClass
      */
     private void resolveMvcClass(Class<?> scannedClass) {

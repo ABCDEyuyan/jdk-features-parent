@@ -95,7 +95,7 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
         MethodArgumentResolver resolver = getArgumentResolver(parameter);
         if (resolver == null) {
             throw new IllegalArgumentException("不支持的参数类型 [" +
-                    parameter.getParamType() + "]. supportsParameter 方法应该先调用");
+                    parameter.getParameterType() + "]. supportsParameter 方法应该先调用");
         }
         return resolver.resolveArgument(parameter, request);
 

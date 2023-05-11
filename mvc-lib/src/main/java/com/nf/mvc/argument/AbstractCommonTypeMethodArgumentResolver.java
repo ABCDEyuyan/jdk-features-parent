@@ -36,7 +36,7 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         Object[] objectArray = ObjectUtils.toObjectArray(source);
         int length = Array.getLength(objectArray);
         if (isSupportedType(parameter)) {
-            return resolveArgumentInternal(parameter.getParamType(), length == 0 ? null : objectArray[0], parameter);
+            return resolveArgumentInternal(parameter.getParameterType(), length == 0 ? null : objectArray[0], parameter);
         } else if (isSupportedTypeArray(parameter)) {
             //如果数据源为null，那么length就=0，那么array就是一个长度为0的数组，并不会进入到循环里面执行真正的参数处理
             Object array = Array.newInstance(parameter.getComponentType(), length);
@@ -68,7 +68,7 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
     protected abstract Object[] getSource(MethodParameter methodParameter, HttpServletRequest request);
 
     private boolean isSupportedType(MethodParameter methodParameter) {
-        return supportsInternal(methodParameter.getParamType());
+        return supportsInternal(methodParameter.getParameterType());
     }
 
     private boolean isSupportedTypeArray(MethodParameter methodParameter) {

@@ -28,14 +28,17 @@ public class HandlerMethod extends HandlerClass {
         this(handlerMethod.getDeclaringClass(), handlerMethod);
     }
 
-    public HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
-        super(handlerClass);
-        this.handlerMethod = handlerMethod;
-        initMethodParameters();
+    public HandlerMethod(Object handlerObject, Method handlerMethod) {
+        this(handlerObject.getClass(), handlerMethod);
     }
 
-    private HandlerMethod(Object handlerObject, Method handlerMethod) {
-        super(handlerObject);
+    /**
+     * 这个构造函数几乎不会被用到，直接用第一个构造函数更方便
+     * @param handlerClass
+     * @param handlerMethod
+     */
+    public HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
+        super(handlerClass);
         this.handlerMethod = handlerMethod;
         initMethodParameters();
     }
@@ -53,7 +56,6 @@ public class HandlerMethod extends HandlerClass {
     public String getMethodName() {
         return handlerMethod.getName();
     }
-
 
     public Method getHandlerMethod() {
         return handlerMethod;

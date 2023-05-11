@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 public class ServletApiMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean supports(MethodParameter parameter) {
-        Class<?> paramType = parameter.getParamType();
+        Class<?> paramType = parameter.getParameterType();
         return HttpServletRequest.class.isAssignableFrom(paramType)||
                 HttpServletResponse.class.isAssignableFrom(paramType)||
                 HttpSession.class.isAssignableFrom(paramType)||
@@ -30,7 +30,7 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-        Class<?> paramType = parameter.getParamType();
+        Class<?> paramType = parameter.getParameterType();
         HandlerContext context = HandlerContext.getContext();
         if (HttpServletRequest.class.isAssignableFrom(paramType)) {
             return request;
@@ -39,12 +39,13 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
             return context.getResponse();
         }
         if (HttpSession.class.isAssignableFrom(paramType)) {
-           // return request.getSession();//这样可以
+           // return request.getSession();//这样也可以
             return context.getSession();
         }
         if (ServletContext.class.isAssignableFrom(paramType)) {
             return request.getServletContext();
         }
+        // 不会走到这里，因为supports方法返回true才会调用resolveArgument方法
         return null;
     }
 }

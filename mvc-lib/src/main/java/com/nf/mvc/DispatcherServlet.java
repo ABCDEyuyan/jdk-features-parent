@@ -58,7 +58,20 @@ import java.util.function.Consumer;
  * <h3>默认组件与自定义组件</h3>
  * <p>
  * 整个mvc框架扩展用的组件分为框架提供的默认组件与用户提供的自定义组件，同类型的自定义组件优先级总是高于框架提供的的默认组件的，
- * 同类型的自定义组件的优先级可以通过Order注解调整，默认组件的配置通常通过实现{@link WebMvcConfigurer}接口的方式来调整
+ * 同类型的自定义组件的优先级可以通过Order注解调整。<br/>
+ * 整个Mvc框架管理有7大组件，其中前4大组件是只要编写对应的实现类，放置在项目中即可，Mvc框架通过类扫描的方式获取并应用到框架上，不需要再在别的地方使用或配置，
+ * 而第五大组件ViewResult，用户通常采用继承此类来扩展Mvc框架的能力，并应用在控制器方法的返回值上，第6类组件是用来对Mvc框架内置的5大组件(HandlerMapping,HandlerAdapter,
+ * MethodArgumentResolver,HandlerExceptionResolver,CorsConfiguration)进行配置用的，最后一个拦截器组件，是用户用来编写项目的拦截相关的业务使用，
+ * 比如实现验证方面的拦截器
+ * <ul>
+ *     <li>{@link HandlerMapping}</li>
+ *     <li>{@link HandlerAdapter}</li>
+ *     <li>{@link MethodArgumentResolver}</li>
+ *     <li>{@link HandlerExceptionResolver}</li>
+ *     <li>{@link ViewResult}</li>
+ *     <li>{@link WebMvcConfigurer}</li>
+ *     <li>{@link HandlerInterceptor}</li>
+ * </ul>
  * </p>
  * h3>组件的获取</h3>
  * <p>
@@ -74,7 +87,7 @@ import java.util.function.Consumer;
  * <h3>核心组件的实例化</h3>
  * <p>
  *   核心的mvc框架组件都是在此类的{@link #init(ServletConfig)}方法实例化并完成组合的。可以看任何一个以init开头的方法了解详情，
- *   比如{@link #initHandlerMappings()}
+ *   比如{@link #initHandlerMappings()},7大被Mvc框架处理的组件都要求必须有默认构造函数
  * </p>
  * <h3>初始化处理</h3>
  * <p>
@@ -111,6 +124,11 @@ import java.util.function.Consumer;
  *  如果你不通过实现WebMvcConfigurer接口的方式配置跨域，那么它会采用默认值，具体的跨域配置情况见{@link CorsConfiguration#applyDefaultConfiguration()}
  *  方法里面的设置
  *  </p>
+ * @see MvcContext
+ * @see HandlerMapping
+ * @see HandlerAdapter
+ * @see HandlerExecutionChain
+ * @see HandlerExceptionResolver
  */
 public class DispatcherServlet extends HttpServlet {
     /**

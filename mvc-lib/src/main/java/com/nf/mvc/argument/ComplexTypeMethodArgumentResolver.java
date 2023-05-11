@@ -61,7 +61,7 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
     private volatile HandlerMethodArgumentResolverComposite resolvers = null;
     @Override
     public boolean supports(MethodParameter parameter) {
-        Class<?> paramType = parameter.getParamType();
+        Class<?> paramType = parameter.getParameterType();
         return ReflectionUtils.isComplexProperty(paramType);
     }
 
@@ -77,7 +77,7 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
         */
 
         Stack<String> prefixStack = new Stack<>();
-        Object bean = ReflectionUtils.newInstance(parameter.getParamType());
+        Object bean = ReflectionUtils.newInstance(parameter.getParameterType());
         populateBean(bean, request, prefixStack);
         return bean;
     }
@@ -203,8 +203,8 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
     private Object resolveArgument(MethodParameter parameter, HttpServletRequest request, Stack<String> prefixStack) throws Exception {
         if (getResolvers().supports(parameter)) {
             return getResolvers().resolveArgument(parameter, request);
-        } else if (ReflectionUtils.isComplexProperty(parameter.getParamType())) {
-            Object bean = ReflectionUtils.newInstance(parameter.getParamType());
+        } else if (ReflectionUtils.isComplexProperty(parameter.getParameterType())) {
+            Object bean = ReflectionUtils.newInstance(parameter.getParameterType());
             populateBean(bean, request, prefixStack);
             return bean;
         }

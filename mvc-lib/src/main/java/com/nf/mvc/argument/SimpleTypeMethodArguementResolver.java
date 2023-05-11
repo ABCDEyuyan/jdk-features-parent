@@ -29,7 +29,7 @@ public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodA
         }
         // 如果值还是null并且参数类型是简单类型，简单类型不能赋值为null，所以抛异常
         if (value == null && ReflectionUtils.isPrimitive(type)) {
-            throw new IllegalArgumentException("参数名:" + methodParameter.getParamName() +" 的值为null，不能把null给简单类型:" + type);
+            throw new IllegalArgumentException("参数名:" + methodParameter.getParameterName() +" 的值为null，不能把null给简单类型:" + type);
         }
         // 值不为null才进行类型转换，这个值可能是从请求端获取的，也可能是默认值提供的。转换是可能失败的，这里是可能抛异常的
         if (value != null) {
@@ -41,7 +41,7 @@ public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodA
 
     @Override
     protected Object[] getSource(MethodParameter methodParameter,HttpServletRequest request) {
-        return request.getParameterValues(methodParameter.getParamName());
+        return request.getParameterValues(methodParameter.getParameterName());
     }
 
 }
