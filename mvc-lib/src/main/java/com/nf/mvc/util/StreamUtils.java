@@ -27,10 +27,13 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public abstract class StreamUtils {
-
+    public static final String APPLICATION_OCTET_STREAM_VALUE = "application/octet-stream";
     public static final int BUFFER_SIZE = 4096;
 
     private static final byte[] EMPTY_CONTENT = new byte[0];
@@ -146,5 +149,16 @@ public abstract class StreamUtils {
 
     public static InputStream emptyInput() {
         return new ByteArrayInputStream(EMPTY_CONTENT);
+    }
+
+    public static InputStream getInputStreamFromRealPath(String realPath) {
+        InputStream inputStream ;
+        try {
+            Path path = Paths.get(realPath);
+            inputStream = Files.newInputStream(path);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("路径可能不对:" + realPath + " 无法生成输入流", e);
+        }
+        return inputStream;
     }
 }

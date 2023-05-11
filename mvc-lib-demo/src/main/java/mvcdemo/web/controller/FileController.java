@@ -5,15 +5,16 @@ import com.nf.mvc.file.MultipartFile;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.FileViewResult;
 import com.nf.mvc.view.JsonViewResult;
+import com.nf.mvc.view.StreamViewResult;
 
 import javax.servlet.http.Part;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.nf.mvc.handler.HandlerHelper.file;
-import static com.nf.mvc.handler.HandlerHelper.json;
+import static com.nf.mvc.handler.HandlerHelper.*;
 
 public class FileController {
     @RequestMapping("/download")
@@ -22,7 +23,11 @@ public class FileController {
         return file(realPath);
     }
 
-
+    @RequestMapping("/stream")
+    public StreamViewResult streamDownload(String filename) {
+        String realPath ="e:/Image/"+filename;
+        return stream(realPath);
+    }
     //一定要对Dispatcherservlet设置multipart config
     //方法参数是Part或者MultipartFile
 

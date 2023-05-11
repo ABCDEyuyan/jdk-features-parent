@@ -1,9 +1,15 @@
 package com.nf.mvc.view;
 
 import com.nf.mvc.ViewResult;
+import com.nf.mvc.util.ObjectUtils;
+import com.nf.mvc.util.StreamUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 此类主要是用来响应流，比如给一个图片的url，直接响应图片的字节数据，以便一个图片能正确显示，比如
@@ -13,39 +19,40 @@ import javax.servlet.http.HttpServletResponse;
  * TODO:注意：此类不仅仅是为了图片显示设计的，还可以有其它功能
  */
 public class StreamViewResult extends ViewResult {
-    @Override
-    public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    private  Map<String, String> headers ;
+    private InputStream inputStream;
 
+    public StreamViewResult(InputStream inputStream) {
+        this(inputStream, new HashMap<>());
     }
-}
 
-/*
-private InputStream inputStream;
-    private Map<String, String> headers;
-    private int bufferSize = 2048;
-
-    public SteamView(InputStream inputStream, Map<String, String> headers) {
+    public StreamViewResult(InputStream inputStream, Map<String, String> headers) {
         this.inputStream = inputStream;
         this.headers = headers;
     }
 
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
+    @Override
+    public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        writeContentType(resp);
+        writeHeaders(resp);
+        writeContent(resp);
     }
 
-    @Override
-    protected void render(WebParam param) throws ServletException, IOException {
-        HttpServletResponse response = param.getResponse();
-        response.setContentType("application/octet-stream");
-        headers.forEach((name, value) -> response.setHeader(name, value));
-        try(BufferedInputStream bis = new BufferedInputStream(inputStream)) {
-            OutputStream os = response.getOutputStream();
-            int len = 0;
-            byte[] bytes = new byte[bufferSize];
-            while((len = bis.read(bytes, 0, bytes.length)) != -1){
-                os.write(bytes, 0, len);
-            }
+    protected void writeContentType(HttpServletResponse resp) throws Exception{
+        resp.setContentType(StreamUtils.APPLICATION_OCTET_STREAM_VALUE);
+    }
+
+    protected void writeHeaders(HttpServletResponse resp) throws Exception {
+        if (ObjectUtils.isEmpty(headers)) {
+            return;
+        }
+        headers.forEach((k,v)-> resp.setHeader(k,v));
+    }
+
+    protected void writeContent(HttpServletResponse resp) throws Exception {
+        try (InputStream input = this.inputStream; OutputStream output = resp.getOutputStream()) {
+            StreamUtils.copy(input, output);
         }
     }
 
- */
+}
