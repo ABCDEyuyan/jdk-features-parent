@@ -71,8 +71,8 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
                     handleResult = method.invoke(instance, exposedException);
                     return adaptHandlerResult(handleResult);
                 } catch (Exception e) {
-                    /* 进入到这里就是异常处理方法本身的执行出了错，catch里什么都不干，相当于吞掉异常处理本身的异常，
-                    说明异常处理方法无法正确的处理异常，也就是说本异常解析器无法处理异常，这样，通过返回null的形式，
+                    /* 进入到这里就是异常处理方法本身的执行出了错，catch里什么都不干，相当于吞掉异常处理方法本身的异常，
+                    异常处理方法无法正确的处理异常，也就是说本异常解析器无法处理异常，这样，通过返回null的形式，
                     就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递的第四个参数的值 */
                     return null;
                 }
