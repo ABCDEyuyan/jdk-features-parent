@@ -3,6 +3,7 @@ package com.nf.mvc.argument;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.util.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -137,6 +138,10 @@ public class MethodParameter {
      */
     public  Class[] getActualArguments() {
         return ReflectionUtils.getActualArgument(getParameter());
+    }
+
+    public  boolean isPresent(Class<? extends Annotation> annotationClass){
+        return getParameter().isAnnotationPresent(annotationClass);
     }
 
     public Object getDefaultValue() {

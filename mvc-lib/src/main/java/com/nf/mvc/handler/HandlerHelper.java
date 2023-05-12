@@ -1,17 +1,24 @@
 package com.nf.mvc.handler;
 
-import com.nf.mvc.ViewResult;
 import com.nf.mvc.util.StreamUtils;
 import com.nf.mvc.view.*;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 此类主要是给用户编写的控制用的一些便利方法，利用java的静态方法导入的形式使用，
+ * 利用这些方法，方便创建ViewResult对象，典型的使用方法如下：
+ * <pre class="code">
+ *   import static com.nf.mvc.handler.HandlerHelper.json
+ *   public class SomeController{
+ *      public ViewResult json(...){
+ *          return json(new ResponseVO(...));
+ *      }
+ *    }
+ * </pre>
+ */
 public class HandlerHelper {
     public static VoidViewResult empty() {
         return new VoidViewResult();
