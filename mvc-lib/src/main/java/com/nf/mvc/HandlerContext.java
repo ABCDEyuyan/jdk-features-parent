@@ -1,5 +1,7 @@
 package com.nf.mvc;
 
+import com.nf.mvc.argument.MethodParameter;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,11 +13,13 @@ import javax.servlet.http.HttpSession;
  *
  * <p>
  *     设计这个类出来主要是演示在多线程执行情况下，不同请求有不同request与response怎么保存的问题。
- *     这个类在此mvc框架中并不是一定要有的，更多的是一种技术演示的作用
+ *     此类主要是通过ThreadLocal来实现，让每一个请求线程都保存一份线程独有的HandlerContext，进而也就保存了request，response等对象
  *     存储在ThreadLocal中的对象一定要记得删除，以防止内存泄漏的问题，这点见{@link DispatcherServlet#doService(HttpServletRequest, HttpServletResponse)}
  *     finally代码块
  * </p>
  *
+ * <p>此类除了演示多线程情况下，怎么保存独属于当前线程的对象这种技术外，此类还是有必要存在的，比如在Servlet API
+ * 参数解析器中获取response对象，见{@link com.nf.mvc.argument.ServletApiMethodArgumentResolver#resolveArgument(MethodParameter, HttpServletRequest)}</p>
  * <p>
  *     框架内使用方式如下：
  *     <pre class="code">

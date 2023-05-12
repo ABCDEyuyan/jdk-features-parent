@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * 此解析器主要是用来解析常见的Servlet相关的类型，比如HttpServletRequest，HttpSession等
+ * @see HandlerContext
+ */
 public class ServletApiMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean supports(MethodParameter parameter) {
@@ -22,7 +26,6 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
      * 参数解析，是从请求中获取数据的，所以方法设计没有response对象是合理的
      * 但这样给我们带来一个解析的问题，无法获取到response对象
      * request与response对象必须来自于DispatcherServlet的service
-     *
      * @param parameter
      * @param request
      * @return
@@ -45,7 +48,7 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
         if (ServletContext.class.isAssignableFrom(paramType)) {
             return request.getServletContext();
         }
-        // 不会走到这里，因为supports方法返回true才会调用resolveArgument方法
+        // 一般不会走到这里，因为supports方法返回true才会调用resolveArgument方法
         return null;
     }
 }

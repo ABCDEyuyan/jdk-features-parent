@@ -5,7 +5,6 @@ import com.nf.mvc.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.List;
 
 /**
  * 此类是某个方法的某一个参数的封装类，里面主要封装了
@@ -16,13 +15,17 @@ import java.util.List;
  *     <li>参数在方法中的位置，以0开头:{@link #getParameterIndex()} ()}</li>
  *     <li>参数所在方法所在的类:{@link #getContainingClass()} ()} ()}</li>
  * </ul>
+ * <h3>关于参数名</h3>
+ * <p>优先以RequestParam注解指定的值为准，如果没有指定，就以反射获取的名字为准，
+ * 方法{@link #getParameter()}实现了这个逻辑。所以，所有的方法参数解析器都支持注解指定的参数名方式，
+ * 而RequestParam注解指定的默认值，并没有写在这个类里面，是因为默认值并不是对所有的参数解析器有用，默认值主要是针对简单类型有用</p>
  * <h3>hashCode与equals的重写</h3>
  * <p>
  *     这个类之所以重写这些内容是因为参数类型对应的解析器我进行了缓存的处理，而缓存又是以此类型作为key值的。
  * </p>
  * <h3>isList与isArray</h3>
  * <p>
- *     关于这两类方法及其相关的方法放在这里的原因是，本mvc框架对参数进行解析的时候，主要只支持T,T[],List<T>这三种情况，
+ *     关于这两个方法及其相关的方法放在这里的原因是，本mvc框架对参数进行解析的时候，主要只支持T,T[],List<T>这三种情况，
  *     放在这里便于解析器调用，也不存在非常不合理的逻辑
  * </p>
  * <h3>为什么不持有HandlerMethod，而是持有Method</h3>
@@ -35,6 +38,7 @@ import java.util.List;
  * @see com.nf.mvc.MethodArgumentResolver
  * @see com.nf.mvc.support.MethodInvoker
  * @see HandlerMethod
+ * @see RequestParam
  */
 public class MethodParameter {
     private final Method method;
@@ -116,7 +120,7 @@ public class MethodParameter {
     }
 
     public boolean isList() {
-        return ReflectionUtils.isAssignable(List.class, getParameterType());
+        return ReflectionUtils.isList( getParameterType());
     }
 
     /**
@@ -132,9 +136,6 @@ public class MethodParameter {
      * @return
      */
     public  Class[] getActualArguments() {
-        if (!isList()) {
-            throw new IllegalStateException("方法参数是List<T>这样的形式获取实参才有意义,请确保参数是一个List类型");
-        }
         return ReflectionUtils.getActualArgument(getParameter());
     }
 

@@ -4,11 +4,12 @@ import com.nf.mvc.util.ReflectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ArgumentTest {
     private Map<String, String> requestMap;
@@ -79,4 +80,16 @@ public class ArgumentTest {
         System.out.println("i = " + i);
     }
 //endregion
+@Test()
+public void testGeneric() throws Exception {
+    Class<SomeController> controllerClass = SomeController.class;
+    Method m2 = controllerClass.getDeclaredMethod("m2", List.class);
+    Parameter parameter = m2.getParameters()[0];
+
+    System.out.println("ReflectionUtils.isAssignable(List.class,parameter.getType()) = " + ReflectionUtils.isAssignable(List.class, parameter.getType()));
+    Class[] actualArguments = ReflectionUtils.getActualArgument(parameter);
+    for (Class argument : actualArguments) {
+        System.out.println("argument = " + argument);
+    }
+}
 }
