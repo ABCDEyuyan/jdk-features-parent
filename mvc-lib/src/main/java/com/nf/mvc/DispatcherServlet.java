@@ -368,7 +368,6 @@ public class DispatcherServlet extends HttpServlet {
             throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它扩展组件所在的包---");
         }
         return StringUtils.split(pkg, Delimiters.Common.getPattern()).toArray(new String[]{});
-
     }
 
     //endregion

@@ -1,5 +1,6 @@
 package com.nf.mvc.util;
 
+import javax.servlet.ServletConfig;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +18,9 @@ import java.util.stream.Collectors;
  * </pre>
  * 组合使用是一种或者的关系，意味着字符串中只要出现了组合的模式中的任意成员都会进行拆分操作
  * </p>
+ * <p>具体的使用地方见{@link com.nf.mvc.DispatcherServlet#getBasePackages(ServletConfig)}</p>
  * @see StringUtils
+ * @see com.nf.mvc.DispatcherServlet
  */
 public enum Delimiters {
     Comma(",+","逗号分隔符"),
