@@ -11,6 +11,7 @@ import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.support.HttpHeaders;
 import com.nf.mvc.support.HttpMethod;
 import com.nf.mvc.util.CorsUtils;
+import com.nf.mvc.util.Delimiters;
 import com.nf.mvc.util.ScanUtils;
 import com.nf.mvc.util.StringUtils;
 import io.github.classgraph.ScanResult;
@@ -198,9 +199,9 @@ public class DispatcherServlet extends HttpServlet {
         //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());
 
         //获取要扫描的类所在的基础包的名字
-        String basePackage = getBasePackage(config);
+        String[] basePackages = getBasePackages(config);
         //去执行类扫描的功能
-        ScanResult scanResult = ScanUtils.scan(basePackage);
+        ScanResult scanResult = ScanUtils.scan(basePackages);
         /*
             initMvc与configMvc方法设置为private final是为了阻止子类重写，因为mvc组件的处理是有先后顺序要求的，
             比如Adapter组件初始化时，是需要参数解析器初始化完毕的，子类要变更初始化逻辑，只需要重写单独的某个init方法即可
@@ -361,12 +362,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
 
-    private String getBasePackage(ServletConfig config) {
+    private String[] getBasePackages(ServletConfig config) {
         String pkg = config.getInitParameter(BASE_PACKAGE);
         if (pkg == null || pkg.isEmpty()) {
             throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它扩展组件所在的包---");
         }
-        return pkg;
+        return StringUtils.split(pkg, Delimiters.Common.getPattern()).toArray(new String[]{});
+
     }
 
     //endregion
