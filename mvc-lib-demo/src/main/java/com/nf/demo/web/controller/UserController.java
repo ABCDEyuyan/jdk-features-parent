@@ -21,7 +21,7 @@ public class UserController {
         if (valid) {
             return json(new ResponseVO(200, "ok", username));
         }else{
-            return json(new ResponseVO(500, "no", null));
+            return json(new ResponseVO(500, "error", null));
         }
     }
 
