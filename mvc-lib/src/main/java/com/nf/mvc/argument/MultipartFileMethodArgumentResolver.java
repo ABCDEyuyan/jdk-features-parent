@@ -1,17 +1,12 @@
 package com.nf.mvc.argument;
 
-import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.file.MultipartFile;
 import com.nf.mvc.file.StandardMultipartFile;
-import com.nf.mvc.util.FileCopyUtils;
-import com.nf.mvc.util.ObjectUtils;
-import com.nf.mvc.util.ReflectionUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +34,7 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
             List<Part> matchedParts = new ArrayList<>();
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
-                if (part.getName().equals(methodParameter.getParamName())) {
+                if (part.getName().equals(methodParameter.getParameterName())) {
                     matchedParts.add(part);
                 }
             }

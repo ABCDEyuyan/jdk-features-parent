@@ -10,13 +10,13 @@ import java.util.Map;
 public class RedirectViewResult extends ViewResult {
 
     private String url;
-    private Map<String,Object> model;
+    private Map<String,String> model;
 
     public RedirectViewResult(String url) {
         this(url, new HashMap<>());
     }
 
-    public RedirectViewResult(String url, Map<String, Object> model) {
+    public RedirectViewResult(String url, Map<String, String> model) {
         this.url = url;
         this.model = model;
     }
@@ -26,13 +26,13 @@ public class RedirectViewResult extends ViewResult {
         this.url += initModel();
         resp.sendRedirect(url);
     }
-
+//TODO:用StringJoiner更好？
     private  String initModel(){
         //ur?a=10&b=20
         if(model.size()==0) return "";
 
         StringBuilder builder = new StringBuilder("?");
-        for (Map.Entry<String, Object> entry : model.entrySet()) {
+        for (Map.Entry<String, String> entry : model.entrySet()) {
             builder.append(entry.getKey());
             builder.append("=");
             builder.append(entry.getValue());

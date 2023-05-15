@@ -12,6 +12,9 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * <p>此类利用caffeine进行了缓存实现，缓存实现的详细介绍见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite}</p>
+ */
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private static final PathMatcher defaultPathMatcher = new AntPathMatcher.Builder().build();

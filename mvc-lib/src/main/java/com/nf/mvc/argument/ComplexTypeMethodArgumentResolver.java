@@ -9,13 +9,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * 这是一个复杂类型的参数解析器，所谓的复杂类型就是通常我们编写的pojo类，<br/>
  * 此解析器支持嵌套bean的解析，数据源的key是属性名，用句号分隔，类似于el表达式的写法
  * <p>
  *     此复杂类型的解析逻辑是遍历其所有的setter方法，如果setter方法的参数是其它解析器可以解析的，就交给其它解析器解析，
- *     如果其它解析器不支持，比如仍然是一个复杂的pojo类型，就又交给本解析器进行递归处理。<br/>
+ *     如果其它解析器不支持，比如仍然是一个复杂的pojo类型，就又交给本解析器进行递归解析处理。见{@link #getResolvers()}<br/>
  *     所以，本解析器本质上只负责复杂类型的实例化,并利用其它解析器解析内部的简单类型的属性以填充此复杂类型的实例
  * </p>
  * <p>
@@ -54,28 +55,31 @@ import java.util.Stack;
  *
  * </pre>
  * </p>
+ * <p>强烈建议：此解析器应该是整个解析器链的最后一个解析器</p>
+ * <p>此类也利用了{@link HandlerMethodArgumentResolverComposite}类进行了自定义的解析器组合，
+ * 先利用这个解析器组合进行解析，解析不了就交给本类解析</p>
+ * <p>
+ *     这里也演示了多线程环境下单例模式的使用，以避免重复的创建自定义解析器组合。具体见{@link #getResolvers()},
+ *     需要注意的是本类也是单例模式下运行的
+ * </p>
+ * @see HandlerMethodArgumentResolverComposite
+ * @see MethodArgumentResolver
  */
 public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver {
+    /* 这里添加volatile是为了防止指令重排序与内存可见性的目的添加的，防止new了对象之后还没有初始化完毕就返回，
+      不过jdk4之后这个问题已经修复，可以不用加这个关键字了 */
     private volatile HandlerMethodArgumentResolverComposite resolvers = null;
     @Override
     public boolean supports(MethodParameter parameter) {
-        Class<?> paramType = parameter.getParamType();
+        Class<?> paramType = parameter.getParameterType();
         return ReflectionUtils.isComplexProperty(paramType);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-        /*
-        //BeanUtils来自于Apache的commons-beanutils工具包
-        //如果你不想用BeanUtils实现，你可以用之前学过的Introspector
-        Class<?> paramType = parameter.getParamType();
-        Object instance = ReflectionUtils.newInstance(paramType);
-        BeanUtils.populate(instance,request.getParameterMap());
-        return instance;
-        */
 
         Stack<String> prefixStack = new Stack<>();
-        Object bean = ReflectionUtils.newInstance(parameter.getParamType());
+        Object bean = ReflectionUtils.newInstance(parameter.getParameterType());
         populateBean(bean, request, prefixStack);
         return bean;
     }
@@ -201,29 +205,27 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
     private Object resolveArgument(MethodParameter parameter, HttpServletRequest request, Stack<String> prefixStack) throws Exception {
         if (getResolvers().supports(parameter)) {
             return getResolvers().resolveArgument(parameter, request);
-        } else if (ReflectionUtils.isComplexProperty(parameter.getParamType())) {
-            Object bean = ReflectionUtils.newInstance(parameter.getParamType());
+        } else  {
+            Object bean = ReflectionUtils.newInstance(parameter.getParameterType());
             populateBean(bean, request, prefixStack);
             return bean;
         }
-        return null;
-
     }
 
     /**
      * 此复杂类型的解析器利用其它的解析器来进行数据解析，所以要排除掉自己
+     *
+     * 参数解析器是单例的，但其运行在多线程环境下，下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性
      * @return
      */
-    private synchronized HandlerMethodArgumentResolverComposite getResolvers() {
+    private  HandlerMethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {
-            List<MethodArgumentResolver> argumentResolvers = MvcContext.getMvcContext().getArgumentResolvers();
-            HandlerMethodArgumentResolverComposite result = new HandlerMethodArgumentResolverComposite();
-            for (MethodArgumentResolver argumentResolver : argumentResolvers) {
-                if (!(argumentResolver instanceof ComplexTypeMethodArgumentResolver)) {
-                    result.addResolver(argumentResolver);
-                }
+            synchronized (ComplexTypeMethodArgumentResolver.class) {
+                resolvers = new HandlerMethodArgumentResolverComposite().addResolvers(
+                        MvcContext.getMvcContext().getArgumentResolvers().stream()
+                                .filter(r->!(r instanceof  ComplexTypeMethodArgumentResolver))
+                                .collect(Collectors.toList()));
             }
-            resolvers = result;
         }
 
         return resolvers;

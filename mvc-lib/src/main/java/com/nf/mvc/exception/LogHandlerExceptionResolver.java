@@ -15,8 +15,10 @@ public class LogHandlerExceptionResolver implements HandlerExceptionResolver {
             return null;
         }
         //我们这个解析器只解析RuntimeException
+        System.out.println("\n==============");
         System.out.println("异常消息是:" + ex.getMessage());
-        //下面这行代码不用写，只是演示用
+        System.out.println("==============");
+
         return null;
     }
 }

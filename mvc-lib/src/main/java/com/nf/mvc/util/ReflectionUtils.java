@@ -3,7 +3,6 @@ package com.nf.mvc.util;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
-import javassist.bytecode.MethodInfo;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -118,7 +117,7 @@ public abstract class ReflectionUtils {
                     sortMap.put(attr.index(i), attr.variableName(i));
                 }
                 int pos = Modifier.isStatic(ctMethod.getModifiers()) ? 0 : 1;
-                paramNames = Arrays.asList(Arrays.copyOfRange(sortMap.values().toArray(new String[0]), pos, paramLength + pos ));
+                paramNames = Arrays.asList(Arrays.copyOfRange(sortMap.values().toArray(new String[0]), pos, paramLength + pos));
                 return paramNames;
             }
             return paramNames;
@@ -138,7 +137,7 @@ public abstract class ReflectionUtils {
         List<String> parameterNames = new ArrayList<>();
 
         for (Parameter parameter : parameters) {
-            if(!parameter.isNamePresent()) {
+            if (!parameter.isNamePresent()) {
                 throw new IllegalArgumentException("编译的时候需要指定-parameters选项");
             }
 
@@ -211,7 +210,6 @@ public abstract class ReflectionUtils {
 
     /**
      * 判断是否是简单类型的数组，比如int[],Integer[],Date[]
-     *
      * @param type
      * @return
      */
@@ -241,6 +239,7 @@ public abstract class ReflectionUtils {
     public static boolean isSimpleTypeList(Class<?> listType, Class<?> actualTypeParam) {
         return isList(listType) && isSimpleType(actualTypeParam);
     }
+
     /**
      * 如果是Collection以及Map的子类型，就认为是一个集合
      *
@@ -335,16 +334,25 @@ public abstract class ReflectionUtils {
 
     /**
      * 此方法是用来获取方法泛型参数的类型实参的
+     *
      * @param parameter
      * @return
      */
     public static Class[] getActualArgument(Parameter parameter) {
-        ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameterizedType();
+
+        Type type = parameter.getParameterizedType();
+        if (!(type instanceof ParameterizedType)) {
+            throw new IllegalArgumentException("参数要求是一个参数化的泛型类型，不能使用原生类型");
+        }
+
+        // 如果方法的参数是List这样的类型，而不是List<String>,List<Integer>这样的，直接进行类型转换抛出ClassCastException异常
+        ParameterizedType parameterizedType = (ParameterizedType) type;
         Type[] types = parameterizedType.getActualTypeArguments();
         Class[] actualTypeArguments = new Class[types.length];
         for (int i = 0; i < types.length; i++) {
             actualTypeArguments[i] = (Class) types[i];
         }
         return actualTypeArguments;
+
     }
 }
