@@ -13,7 +13,30 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * <p>此类利用caffeine进行了缓存实现，缓存实现的详细介绍见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite}</p>
+ * 此类是Mvc框架的核心{@link HandlerMapping}实现，其核心的功能有
+ * <h3>什么是Handler</h3>
+ * <p>所有扫描到的方法上有{@link RequestMapping}注解的都可以称之为Handler，如果类上也有此注解，
+ * 那么就表明此Handler能处理的请求是由两段地址组成的，比如下面的handler能处理的地址就是<i>/product/list</i>
+ * <pre class="code">
+ *   &#64;RequestMapping("/product")
+ *   public class ProductController{
+ *       &#64;RequestMapping("/list")
+ *       public ViewResult list(){...}
+ *   }
+ * </pre>
+ * </p>
+ * <h3>请求匹配</h3>
+ * <p>此类实现借助{@link PathMatcher}可以实现灵活的地址匹配模式，比如区分大小写，不区分大小写，Ant地址模式匹配能，此类默认使用的AntPathMatcher。
+ * 一般是在Handler类以及方法上通过注解{@link RequestMapping}指定地址方法，比如/**,然后依据当前请求的requestURI（去掉上下文）的地址进行模式匹配，
+ * 能匹配上就返回此Handler作为处理者
+ * </p>
+ * <h3>缓存</h3>
+ * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能
+ * 整个Mvc框架在缓存上的应用的详细介绍见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite}</p>
+ * @see com.nf.mvc.HandlerMapping
+ * @see PathMatcher
+ * @see AntPathMatcher
+ * @see RequestMapping
  */
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
