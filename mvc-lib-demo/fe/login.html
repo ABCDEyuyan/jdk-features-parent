@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=
+  , initial-scale=1.0"
+    />
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+    <script src="lib/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <input type="text" name="username" v-model="uX.userX" />
+      <input type="password" name="pwd" v-model="uX.pwdx" />
+      <input type="button" value="login" @click="login" />
+    </div>
+
+    <script>
+      axios.defaults.baseURL = 'http://localhost:8080/mvc'
+      let vm = new Vue({
+        el: '#app',
+        data: {
+          uX: {
+            userX: '',
+            pwdx: '',
+          },
+        },
+        methods: {
+          login: function () {
+            const params = new URLSearchParams()
+            params.append('username', vm.uX.userX)
+            params.append('pwd', vm.uX.pwdx)
+            axios({
+              method: 'post',
+              url: '/user/login',
+              data: params,
+            }).then(function (result) {
+              if (result.data.code != 200) {
+                alert('账号密码不多')
+              } else {
+                sessionStorage.setItem('userid', result.data.data)
+              }
+            })
+          },
+        },
+      })
+    </script>
+  </body>
+</html>
