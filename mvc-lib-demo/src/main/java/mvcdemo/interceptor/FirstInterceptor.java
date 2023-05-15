@@ -1,22 +1,21 @@
-package mvcdemo.web.interceptor;
+package mvcdemo.interceptor;
 
 import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.Interceptors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-@Interceptors(excludePattern = {"/product/**"})
-public class ThirdInterceptor implements HandlerInterceptor {
+@Interceptors({"/product/insert"})
+public class FirstInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("third pre---");
+        System.out.println("first pre---");
         return  true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("third post---");
-        
+        System.out.println("first post---");
+
     }
 }

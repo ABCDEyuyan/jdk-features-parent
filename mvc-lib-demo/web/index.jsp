@@ -13,6 +13,6 @@
 <body>
 <h1>index----</h1>
 
-<img src="download?filename=1.jpg"/>
+<%--<img src="download?filename=1.jpg"/>--%>
 </body>
 </html>

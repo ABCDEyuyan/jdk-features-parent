@@ -1,7 +1,9 @@
 package com.nf.mvc.util;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * 此类拷贝自spring的StringUtils类
@@ -72,27 +74,8 @@ public abstract class StringUtils {
         return containsWhitespace((CharSequence) str);
     }
 
-    public static String trimWhitespace(String str) {
-        if (!hasLength(str)) {
-            return str;
-        }
-
-        int beginIndex = 0;
-        int endIndex = str.length() - 1;
-
-        while (beginIndex <= endIndex && Character.isWhitespace(str.charAt(beginIndex))) {
-            beginIndex++;
-        }
-
-        while (endIndex > beginIndex && Character.isWhitespace(str.charAt(endIndex))) {
-            endIndex--;
-        }
-
-        return str.substring(beginIndex, endIndex + 1);
-    }
-
     /**
-     * 裁剪掉所有的空白字符，包含前部，中间，尾部的空白
+     * 裁剪掉所有的空白字符，包含前部，中间，尾部的所有空白
      * @param str
      * @return
      */
@@ -112,4 +95,17 @@ public abstract class StringUtils {
         return sb.toString();
     }
 
+    /**
+     * 利用String自带的split方法进行字符串拆分，拆分前会调用trim方法剔除掉前后所有的空白，
+     * split的拆分方法可能导致前部出现空的字符串，比如用逗号作为分隔符拆分",,,abc,def"这样的数据，
+     * 本方法剔除了拆分为长度为0的空字符串
+     * @param source:一个字符串数据
+     * @param regex：正则表达式，通常是分隔符，可以使用{@link Delimiters}来指定常用的分隔符及分隔符组合
+     * @return
+     */
+    public static List<String> split(String source,String regex) {
+        Assert.notNull(source,"原始字符串不能是null的");
+        String[] strings = source.trim().split(regex);
+        return Arrays.stream(strings).filter(s -> s.length() != 0).collect(Collectors.toList());
+    }
 }

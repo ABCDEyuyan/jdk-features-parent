@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * composite:复合，组合的意思，就是表示此类管理很多的解析器
- * <p>此类是一个典型的组合模式实现，自己本身是一个解析器，也管理者其它的一些解析器，类似于算术表达式4*5+7*8，
+ * <p>此类是一个典型的组合模式实现，自己本身是一个解析器，也管理着其它的一些解析器，类似于算术表达式4*5+7*8，
  * 其中4*5是一个完整的算术表达式，也是一个更大的算术表达式的一部分
  * </p>
  *
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </p>
  * <p>
  *     所有需要进行方法参数解析的类，都可以直接借助此类实现参数的解析，比如mvc框架中的HandlerAdapter实现
- *     与ExceptionResolver的实现，不同的类型可以借助此类组合自己所需要的一套参数解析器，
+ *     、ExceptionResolver以及ComplexTypeMethodArgumentResolver的实现，不同的类型可以借助此类组合自己所需要的一套参数解析器，
  *     比如HandlerAdapter可以利用此类组合几个解析器来解析参数，而异常解析器也可以自己组合另一套解析器供自己使用
  * </p>
  *
@@ -51,6 +51,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * </p>
  * @see com.nf.mvc.adapter.RequestMappingHandlerAdapter
  * @see com.nf.mvc.support.MethodInvoker
+ * @see ComplexTypeMethodArgumentResolver
+ * @see com.nf.mvc.HandlerExceptionResolver
  */
 public class HandlerMethodArgumentResolverComposite implements MethodArgumentResolver {
 
