@@ -1,9 +1,9 @@
 package com.nf.mvc.mapping;
 
 import com.nf.mvc.HandlerExecutionChain;
-import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
+import com.nf.mvc.handler.HandlerClass;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +15,7 @@ import java.util.Map;
  * 依据类的名字来处理映射，
  * 比如你的类是以Controller结尾的，名字是FirstController
  * 那么就表明你能处理的请求地址是:/first
+ * <p>此类并没有真正用起来，主要目的是演示用的</p>
  */
 public class NameConventionHandlerMapping implements HandlerMapping {
 

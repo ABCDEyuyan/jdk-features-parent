@@ -12,6 +12,16 @@ import java.lang.reflect.Method;
 
 import static com.nf.mvc.ViewResult.adaptHandlerResult;
 
+/**
+ * 此类是Mvc框架的核心HandlerAdapter,此适配器主要是利用Mvc框架注册的所有解析器对{@link HandlerMethod}封装的请求处理方法
+ * 的参数进行解析，解析之后再调用方法以处理请求
+ * <p>此HandlerAdapter对Handler的返回类型会进行适配，适配的逻辑见{@link ViewResult#adaptHandlerResult(Object)},
+ * 详细解释见{@link HandlerAdapter}的注释说明</p>
+ * @see HandlerAdapter
+ * @see HandlerMethodArgumentResolverComposite
+ * @see MethodInvoker
+ * @see HandlerMethod
+ */
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     private static final HandlerMethodArgumentResolverComposite defaultResolvers = HandlerMethodArgumentResolverComposite.defaultInstance();

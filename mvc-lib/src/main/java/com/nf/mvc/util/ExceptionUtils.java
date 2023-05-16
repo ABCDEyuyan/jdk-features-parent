@@ -16,7 +16,7 @@ public interface ExceptionUtils {
      * @param ex
      * @return
      */
-    public static Throwable getRootCause(Throwable ex){
+     static Throwable getRootCause(Throwable ex){
         Throwable cause;
         Throwable result = ex;
         while(null != (cause = result.getCause())  && (result != cause) ) {
