@@ -6,6 +6,7 @@ import com.nf.demo.service.ProductService;
 import com.nf.demo.service.impl.ProductServiceImpl;
 import com.nf.demo.vo.ResponseVO;
 import com.nf.mvc.ViewResult;
+import com.nf.mvc.file.MultipartFile;
 import com.nf.mvc.mapping.RequestMapping;
 
 import java.util.List;
@@ -17,8 +18,16 @@ public class ProductController {
     private ProductService productService = new ProductServiceImpl();
     @RequestMapping("/list")
     public ViewResult list(){
-
         List<ProductEntity> list = productService.getAll();
         return json(new ResponseVO(200,"ok",list));
+    }
+
+    @RequestMapping("/insert")
+    public ViewResult insert(MultipartFile pfile,ProductEntity product){
+        product.setPfile(pfile);
+        //UUID.randomUUID().toString()
+        product.setImage(pfile.getOriginalFilename());
+        productService.insert(product);
+        return json(new ResponseVO(200, "ok", null));
     }
 }

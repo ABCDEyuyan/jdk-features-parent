@@ -12,7 +12,11 @@ public class ProductDaoImpl implements ProductDao {
     SqlExecutor executor = SqlExecutorUtils.getExecutor();
     @Override
     public void insert(ProductEntity product) {
-
+        String sql = "insert into product (pname,price,image,qty,status,pubdate,cid) values(?,?,?,?,?,?,?)";
+        executor.update(sql, product.getPname(),
+                product.getPrice(), product.getImage(),
+                product.getQty(), product.getStatus(),
+                product.getPubdate(), product.getCid());
     }
 
     @Override

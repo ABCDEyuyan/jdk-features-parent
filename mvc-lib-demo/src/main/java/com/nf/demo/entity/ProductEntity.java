@@ -1,5 +1,6 @@
 package com.nf.demo.entity;
 
+import com.nf.mvc.file.MultipartFile;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ public class ProductEntity {
     private LocalDate pubdate;
     private BigDecimal price;
     private Integer cid;
+    private MultipartFile pfile;
 
     public String getStatusText(){
         return this.status==true?"上架":"下架";
