@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="lib/vue.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script src="lib/common.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <table>
+        <thead>
+          <tr>
+            <td>id</td>
+            <td>名称</td>
+            <td>price</td>
+            <td>status</td>
+            <td>qty</td>
+            <td>cid</td>
+            <td>日期</td>
+            <td>图片</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :key="p.id" v-for="p in productList">
+            <td>{{p.id}}</td>
+            <td>{{p.pname}}</td>
+            <td>{{p.price}}</td>
+            <td>{{p.statusText}}</td>
+            <td>{{p.qty}}</td>
+            <td>{{p.cid}}</td>
+            <td>{{p.pubdate}}</td>
+            <td><img :src="getImageUrl(p.image)" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      let vm = new Vue({
+        el: '#app',
+        data: {
+          productList: [],
+        },
+        methods: {
+          getImageUrl: function (name) {
+            return axios.defaults.baseURL + '/file/download?filename=' + name
+          },
+        },
+        created: function () {
+          axios.get('/product/list').then(function (result) {
+            vm.productList = result.data.data
+          })
+        },
+      })
+    </script>
+  </body>
+</html>

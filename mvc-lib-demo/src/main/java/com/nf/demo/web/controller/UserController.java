@@ -12,6 +12,7 @@ import static com.nf.mvc.handler.HandlerHelper.json;
 @RequestMapping("/user")
 public class UserController {
     private UserService userService = new UserServiceImpl();
+
     @RequestMapping("/login")
     public ViewResult login(String username, String pwd) {
         UserEntity userEntity = new UserEntity();
