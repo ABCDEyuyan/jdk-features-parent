@@ -38,6 +38,9 @@ public abstract class StringUtils {
         return joiner.toString();
     }
 
+    public static  boolean isNullOrEmpty(String str){
+        return (str==null || str.isEmpty());
+    }
     public static boolean hasLength(CharSequence str) {
         return (str != null && str.length() > 0);
     }

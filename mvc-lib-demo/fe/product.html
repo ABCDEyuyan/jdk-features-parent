@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 
+    <style>
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    </style>
     <script src="lib/vue.js"></script>
     <script src="lib/axios.min.js"></script>
     <script src="lib/common.js"></script>
@@ -38,23 +44,88 @@
           </tr>
         </tbody>
       </table>
+      <div>
+        名字:<input type="text" name="pname" v-model="product.pname" /><br />
+        价格:<input type="text" name="price" v-model="product.price" /><br />
+        数量:<input type="number" name="qty" v-model="product.qty" /><br />
+        日期:<input
+          type="date"
+          name="pubdate"
+          v-model="product.pubdate"
+        /><br />
+        状态:
+        <input type="radio" id="up" value="true" v-model="product.status" />
+        <label for="up">上架</label>
+        <input type="radio" id="down" value="false" v-model="product.status" />
+        <label for="down">下架</label><br />
+
+        分类:
+        <select name="cid" v-model="product.cid">
+          <option>---选择---</option>
+          <option v-for="c in categoryList" :value="c.id">{{c.cname}}</option>
+        </select>
+        <br />
+        图片:<input type="file" name="pfile" id="pfile" ref="pfile" /><br />
+        <input type="button" value="insert" @click="insert" />
+      </div>
     </div>
 
     <script>
       let vm = new Vue({
         el: '#app',
         data: {
+          product: {
+            id: -1,
+            pname: '',
+            price: 0.0,
+            qty: 0,
+            pubdate: '',
+            status: true,
+            cid: 0,
+            image: '',
+          },
           productList: [],
+          categoryList: [],
         },
         methods: {
           getImageUrl: function (name) {
             return axios.defaults.baseURL + '/file/download?filename=' + name
           },
+          getProductList() {
+            axios.get('/product/list').then(function (result) {
+              vm.productList = result.data.data
+            })
+          },
+          getCategoryList() {
+            axios.get('/category/list').then(function (result) {
+              vm.categoryList = result.data.data
+            })
+          },
+          insert() {
+            let fd = new FormData()
+            fd.append('pfile', vm.$refs.pfile.files[0])
+
+            axios({
+              url: '/product/insert',
+              method: 'POST',
+              headers: {
+                'Content-Type': 'multipart-formdata',
+              },
+              data: fd,
+              params: vm.product,
+            }).then(function (result) {
+              if (result.data.code == 501) {
+                location.href = 'login.html'
+              }
+              if (result.data.code == 200) {
+                location.reload()
+              }
+            })
+          },
         },
         created: function () {
-          axios.get('/product/list').then(function (result) {
-            vm.productList = result.data.data
-          })
+          this.getProductList()
+          this.getCategoryList()
         },
       })
     </script>
