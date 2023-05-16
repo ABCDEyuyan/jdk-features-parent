@@ -14,26 +14,14 @@ public abstract class CorsUtils {
 
 	/**
 	 * 判断是否是跨域请求
-	 * Returns {@code true} if the request is a valid CORS one by checking {@code Origin}
-	 * header presence and ensuring that origins are different.
 	 */
 	public static boolean isCorsRequest(HttpServletRequest request) {
+		/*更好的实现见spring mvc中CorsUtils类，这里简化为只要有origin就表示是跨域请求*/
 		return request.getHeader(ORIGIN) == null?false:true;
-		/*更好的实现是下面这样,但spring中这些url解析的类太多了，复制不过来。。。简化为只要有origin就表示是跨域请求*/
-		/*UriComponents originUrl = UriComponentsBuilder.fromOriginHeader(origin).build();
-		String scheme = request.getScheme();
-		String host = request.getServerName();
-		int port = request.getServerPort();
-		return !(ObjectUtils.nullSafeEquals(scheme, originUrl.getScheme()) &&
-				ObjectUtils.nullSafeEquals(host, originUrl.getHost()) &&
-				getPort(scheme, port) == getPort(originUrl.getScheme(), originUrl.getPort()));*/
-
 	}
 
 	/**
-	 * 判断是否是"预检请求"
-	 * Returns {@code true} if the request is a valid CORS pre-flight one by checking {code OPTIONS} method with
-	 * {@code Origin} and {@code Access-Control-Request-Method} headers presence.
+	 * 判断是否是<i>预检请求</i>
 	 */
 	public static boolean isPreFlightRequest(HttpServletRequest request) {
 		return (HttpMethod.OPTIONS.matches(request.getMethod()) &&

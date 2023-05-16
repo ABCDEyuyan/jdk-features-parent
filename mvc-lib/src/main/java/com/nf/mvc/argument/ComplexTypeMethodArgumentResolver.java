@@ -13,12 +13,7 @@ import java.util.stream.Collectors;
 
 /**
  * 这是一个复杂类型的参数解析器，所谓的复杂类型就是通常我们编写的pojo类，<br/>
- * 此解析器支持嵌套bean的解析，数据源的key是属性名，用句号分隔，类似于el表达式的写法
- * <p>
- *     此复杂类型的解析逻辑是遍历其所有的setter方法，如果setter方法的参数是其它解析器可以解析的，就交给其它解析器解析，
- *     如果其它解析器不支持，比如仍然是一个复杂的pojo类型，就又交给本解析器进行递归解析处理。见{@link #getResolvers()}<br/>
- *     所以，本解析器本质上只负责复杂类型的实例化,并利用其它解析器解析内部的简单类型的属性以填充此复杂类型的实例
- * </p>
+ * 此解析器支持嵌套bean的解析，数据源的key是属性名，嵌套bean的话属性名用句号分隔，类似于el表达式的写法
  * <p>
  * 假定有下面这样一个控制，其参数是POJO类Emp，那么request对象的map中如果有对应的key就可以把此Emp解析出来
  * <pre class="code">
@@ -55,7 +50,14 @@ import java.util.stream.Collectors;
  *
  * </pre>
  * </p>
- * <p>强烈建议：此解析器应该是整个解析器链的最后一个解析器</p>
+ * <p>此类的实现的逻辑是：
+ * <ol>
+ *     <li>其它解析器解析不了就认为此类是一个复杂类型,创建此类的实例</li>
+ *     <li>获取并遍历其所有settter方法并调用</li>
+ *     <li>如果setter方法的参数其它解析器可以解析就交给其它解析器解析</li>
+ *     <li>如果setter方法的参数其它解析器解析不了，就重复第一步，递归处理</li>
+ * </ol>
+ * 强烈建议：此解析器应该是整个解析器链的最后一个解析器</p>
  * <p>此类也利用了{@link HandlerMethodArgumentResolverComposite}类进行了自定义的解析器组合，
  * 先利用这个解析器组合进行解析，解析不了就交给本类解析</p>
  * <p>
@@ -66,13 +68,11 @@ import java.util.stream.Collectors;
  * @see MethodArgumentResolver
  */
 public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver {
-    /* 这里添加volatile是为了防止指令重排序与内存可见性的目的添加的，防止new了对象之后还没有初始化完毕就返回，
-      不过jdk4之后这个问题已经修复，可以不用加这个关键字了 */
+
     private volatile HandlerMethodArgumentResolverComposite resolvers = null;
     @Override
     public boolean supports(MethodParameter parameter) {
-        Class<?> paramType = parameter.getParameterType();
-        return ReflectionUtils.isComplexProperty(paramType);
+        return !getResolvers().supports(parameter);
     }
 
     @Override
