@@ -17,6 +17,7 @@ public class ProductController {
     private ProductService productService = new ProductServiceImpl();
     @RequestMapping("/list")
     public ViewResult list(){
+
         List<ProductEntity> list = productService.getAll();
         return json(new ResponseVO(200,"ok",list));
     }
