@@ -67,10 +67,6 @@ import java.util.stream.Collectors;
  *     后续直接返回解析器组合的方式避免重复创建的问题，但由于参数解析器是运行在多线程的环境下，所以为了线程安全性，
  *     这里采用双重检查+volatile的形式解决这一问题，具体见{@link #getResolvers()}方法
  * </p>
- *
- * <h3>使用注意事项</h3>
- * <p>想用此类解析参数时，直接调用{@link #resolveArgument(MethodParameter, HttpServletRequest)}方法即可，
- * 不需要先调用方法{@link #supports(MethodParameter)}</p>
  * @see HandlerMethodArgumentResolverComposite
  * @see MethodArgumentResolver
  */
