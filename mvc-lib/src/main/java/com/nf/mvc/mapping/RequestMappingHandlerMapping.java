@@ -6,6 +6,7 @@ import com.nf.mvc.*;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.support.PathMatcher;
+import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
@@ -79,7 +80,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
-        String requestUrl = getRequestUrl(request);
+        String requestUrl = RequestUtils.getRequestUrl(request);
         /* get方法的第二个参数是在缓存中没有对应的key值执行的函数，其返回值会自动放置到缓存中
         * 如果返回值是null，那么不会放置到缓存中。
         * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
@@ -121,7 +122,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     public List<HandlerInterceptor> getInterceptors(HttpServletRequest request) {
         List<HandlerInterceptor> result = new ArrayList<>();
         List<HandlerInterceptor> interceptors = MvcContext.getMvcContext().getCustomHandlerInterceptors();
-        String requestUrl = getRequestUrl(request);
+        String requestUrl = RequestUtils.getRequestUrl(request);
         for (HandlerInterceptor interceptor : interceptors) {
             Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
             if (interceptorClass.isAnnotationPresent(Interceptors.class)) {

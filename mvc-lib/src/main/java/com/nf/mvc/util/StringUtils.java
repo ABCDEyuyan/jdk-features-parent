@@ -28,7 +28,7 @@ public abstract class StringUtils {
      * @param delimiter
      * @return
      */
-    public static String toCommaDelimitedString(List<String> stringList,String delimiter) {
+    public static String toCommaDelimitedString(Iterable<String> stringList,String delimiter) {
         StringJoiner joiner = new StringJoiner(delimiter);
         for (String val : stringList) {
             if (val != null) {
@@ -36,10 +36,6 @@ public abstract class StringUtils {
             }
         }
         return joiner.toString();
-    }
-
-    public static  boolean isNullOrEmpty(String str){
-        return (str==null || str.isEmpty());
     }
     public static boolean hasLength(CharSequence str) {
         return (str != null && str.length() > 0);
@@ -78,6 +74,78 @@ public abstract class StringUtils {
     }
 
     /**
+     * Trim leading whitespace from the given {@code String}.
+     * @param str the {@code String} to check
+     * @return the trimmed {@code String}
+     * @see java.lang.Character#isWhitespace
+     */
+    public static String trimLeadingWhitespace(String str) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        int beginIdx = 0;
+        while (beginIdx < str.length() && Character.isWhitespace(str.charAt(beginIdx))) {
+            beginIdx++;
+        }
+        return str.substring(beginIdx);
+    }
+
+    /**
+     * Trim trailing whitespace from the given {@code String}.
+     * @param str the {@code String} to check
+     * @return the trimmed {@code String}
+     * @see java.lang.Character#isWhitespace
+     */
+    public static String trimTrailingWhitespace(String str) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        int endIdx = str.length() - 1;
+        while (endIdx >= 0 && Character.isWhitespace(str.charAt(endIdx))) {
+            endIdx--;
+        }
+        return str.substring(0, endIdx + 1);
+    }
+
+    /**
+     * Trim all occurrences of the supplied leading character from the given {@code String}.
+     * @param str the {@code String} to check
+     * @param leadingCharacter the leading character to be trimmed
+     * @return the trimmed {@code String}
+     */
+    public static String trimLeadingCharacter(String str, char leadingCharacter) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        int beginIdx = 0;
+        while (beginIdx < str.length() && leadingCharacter == str.charAt(beginIdx)) {
+            beginIdx++;
+        }
+        return str.substring(beginIdx);
+    }
+
+    /**
+     * Trim all occurrences of the supplied trailing character from the given {@code String}.
+     * @param str the {@code String} to check
+     * @param trailingCharacter the trailing character to be trimmed
+     * @return the trimmed {@code String}
+     */
+    public static String trimTrailingCharacter(String str, char trailingCharacter) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        int endIdx = str.length() - 1;
+        while (endIdx >= 0 && trailingCharacter == str.charAt(endIdx)) {
+            endIdx--;
+        }
+        return str.substring(0, endIdx + 1);
+    }
+
+    /**
      * 裁剪掉所有的空白字符，包含前部，中间，尾部的所有空白
      * @param str
      * @return
@@ -111,4 +179,76 @@ public abstract class StringUtils {
         String[] strings = source.trim().split(regex);
         return Arrays.stream(strings).filter(s -> s.length() != 0).collect(Collectors.toList());
     }
+
+    public static String capitalize(String str) {
+        return changeFirstCharacterCase(str, true);
+    }
+
+    /**
+     * Uncapitalize a {@code String}, changing the first letter to
+     * lower case as per {@link Character#toLowerCase(char)}.
+     * No other letters are changed.
+     * @param str the {@code String} to uncapitalize
+     * @return the uncapitalized {@code String}
+     */
+    public static String uncapitalize(String str) {
+        return changeFirstCharacterCase(str, false);
+    }
+
+    private static String changeFirstCharacterCase(String str, boolean capitalize) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        char baseChar = str.charAt(0);
+        char updatedChar;
+        if (capitalize) {
+            updatedChar = Character.toUpperCase(baseChar);
+        }
+        else {
+            updatedChar = Character.toLowerCase(baseChar);
+        }
+        if (baseChar == updatedChar) {
+            return str;
+        }
+
+        char[] chars = str.toCharArray();
+        chars[0] = updatedChar;
+        return new String(chars);
+    }
+
+
+    public static String getFilename( String path) {
+        if (path == null) {
+            return null;
+        }
+
+        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
+    }
+
+    /**
+     * Extract the filename extension from the given Java resource path,
+     * e.g. "mypath/myfile.txt" -> "txt".
+     * @param path the file path (may be {@code null})
+     * @return the extracted filename extension, or {@code null} if none
+     */
+    public static String getFilenameExtension(String path) {
+        if (path == null) {
+            return null;
+        }
+
+        int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
+        if (extIndex == -1) {
+            return null;
+        }
+
+        int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        if (folderIndex > extIndex) {
+            return null;
+        }
+
+        return path.substring(extIndex + 1);
+    }
+
 }
