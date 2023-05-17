@@ -22,7 +22,7 @@
       <module name="annotation-demo" options="-parameters" />
       <module name="dbutils-lib" options="-parameters" />
       <module name="exception-demo" options="-parameters" />
-      <module name="jdk-features-parent" options="-parameters" />
+      <module name="jdk-features-parent" options="" />
       <module name="lambda-demo" options="-parameters" />
       <module name="mvc-lib" options="-parameters" />
       <module name="mvc-lib-demo" options="-parameters" />
