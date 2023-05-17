@@ -4,6 +4,7 @@ import com.nf.mvc.HandlerExecutionChain;
 import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.MvcContext;
 import com.nf.mvc.handler.HandlerClass;
+import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws ServletException {
-        String requestUrl = getRequestUrl(request);
+        String requestUrl = RequestUtils.getRequestUrl(request);
         Object handler = handlers.get(requestUrl);
         return handler==null?null:new HandlerExecutionChain(handler, getInterceptors(request));
     }

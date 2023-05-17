@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  *
  * </pre>
  * </p>
- * <h3>实现的逻辑</h3>
+ * <h3>实现逻辑</h3>
  * <ol>
  *     <li>其它解析器解析不了就认为此类是一个复杂类型,创建此类的实例</li>
  *     <li>获取并遍历其所有settter方法并调用</li>
@@ -168,9 +168,7 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
 
     /**
      * 此复杂类型的解析器利用其它的解析器来进行数据解析，所以要排除掉自己
-     * <p>
-     * 参数解析器是单例的，但其运行在多线程环境下，下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性
-     *
+     * <p>参数解析器是单例的，但其运行在多线程环境下，下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性</p>
      * @return
      */
     private HandlerMethodArgumentResolverComposite getResolvers() {

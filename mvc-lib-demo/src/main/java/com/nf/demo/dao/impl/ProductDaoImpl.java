@@ -22,7 +22,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void update(ProductEntity product) {
-
+        String sql = "update product set pname=?,price=?,image=?,qty=?,status=?,pubdate=?,cid=? where id = ?";
+        executor.update(sql, product.getPname(), product.getPrice(),
+                product.getImage(), product.getQty(), product.getStatus(),
+                product.getPubdate(), product.getCid(), product.getId());
     }
 
     @Override
@@ -33,7 +36,8 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void delete(int id) {
-
+        String sql = "delete from product where id = ?";
+        executor.update(sql, id);
     }
 
     @Override

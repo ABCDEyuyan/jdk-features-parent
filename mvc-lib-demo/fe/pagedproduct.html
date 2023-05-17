@@ -6,11 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
+      #products {
+        font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+        width: 100%;
+        border-collapse: collapse;
+      }
+      #products td,
+      #products th {
+        font-size: 1em;
+        border: 1px solid #98bf21;
+        padding: 3px 7px 2px 7px;
+      }
+      #products th {
+        font-size: 1.1em;
+        text-align: left;
+        padding-top: 5px;
+        padding-bottom: 4px;
+        background-color: #a7c942;
+        color: #ffffff;
+      }
+      #products tr.alt td {
+        color: #000000;
+        background-color: #eaf2d3;
+      }
+
       img {
         width: 20px;
         height: 20px;
       }
+      ul.pagination {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+      }
+
+      ul.pagination li {
+        display: inline;
+      }
+
+      ul.pagination li a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        border: 1px solid #ddd;
+        margin: 0 4px;
+      }
+
+      ul.pagination li a.active {
+        background-color: #4caf50;
+        color: white;
+        border: 1px solid #4caf50;
+      }
+
+      ul.pagination li a:hover:not(.active) {
+        background-color: #ddd;
+      }
     </style>
+
     <script src="lib/vue.js"></script>
     <script src="lib/axios.min.js"></script>
     <script src="lib/common.js"></script>
@@ -23,7 +77,7 @@
       <input type="radio" id="down" value="false" v-model="status" />
       <label for="down">下架</label><br />
 
-      <table>
+      <table id="products">
         <thead>
           <tr>
             <td>id</td>
@@ -49,42 +103,72 @@
           </tr>
         </tbody>
       </table>
-      <div>
-        <a
-          href="#"
-          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.first,pagedProduct.paginationText.pagination.pageSize)"
-          >首页</a
-        >
-        <a
-          href="#"
-          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.prev,pagedProduct.paginationText.pagination.pageSize)"
-          >上一页</a
-        >
+      <ul class="pagination">
+        <li>
+          <a
+            href="#"
+            @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.first,pagedProduct.paginationText.pagination.pageSize)"
+            >首页</a
+          >
+        </li>
 
-        <p v-for="n in pagedProduct.paginationText.pagedText">
-          <a v-if="n!='...'" href="#" @click="getPagedProductList(n,pageSize)">
+        <li>
+          <a
+            href="#"
+            @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.prev,pagedProduct.paginationText.pagination.pageSize)"
+            >上一页</a
+          >
+        </li>
+        <li v-for="n in pagedProduct.paginationText.pagedText" :key="n">
+          <a
+            v-if="n!='...'"
+            href="#"
+            @click="getPagedProductList(n,pageSize)"
+            :class="{ active: n==pagedProduct.paginationText.pagination.pageNo }"
+          >
             {{n}}
           </a>
-          <span v-if="n=='...'">{{n}}</span>
-        </p>
-        <a
-          href="#"
-          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.next,pagedProduct.paginationText.pagination.pageSize)"
-          >下一页</a
-        >
-        <a
-          href="#"
-          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.last,pagedProduct.paginationText.pagination.pageSize)"
-          >尾页</a
-        >
-
-        <select v-model="pageSize">
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-        </select>
-      </div>
+          <a v-else style="pointer-events: none">{{n}}</a>
+        </li>
+        <li>
+          <a
+            href="#"
+            @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.next,pagedProduct.paginationText.pagination.pageSize)"
+            >下一页</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.last,pagedProduct.paginationText.pagination.pageSize)"
+            >尾页</a
+          >
+        </li>
+        <li>
+          <select v-model="pageSize">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
+        </li>
+        <li>
+          <input
+            v-model="pageNo"
+            type="number"
+            min="1"
+            :max="pagedProduct.paginationText.pagination.last"
+            @keyup.enter="getPagedProductList(pageNo,pageSize)"
+          />
+        </li>
+        <li>
+          <input
+            type="button"
+            value="确定"
+            @click="getPagedProductList(pageNo,pageSize)"
+          />
+        </li>
+      </ul>
     </div>
 
     <script>
@@ -93,7 +177,13 @@
         data: {
           status: true,
           pageSize: 2,
-          pagedProduct: {},
+          pageNo: 1,
+          pagedProduct: {
+            paginationText: {
+              pagedText: [],
+            },
+            list: [],
+          },
         },
         methods: {
           getImageUrl: function (name) {
@@ -110,6 +200,8 @@
               })
               .then(function (result) {
                 vm.pagedProduct = result.data.data
+                vm.pageSize = vm.pagedProduct.paginationText.pagination.pageSize
+                vm.pageNo = vm.pagedProduct.paginationText.pagination.pageNo
               })
           },
         },

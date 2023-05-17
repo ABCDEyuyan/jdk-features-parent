@@ -28,7 +28,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String authHeader = request.getHeader("auth");
         //表明请求头有数据，意味着登录过了，所以放行
-        if (!StringUtils.isNullOrEmpty(authHeader)) {
+        if (StringUtils.hasText(authHeader)) {
             return true;
         }
         //因为拦截器注解写了要拦截的地址，所以只会在请求地址就是要拦截的
