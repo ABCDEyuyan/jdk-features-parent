@@ -29,6 +29,7 @@
             <td>cid</td>
             <td>日期</td>
             <td>图片</td>
+            <td>操作</td>
           </tr>
         </thead>
         <tbody>
@@ -41,6 +42,10 @@
             <td>{{p.cid}}</td>
             <td>{{p.pubdate}}</td>
             <td><img :src="getImageUrl(p.image)" /></td>
+            <td>
+              <a href="#" @click.prevent="edit(p)">编辑</a>
+              <a href="#" @click.prevent="deleteById(p.id)">删除</a>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -66,7 +71,13 @@
         </select>
         <br />
         图片:<input type="file" name="pfile" id="pfile" ref="pfile" /><br />
-        <input type="button" value="insert" @click="insert" />
+        <input
+          type="hidden"
+          name="image"
+          id="image"
+          v-model="product.image"
+        /><br />
+        <input type="button" value="保存" @click="save" />
       </div>
     </div>
 
@@ -84,6 +95,7 @@
             cid: 0,
             image: '',
           },
+          isInsert: true,
           productList: [],
           categoryList: [],
         },
@@ -101,12 +113,35 @@
               vm.categoryList = result.data.data
             })
           },
-          insert() {
+          edit(p) {
+            //相当于克隆，避免表格中的数据与表单中的数据联动
+            vm.product = JSON.parse(JSON.stringify(p))
+            //不能像下面这样写
+            // vm.product = p
+
+            this.isInsert = false
+          },
+          deleteById(id) {
+            if (confirm('sure?')) {
+              axios.post('/product/delete?id=' + id).then(function (result) {
+                if (result.data.code == 501) {
+                  location.href = 'login.html'
+                }
+                if (result.data.code == 200) {
+                  location.reload()
+                }
+              })
+            }
+          },
+          modify(url) {
             let fd = new FormData()
-            fd.append('pfile', vm.$refs.pfile.files[0])
+            let file = vm.$refs.pfile.files[0]
+            if (file != undefined && file != null) {
+              fd.append('pfile', vm.$refs.pfile.files[0])
+            }
 
             axios({
-              url: '/product/insert',
+              url: url,
               method: 'POST',
               headers: {
                 'Content-Type': 'multipart-formdata',
@@ -121,6 +156,14 @@
                 location.reload()
               }
             })
+          },
+          save() {
+            if (this.isInsert) {
+              this.modify('/product/insert')
+            } else {
+              this.modify('/product/update')
+              this.isInsert = true
+            }
           },
         },
         created: function () {

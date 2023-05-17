@@ -15,18 +15,14 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao = new ProductDaoImpl();
     @Override
     public void insert(ProductEntity product) {
-        MultipartFile file  = product.getPfile();
-        try {
-            file.transferTo(Paths.get("D:/tmp",file.getOriginalFilename()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        handleFile(product);
         productDao.insert(product);
     }
 
     @Override
     public void update(ProductEntity product) {
-
+        handleFile(product);
+        productDao.update(product);
     }
 
     @Override
@@ -36,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(int id) {
-
+        productDao.delete(id);
     }
 
     @Override
@@ -47,5 +43,18 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Long getPagedCount(boolean status) {
         return productDao.getPagedCount(status);
+    }
+
+    private void handleFile(ProductEntity product){
+        MultipartFile file = product.getPfile();
+        if (file != null) {
+            product.setImage(file.getOriginalFilename());
+            try {
+                file.transferTo(Paths.get("D:/tmp",file.getOriginalFilename()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }
