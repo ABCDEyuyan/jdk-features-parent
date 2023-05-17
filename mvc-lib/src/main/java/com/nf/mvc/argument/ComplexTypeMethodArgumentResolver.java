@@ -68,6 +68,9 @@ import java.util.stream.Collectors;
  *     这里采用双重检查+volatile的形式解决这一问题，具体见{@link #getResolvers()}方法
  * </p>
  *
+ * <h3>使用注意事项</h3>
+ * <p>想用此类解析参数时，直接调用{@link #resolveArgument(MethodParameter, HttpServletRequest)}方法即可，
+ * 不需要先调用方法{@link #supports(MethodParameter)}</p>
  * @see HandlerMethodArgumentResolverComposite
  * @see MethodArgumentResolver
  */
