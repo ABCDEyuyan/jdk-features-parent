@@ -10,6 +10,7 @@
         <init-param>
             <param-name>base-package</param-name>
             <param-value>com.nf.demo.web</param-value>
+      <!--      <param-value>mvcdemo</param-value>-->
         </init-param>
         <load-on-startup>200</load-on-startup>
         <!--要设置在load-on-startup下面-->

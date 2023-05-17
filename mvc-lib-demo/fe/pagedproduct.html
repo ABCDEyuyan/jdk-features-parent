@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    </style>
+    <script src="lib/vue.js"></script>
+    <script src="lib/axios.min.js"></script>
+    <script src="lib/common.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      状态:
+      <input type="radio" id="up" value="true" v-model="status" />
+      <label for="up">上架</label>
+      <input type="radio" id="down" value="false" v-model="status" />
+      <label for="down">下架</label><br />
+
+      <table>
+        <thead>
+          <tr>
+            <td>id</td>
+            <td>名称</td>
+            <td>price</td>
+            <td>status</td>
+            <td>qty</td>
+            <td>cid</td>
+            <td>日期</td>
+            <td>图片</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :key="p.id" v-for="p in pagedProduct.list">
+            <td>{{p.id}}</td>
+            <td>{{p.pname}}</td>
+            <td>{{p.price}}</td>
+            <td>{{p.statusText}}</td>
+            <td>{{p.qty}}</td>
+            <td>{{p.cid}}</td>
+            <td>{{p.pubdate}}</td>
+            <td><img :src="getImageUrl(p.image)" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <a
+          href="#"
+          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.first,pagedProduct.paginationText.pagination.pageSize)"
+          >首页</a
+        >
+        <a
+          href="#"
+          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.prev,pagedProduct.paginationText.pagination.pageSize)"
+          >上一页</a
+        >
+
+        <p v-for="n in pagedProduct.paginationText.pagedText">
+          <a v-if="n!='...'" href="#" @click="getPagedProductList(n,pageSize)">
+            {{n}}
+          </a>
+          <span v-if="n=='...'">{{n}}</span>
+        </p>
+        <a
+          href="#"
+          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.next,pagedProduct.paginationText.pagination.pageSize)"
+          >下一页</a
+        >
+        <a
+          href="#"
+          @click.prevent="getPagedProductList(pagedProduct.paginationText.pagination.last,pagedProduct.paginationText.pagination.pageSize)"
+          >尾页</a
+        >
+
+        <select v-model="pageSize">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+    </div>
+
+    <script>
+      let vm = new Vue({
+        el: '#app',
+        data: {
+          status: true,
+          pageSize: 2,
+          pagedProduct: {},
+        },
+        methods: {
+          getImageUrl: function (name) {
+            return axios.defaults.baseURL + '/file/download?filename=' + name
+          },
+          getPagedProductList(no, size) {
+            axios
+              .get('/product/list/page', {
+                params: {
+                  status: this.status,
+                  pageNo: no,
+                  pageSize: size,
+                },
+              })
+              .then(function (result) {
+                vm.pagedProduct = result.data.data
+              })
+          },
+        },
+        created: function () {
+          this.getPagedProductList()
+        },
+      })
+    </script>
+  </body>
+</html>
