@@ -7,13 +7,10 @@ import com.nf.mvc.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 /**
- * 这是一个通用的方法调用类型，2参数的invoke方法是调用静态方法用的
+ * 这是一个通用的方法调用类型，2参数的invoke方法是调用静态方法用的，
  * 3参数的invoke方法是调用实例方法用的
  */
 public class MethodInvoker {
@@ -51,17 +48,8 @@ public class MethodInvoker {
         for (int i = 0; i < paramCount; i++) {
             String paramName = paramNames.get(i);
             MethodParameter methodParameter = new MethodParameter(method, i, paramName);
-            paramValues[i] = resolveArgument(methodParameter, request);
-
+            paramValues[i] = resolvers.resolveArgument(methodParameter,request) ;
         }
         return method.invoke(instance, paramValues);
     }
-
-    private Object resolveArgument(MethodParameter parameter,HttpServletRequest request) throws Exception {
-        if (resolvers.supports(parameter)) {
-            return resolvers.resolveArgument(parameter, request);
-        }
-        return null;
-    }
-
 }

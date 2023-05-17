@@ -1,16 +1,12 @@
-package com.nf.mvc;
-
+package com.nf.mvc.exception;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
 
-@Target({ElementType.METHOD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
-    String value() default "abc";
-
-
+public @interface MultiExceptionHandler {
+    Class<? extends Exception>[] value() ;
 }

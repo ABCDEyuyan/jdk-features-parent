@@ -54,7 +54,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
     private List<HandlerMethod> exHandleMethods = new ArrayList<>();
 
     public ExceptionHandlerExceptionResolver() {
-        fetchExHandlMethods();
+        fetchExHandleMethods();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
      *      而如果重写了scanExHandleMethods方法，那么可以完全改写扫描获取异常处理的逻辑，具有更大的灵活性
      * </p>
      */
-    protected void fetchExHandlMethods(){
+    protected void fetchExHandleMethods(){
         scanExHandleMethods(method->method.isAnnotationPresent(ExceptionHandler.class));
         sortExHandleMethods(this.exHandleMethods);
     }
