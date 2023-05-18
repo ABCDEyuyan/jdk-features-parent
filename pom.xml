@@ -16,6 +16,9 @@
         <module>mvc-lib</module>
         <module>lambda-demo</module>
         <module>mvc-lib-demo</module>
+        <module>generic-demo</module>
+        <module>stream-demo</module>
+        <module>thread-demo</module>
     </modules>
 
     <properties>
