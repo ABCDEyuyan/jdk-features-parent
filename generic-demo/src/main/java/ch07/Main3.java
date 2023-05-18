@@ -9,8 +9,8 @@ public class Main3 {
         List<Object> objectList = null;
         List<Number> numbers = null;
         List<Integer> integers = new ArrayList<Integer>(){{add(1);add(2);add(3);}};
-       // print(objectList);
-       // print(numbers);
+        //print(objectList);
+        //print(numbers);
         print(integers);
 
         Arrays.asList();
