@@ -76,7 +76,6 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
 
     @Override
     public final ViewResult resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        Object handleResult;
         Exception exposedException = (Exception) getRootCause(ex);
         HandlerMethod handlerMethod = findMostMatchedHandlerMethod(getExceptionHandlerMethods(),exposedException);
         if (handlerMethod == null) {
@@ -86,7 +85,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
         try {
             Object instance = handlerMethod.getHandlerObject();
             /*从这里可以看出，我们的全局异常处理只能有一个参数，而且必须有,参数的类型就是异常*/
-            handleResult = method.invoke(instance, exposedException);
+            Object handleResult = method.invoke(instance, exposedException);
             return adaptHandlerResult(handleResult);
         } catch (Exception e) {
            /* 进入到这里就是异常处理方法本身的执行出了错，catch里什么都不干，相当于吞掉异常处理方法本身的异常，
