@@ -2,6 +2,7 @@ package com.nf.mvc.view;
 
 
 import com.nf.mvc.util.StreamUtils;
+import com.nf.mvc.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLConnection;
@@ -9,6 +10,15 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 此类是一个响应文件数据给前端的ViewResult，通常用在文件下载以及显示图片等，比如
+ * <pre class="code">
+ *     <img src="http://localhost:8080/file/download?filename=a.jpg"/>
+ * </pre>
+ * @see StreamViewResult
+ * @see com.nf.mvc.ViewResult
+ * @see com.nf.mvc.handler.HandlerHelper
+ */
 public class FileViewResult extends StreamViewResult {
 
     /**
@@ -24,7 +34,7 @@ public class FileViewResult extends StreamViewResult {
     public FileViewResult(String realPath, Map<String,String> headers) {
         super(StreamUtils.getInputStreamFromRealPath(realPath));
         this.realPath = realPath;
-        this.filename = getFileName();
+        this.filename = StringUtils.getFilename(realPath);
     }
 
     @Override
@@ -37,11 +47,6 @@ public class FileViewResult extends StreamViewResult {
         //attachment表示以附件的形式下载，对文件名编码以防止中文文件名在保存对话框中是乱码的
         resp.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
         super.writeHeaders(resp);
-    }
-
-    protected String getFileName() {
-        int lastSlash = realPath.lastIndexOf("/");
-        return realPath.substring(lastSlash + 1);
     }
 
     protected String getMediaType(String filename) {
