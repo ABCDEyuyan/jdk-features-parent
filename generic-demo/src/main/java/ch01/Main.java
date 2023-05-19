@@ -2,21 +2,20 @@ package ch01;
 
 import java.util.ArrayList;
 
+/**
+ * 泛型的好处
+ */
 public class Main {
     public static void main(String[] args) {
         //1.编译时的类型检查
-
         ArrayList<Integer> al = new ArrayList<>();
         al.add(1);//只能添加数字
         Integer result = al.get(0);//没有类型转换
         //2.避免不必要的类型转换
-
         ArrayList al2 = new ArrayList();
-
         al2.add(1);
         al2.add("adfa");
-
-//还需要进行类型转换
+        //还需要进行类型转换
         Integer o = (Integer) al2.get(0);//不报错
         Integer o2 = (Integer) al2.get(1);//报错
 

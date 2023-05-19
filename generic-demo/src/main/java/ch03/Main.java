@@ -1,7 +1,12 @@
 package ch03;
 
+/**
+ * 泛型方法的声明与使用
+ */
 public class Main {
     public static void main(String[] args) {
+
+
         SomeClass2<Integer> s = new SomeClass2<>();
         //s.<String>m();//完整的泛型方法调用语法
 

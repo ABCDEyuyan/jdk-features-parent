@@ -15,14 +15,13 @@ public class Main {
         //MyInf<String> inf2 = new MyInfImpl3<Double, Double>();
         MyInf<String> inf3 = new MyInfImpl3<Integer, String>();
         inf3.set("dasf");  //必须是String
+
         ((MyInfImpl3<Integer, String>)inf3).set2("asdf",100);
     }
 
     //子类型可以改变父类型的类型参数的意义
     private static void basic2() {
-        BiFunction<String,Double,Integer> biFunction = (a,b)-> {
-            return 100;
-        };
+        BiFunction<String,Double,Integer> biFunction = (a,b)-> 100;
 
         BinaryOperator<String>  operator = (a,b)-> a + b;
     }
