@@ -12,11 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 此类主要是用来响应流，比如给一个图片的url，直接响应图片的字节数据，以便一个图片能正确显示，比如
- * <pre class="code">
- *     <img src="http://localhost:8080/product/a.jpg"/>
- * </pre>
- * TODO:注意：此类不仅仅是为了图片显示设计的，还可以有其它功能
+ * 此类主要是用来响应流这种视图结果的
+ * @see FileViewResult
+ * @see ViewResult
+ * @see com.nf.mvc.handler.HandlerHelper
  */
 public class StreamViewResult extends ViewResult {
     private  Map<String, String> headers ;

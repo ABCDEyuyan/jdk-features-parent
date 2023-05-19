@@ -121,7 +121,7 @@
         </li>
         <li v-for="n in pagedProduct.paginationText.pagedText" :key="n">
           <a
-            v-if="n!='...'"
+            v-if="n!=pagedProduct.paginationText.skip"
             href="#"
             @click="getPagedProductList(n,pageSize)"
             :class="{ active: n==pagedProduct.paginationText.pagination.pageNo }"
@@ -181,6 +181,9 @@
           pagedProduct: {
             paginationText: {
               pagedText: [],
+              pagination: {
+                last: 0,
+              },
             },
             list: [],
           },

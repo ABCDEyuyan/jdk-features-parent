@@ -49,6 +49,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *     后者类加载时已经全部缓存起来了，容量不会变化了。也与{@link com.nf.mvc.mapping.RequestMappingHandlerMapping#getHandler(HttpServletRequest)}实现的缓存
  *     逻辑不太一样，后者容量超过设定的阈值后会清理掉超量的缓存项，此类永不进行缓存的清理操作
  * </p>
+ *
+ * <h3>使用注意事项</h3>
+ * <p>想用此类解析参数时，直接调用{@link #resolveArgument(MethodParameter, HttpServletRequest)}方法即可，
+ * 不需要先调用方法{@link #supports(MethodParameter)}</p>
  * @see com.nf.mvc.adapter.RequestMappingHandlerAdapter
  * @see com.nf.mvc.support.MethodInvoker
  * @see ComplexTypeMethodArgumentResolver

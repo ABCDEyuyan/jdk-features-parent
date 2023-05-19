@@ -124,9 +124,10 @@
           deleteById(id) {
             if (confirm('sure?')) {
               axios.post('/product/delete?id=' + id).then(function (result) {
-                if (result.data.code == 501) {
+                //在响应拦截器里做了
+                /*  if (result.data.code == 403) {
                   location.href = 'login.html'
-                }
+                } */
                 if (result.data.code == 200) {
                   location.reload()
                 }
@@ -149,9 +150,6 @@
               data: fd,
               params: vm.product,
             }).then(function (result) {
-              if (result.data.code == 501) {
-                location.href = 'login.html'
-              }
               if (result.data.code == 200) {
                 location.reload()
               }

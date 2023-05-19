@@ -2,6 +2,11 @@ package com.nf.mvc.support;
 
 import java.util.Comparator;
 
+/**
+ * 此比较器是依据类上设定的注解{@link Order}值来进行比较的，数字越大优先级越低，
+ * 其广泛应用在用户自定义的Mvc扩展组件之上，用来调整这些自定义组件的顺序
+ * @param <T>
+ */
 public class OrderComparator<T> implements Comparator<T> {
 
     /**

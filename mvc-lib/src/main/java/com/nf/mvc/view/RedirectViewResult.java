@@ -26,7 +26,7 @@ public class RedirectViewResult extends ViewResult {
         this.url += initModel();
         resp.sendRedirect(url);
     }
-//TODO:用StringJoiner更好？
+
     private  String initModel(){
         //ur?a=10&b=20
         if(model.size()==0) return "";

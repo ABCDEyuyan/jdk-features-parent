@@ -8,7 +8,7 @@ import static com.nf.mvc.handler.HandlerHelper.json;
 
 public class GlboalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
-    public ViewResult handleRuntime(){
+    public ViewResult handleRuntime(RuntimeException re){
         return json(new ResponseVO(500, "cuowu", null));
     }
 }
