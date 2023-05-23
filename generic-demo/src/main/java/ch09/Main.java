@@ -1,7 +1,22 @@
 package ch09;
 
 import java.util.List;
+import java.util.Set;
 
+/**
+ * java泛型的使用限制
+ * 主要的限制有：
+ * <ul>
+ *     <li>泛型实参不能是基本类型 {@link #primitive()}</li>
+ *     <li>泛型实参不能实例化 {@link SomeClass#m()}</li>
+ *     <li>不能声明类型为类型参数的静态变量以及静态方法不能使用类上的类型变量 {@link SomeClass}</li>
+ *     <li>不能对参数化的泛型类使用instanceof或者进行类型转换{@link #constraint4()}</li>
+ *     <li>不能创建泛型化的类型数组{@link #constraint5()} ()}</li>
+ *     <li>不能创建泛型类继承于异常类{@link #genericEx} ()}</li>
+ *     <li>方法参数类型不能是参数化的泛型类，这样不形成重载{@link SomeClass#print(Set)} ()}</li>
+ * </ul>
+ * https://docs.oracle.com/javase/tutorial/java/generics/restrictions.html
+ */
 public class Main {
     public static void main(String[] args) {
         // primitive();
@@ -47,22 +62,26 @@ public class Main {
         // 基本类型不能转换为Object o = 5;  //自动的装箱+ 向上转型
         // List<int> list;//
     }
-}
 
-//约束6：不能创建泛型类继承于异常类
-//假定能继承。
-// try{
+    private static void genericEx() {
+        //约束6：不能创建泛型类继承于异常类
+        //假定能继承。
+        // try{
 
-//擦除之后catch的都是同一个类型
-//不符合异常catch的语法。父子
-//}catch(MyEx<String> ex1){
+        //擦除之后catch的都是同一个类型
+        //不符合异常catch的语法。父子
+        //}catch(MyEx<String> ex1){
 
-//}catch(MyEx<Integer> ex2){
+        //}catch(MyEx<Integer> ex2){
 
-//      }
+        //      }
 /*
 class MyEx<T> extends  Throwable{
 
 }*/
+    }
+}
+
+
 
 

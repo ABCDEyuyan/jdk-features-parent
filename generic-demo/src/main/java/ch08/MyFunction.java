@@ -2,10 +2,11 @@ package ch08;
 
 
 /**
- * 1.泛型接口
+ * 1.泛型接口,此接口的实现参考jdk中的Function，主要是用来演示super与extend的实际应用
  * T，R是两个类型级别声明的类型参数（Type Parameter，Type Variable）
  * @param <T>
  * @param <R>
+ * @see java.util.function.Function
  */
 interface MyFunction<T, R> {
     /**
@@ -30,7 +31,7 @@ interface MyFunction<T, R> {
      *  g = x*2
      *  x=5  --->  10+1  -->11*2 =22
      *
-     *  6 T---->R---->V  ---->andThen方法的返回类型
+     *  6. T---->R---->V  ---->andThen方法的返回类型
      * @param after
      * @param <V>
      * @return
