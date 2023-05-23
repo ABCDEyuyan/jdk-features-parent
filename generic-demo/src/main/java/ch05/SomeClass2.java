@@ -18,11 +18,16 @@ package ch05;
  * ？是有上限和下限的。
  * @param <T>
  */
-public class SomeClass2 <T extends Number>{
+public class SomeClass2 <T extends Number  >{
 
     public double add(T t1, T t2) {
         //因为T是Number类型，所以就可以有一些成员可以访问
         return t1.doubleValue() + t2.doubleValue();
+    }
+
+    public static void main(String[] args) {
+        double result = new SomeClass2<Integer>().add(5, 6);
+
     }
 }
 

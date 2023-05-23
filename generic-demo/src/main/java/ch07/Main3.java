@@ -18,6 +18,7 @@ public class Main3 {
     }
 
     public static void print(List<? super Integer> list) {
+
         Integer object = (Integer) list.get(0);
         System.out.println(object);
         list.add(5);
