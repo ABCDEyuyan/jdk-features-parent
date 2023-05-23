@@ -42,8 +42,9 @@ class SomeClass<T> {
 
   }
   */
+
     //下面是可以的
-    public static <T> T m3(T t) {
+    public static <U> U m3(U t) {
         return null;
     }
 
