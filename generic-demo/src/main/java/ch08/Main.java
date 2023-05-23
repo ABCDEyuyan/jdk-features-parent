@@ -16,10 +16,11 @@ public class Main {
     }
 
     private static void wildcardProblem() {
-        Box<?> box = new Box<Integer>(6);
-        //Box<?>虽然可以解决问题，参考ch07中的print方法，带来了好处
+        Box<?> box = new Box<Integer>();
+
+        //Box<?>虽然可以解决一些问题，参考ch07中的print方法，带来了好处
         //但现在导致不能放任何数据
-        //box.set(7);
+        // box.set(7);
         // box.set(new Object());
 
         //虽然可以取，但由于不知道是什么类型，只能用Object类型来接受返回的数据
@@ -33,14 +34,16 @@ public class Main {
         //上届是可以取（你提供（Provider）了数据），不能存（存起来用，consume），
         //PECS :Provider extends,Consumer super
         Box<? extends Number> box = null;
-        //box.set(5);
-        //Number result = box.get();
+        Number number = box.get();
+        //box.set(22);
+
     }
     private static void cs() {
         Box<? super Integer> intSuperBox = new Box<Integer>();
         intSuperBox.set(5);//super--->consumer
         //Integer object = intSuperBox.get();
         // System.out.println(object);
+
     }
 
     private static void pecsDemo() {
@@ -62,6 +65,7 @@ public class Main {
             dest.add(number);
         }
     }
+
 }
 
 
