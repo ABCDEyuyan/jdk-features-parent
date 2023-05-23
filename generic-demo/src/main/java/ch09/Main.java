@@ -35,12 +35,15 @@ public class Main {
         //字符串数组是不能放非字符串数据
         strings[1] = 100;    // An ArrayStoreException is thrown.
 
-         //Object[] stringLists = new ArrayList<String>[2];  // compiler error, but pretend it's allowed
+         //Object[] stringLists = new ArrayList<String>[2];  // compiler error, but pretend(假装) it's allowed
         //因为泛型擦除之后，没有ArrayList<String>与ArrayList<Integer>的区别
         //所以放的2个数据都是ArrayList
         //stringLists[0] = new ArrayList<String>();   // OK
         //stringLists[1] = new ArrayList<Integer>();  // An ArrayStoreException should be thrown,
         // but the runtime can't detect it.
+
+        /* 简单来说就是由于泛型擦除，ArrayList<String>[] 与ArrayList<Integer>[]本质上都是ArrayList[],
+        无法区分两者的不同，你以为声明了两个不同类型的数组，其实都是一样的，没有意义，所以干脆不允许*/
     }
 
     private static void constraint4() {
