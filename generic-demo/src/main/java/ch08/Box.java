@@ -1,15 +1,14 @@
 package ch08;
 
 public class Box<T> {
+    private T data;
 
     public Box() {
     }
 
-    public Box(T data) {
+    /*public Box(T data) {
         this.data = data;
-    }
-
-    private T data;
+    }*/
 
     public void set(T data){
         this.data = data;

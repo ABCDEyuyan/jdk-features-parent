@@ -65,8 +65,7 @@ public class Main {
      * @param list
      */
     static void print2(List<?> list) {
-
-
+        
         for (Object o : list) {
             System.out.print(o.toString() + " ");
         }
