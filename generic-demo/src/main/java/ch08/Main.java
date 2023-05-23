@@ -2,7 +2,9 @@ package ch08;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 这章讲的是PECS
+ */
 public class Main {
 
     public static void main(String[] args) {

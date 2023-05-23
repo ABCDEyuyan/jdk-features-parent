@@ -1,12 +1,13 @@
 package ch05;
 
+/**
+ * 本章讲的是类型变量边界的问题
+ */
 public class Main {
     public static void main(String[] args) {
         //报错，因为String不是Number的子类
         //SomeClass2<String> s = new SomeClass2<>();
-//        bounded();
-
-
+       bounded();
     }
 
     private static void bounded() {
@@ -18,6 +19,7 @@ public class Main {
 
         Student s1 = new Student(1, "a", 175);
         Student s2 = new Student(2, "b", 180);
-        class3.max(s1, s2);
+        Student student = class3.max(s1, s2);
+        System.out.println("student = " + student);
     }
 }

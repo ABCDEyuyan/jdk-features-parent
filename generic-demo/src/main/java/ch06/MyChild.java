@@ -4,7 +4,6 @@ public class MyChild extends MyParent<Integer>{
     @Override
     public void setData(Integer data) {
         System.out.println("---child---");
-
     }
 
 //这个方法叫桥接方法
