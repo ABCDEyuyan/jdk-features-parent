@@ -1,15 +1,13 @@
-package impl.stream;
-
-import impl.function.BiFunction;
-import impl.function.Supplier;
-
+package com.nf.stream;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * collect接口 收集器
  * 通过传入组合子，生成高阶过程
  */
-public interface Collector<T, A, R> {
+public interface MyCollector<T, A, R> {
 
     /**
      * 收集时，提供初始化的值

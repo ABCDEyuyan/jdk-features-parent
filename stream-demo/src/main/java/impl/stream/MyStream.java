@@ -5,12 +5,6 @@ import impl.function.*;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @Author xiongyx
- * @Date 2019/3/6
- *
- * stream实现
- */
 public class MyStream<T> implements Stream<T> {
 
     /**
@@ -66,7 +60,7 @@ public class MyStream<T> implements Stream<T> {
                     return map(mapper, myStream);
                 }
         );
-
+        //因为map运算之后返回类型是R，不是T，不能像limit方法那样返回this，需要返回一个新的流
         // 求值链条 加入一个新的process map
         return new Builder<R>()
                 .nextItemEvalProcess(this.nextItemEvalProcess)

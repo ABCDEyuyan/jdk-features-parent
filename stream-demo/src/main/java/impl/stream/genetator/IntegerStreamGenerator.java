@@ -5,9 +5,6 @@ import impl.stream.NextItemEvalProcess;
 import impl.stream.Stream;
 
 /**
- * @Author xiongyx
- * on 2019/3/5.
- *
  * 整数流生成器
  */
 public class IntegerStreamGenerator {

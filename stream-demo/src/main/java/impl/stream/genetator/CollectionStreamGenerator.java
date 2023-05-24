@@ -8,9 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @Author xiongyx
- * on 2019/3/9.
- *
  * 集合流生成器
  */
 public class CollectionStreamGenerator {

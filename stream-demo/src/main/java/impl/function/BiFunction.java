@@ -1,9 +1,5 @@
 package impl.function;
 
-/**
- * @Author xiongyx
- * on 2019/3/8.
- */
 @FunctionalInterface
 public interface BiFunction<R, T, U> {
 

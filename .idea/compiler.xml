@@ -7,17 +7,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="mvc-lib-demo" />
         <module name="annotation-demo" />
-        <module name="generic-demo" />
-        <module name="optional-demo" />
-        <module name="thread-demo" />
         <module name="reflection-demo" />
         <module name="stream-demo" />
-        <module name="try-with-resource-demo" />
         <module name="exception-demo" />
         <module name="dbutils-lib" />
         <module name="lambda-demo" />
+        <module name="stream-lib" />
+        <module name="mvc-lib-demo" />
+        <module name="generic-demo" />
+        <module name="optional-demo" />
+        <module name="thread-demo" />
+        <module name="try-with-resource-demo" />
         <module name="mvc-lib" />
       </profile>
     </annotationProcessing>
@@ -35,6 +36,7 @@
       <module name="optional-demo" options="-parameters" />
       <module name="reflection-demo" options="-parameters" />
       <module name="stream-demo" options="-parameters" />
+      <module name="stream-lib" options="-parameters" />
       <module name="thread-demo" options="-parameters" />
       <module name="try-with-resource-demo" options="-parameters" />
     </option>

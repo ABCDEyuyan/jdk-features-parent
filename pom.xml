@@ -21,6 +21,7 @@
         <module>thread-demo</module>
         <module>optional-demo</module>
         <module>try-with-resource-demo</module>
+        <module>stream-lib</module>
     </modules>
 
     <properties>

@@ -1,9 +1,5 @@
 package impl.function;
 
-/**
- * @Author xiongyx
- * @Date 2019/3/8
- */
 @FunctionalInterface
 public interface Comparator<T>  {
 

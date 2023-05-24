@@ -5,10 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @Author xiongyx
- * on 2019/3/5.
- */
 public class TestJDKStream {
 
     public static void main(String[] args){

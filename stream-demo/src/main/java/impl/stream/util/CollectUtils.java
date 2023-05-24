@@ -14,9 +14,6 @@ import java.util.function.Function;
 
 
 /**
- * @Author xiongyx
- * on 2019/3/10.
- *
  * stream.collect() 参数常用工具类
  */
 public class CollectUtils {
@@ -40,7 +37,7 @@ public class CollectUtils {
             }
 
             @Override
-            public java.util.function.Function<List<T>, List<T>> finisher() {
+            public Function<List<T>, List<T>> finisher() {
                 return list -> list;
             }
         };

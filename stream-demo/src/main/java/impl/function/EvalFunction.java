@@ -3,10 +3,6 @@ package impl.function;
 
 import impl.stream.MyStream;
 
-/**
- * @Author xiongyx
- * @Date 2019/3/6
- */
 @FunctionalInterface
 public interface EvalFunction<T> {
 

@@ -2,9 +2,6 @@ package impl.stream;
 
 import impl.function.EvalFunction;
 /**
- * @Author xiongyx
- * @Date 2019/3/6
- *
  * 下一个元素求值过程
  */
 public class NextItemEvalProcess {
