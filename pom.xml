@@ -19,6 +19,8 @@
         <module>generic-demo</module>
         <module>stream-demo</module>
         <module>thread-demo</module>
+        <module>optional-demo</module>
+        <module>try-with-resource-demo</module>
     </modules>
 
     <properties>

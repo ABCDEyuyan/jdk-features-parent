@@ -15,6 +15,8 @@
     <file url="file://$PROJECT_DIR$/mvc-lib-demo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mvc-lib/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mvc-lib/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/optional-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/optional-demo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/reflection-demo/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/reflection-demo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
@@ -23,6 +25,8 @@
     <file url="file://$PROJECT_DIR$/stream-demo/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/thread-demo/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/thread-demo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/try-with-resource-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/try-with-resource-demo/src/main/resources" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
