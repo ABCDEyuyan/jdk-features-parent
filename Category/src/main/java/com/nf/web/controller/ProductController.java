@@ -26,9 +26,10 @@ public class ProductController {
     @RequestMapping("/limit")
     public JsonViewResult getLimit(@RequestParam(defaultValue = "") String cid,
                                    @RequestParam(defaultValue = "") String name,
+                                   @RequestParam(defaultValue = "") String status,
                                    @RequestParam(defaultValue = "1") int pageNo,
                                    @RequestParam(defaultValue = "2") int pageSize){
-        List<ProductEntity> result=service.getLimit(cid,name, pageNo, pageSize);
+        List<ProductEntity> result=service.getLimit(cid,name,status,pageNo, pageSize);
         return new JsonViewResult(new ResponseVo(200,"成功",result));
     }
     @RequestMapping("/list")

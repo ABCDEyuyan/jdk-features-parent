@@ -6,9 +6,9 @@ public class Box<T> {
     public Box() {
     }
 
-    /*public Box(T data) {
-        this.data = data;
-    }*/
+//    public Box(T data) {
+//        this.data = data;
+//    }
 
     public void set(T data){
         this.data = data;

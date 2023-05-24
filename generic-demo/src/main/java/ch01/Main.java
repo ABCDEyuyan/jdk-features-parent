@@ -24,6 +24,5 @@ public class Main {
         //如果没有这样的泛型技术，就只能一个一个类型重复编写，
         // 比如处理IntArrayList，DoubleArrayList
         //另外一种选择是只写一个类，但只能针对Object类型进行处理
-
     }
 }

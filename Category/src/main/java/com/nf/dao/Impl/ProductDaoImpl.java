@@ -22,11 +22,17 @@ import java.util.List;
  **/
 public class ProductDaoImpl implements ProductDao {
     SqlExecutor sqlExecutor=new SqlExecutor(DataSourceUtil.getDataSource());
-
     @Override
-    public List<ProductEntity> getLimit(String cid,String name,int pageNo,int pageSize) {
-        String sql="select id,name,image,price,count,status,cid from product where cid like ? and name like ? limit ?,?";
-        return sqlExecutor.query(sql,new BeanListHandler<>(ProductEntity.class),"%"+cid+"%","%"+name+"%",(pageNo-1)*pageSize,pageSize);
+    public List<ProductEntity> getLimit(String cid,String name,String status,int pageNo,int pageSize) {
+        int no=(pageNo-1)*pageSize;
+        int size=pageSize;
+
+        if(status.isEmpty()){
+            String sql="select id,name,image,price,count,status,cid from product where cid like ? and name like ? and status = '0' or status ='1' limit ?,?";
+            return sqlExecutor.query(sql,new BeanListHandler<>(ProductEntity.class),"%"+cid+"%","%"+name+"%",status,no,size);
+        }
+        String sql="select id,name,image,price,count,status,cid from product where cid like ? and name like ? and status = ? limit ?,?";
+        return sqlExecutor.query(sql,new BeanListHandler<>(ProductEntity.class),"%"+cid+"%","%"+name+"%",status,no,size);
     }
 
     @Override

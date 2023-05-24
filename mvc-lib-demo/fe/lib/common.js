@@ -1,4 +1,4 @@
-axios.defaults.baseURL = 'http://localhost:8080/mvc'
+; axios.defaults.baseURL = 'http://localhost:8080/mvc'
 
 // 添加请求拦截器
 axios.interceptors.request.use(

@@ -8,12 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mvc-lib-demo" />
+        <module name="Category" />
         <module name="annotation-demo" />
         <module name="generic-demo" />
         <module name="thread-demo" />
         <module name="reflection-demo" />
         <module name="stream-demo" />
         <module name="exception-demo" />
+        <module name="student-demo" />
         <module name="dbutils-lib" />
         <module name="lambda-demo" />
         <module name="mvc-lib" />
@@ -26,6 +28,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Category" options="-parameters" />
       <module name="annotation-demo" options="-parameters" />
       <module name="dbutils-lib" options="-parameters" />
       <module name="exception-demo" options="-parameters" />
@@ -36,6 +39,7 @@
       <module name="mvc-lib-demo" options="-parameters" />
       <module name="reflection-demo" options="-parameters" />
       <module name="stream-demo" options="-parameters" />
+      <module name="student-demo" options="-parameters" />
       <module name="thread-demo" options="-parameters" />
     </option>
   </component>

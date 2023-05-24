@@ -8,7 +8,7 @@ public class Main {
 
 
         SomeClass2<Integer> s = new SomeClass2<>();
-        //s.<String>m();//完整的泛型方法调用语法
+        s.<String>m();//完整的泛型方法调用语法
 
         s.m();//可以简化
 

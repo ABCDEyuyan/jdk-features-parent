@@ -16,7 +16,6 @@ public class LoginServiceImpl implements LoginService {
     LoginDao dao=new LoginDaoImpl();
     @Override
     public boolean login(UserEntity userEntity)  {
-
         return dao.login(userEntity);
     }
 }

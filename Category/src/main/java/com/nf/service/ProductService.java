@@ -6,7 +6,7 @@ import com.nf.mvc.file.MultipartFile;
 import java.util.List;
 
 public interface ProductService {
-    List<ProductEntity> getLimit(String cid,String name,int pageNo,int pageSize);
+    List<ProductEntity> getLimit(String cid,String name,String status,int pageNo,int pageSize);
 
     List<ProductEntity> getAll();
 

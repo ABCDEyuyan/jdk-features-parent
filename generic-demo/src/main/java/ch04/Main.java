@@ -1,5 +1,7 @@
 package ch04;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 
@@ -7,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         //basic1();
 
-        //basic2();
+        basic2();
 
         MyInf<String> inf = new MyInfImpl3<Double, String>();
         //下面的报错，因为接口的类型实参是String，然后MyInfImpl3实现类的
@@ -16,14 +18,17 @@ public class Main {
         MyInf<String> inf3 = new MyInfImpl3<Integer, String>();
         inf3.set("dasf");  //必须是String
 
-        ((MyInfImpl3<Integer, String>)inf3).set2("asdf",100);
+        ((MyInfImpl3<Integer, String>) inf3).set2("asdf", 100);
+        ((MyInfImpl3<Double, String>) inf).set2("dasd", 1.1);
     }
 
     //子类型可以改变父类型的类型参数的意义
     private static void basic2() {
-        BiFunction<String,Double,Integer> biFunction = (a,b)-> 100;
+        BiFunction<String, Double, Integer> biFunction = (a, b) -> 100;
 
-        BinaryOperator<String>  operator = (a,b)-> a + b;
+        BinaryOperator<String> operator = (a, b) -> a + b;
+        System.out.println( biFunction.apply("a", 1.1));
+        System.out.println(operator.apply("a", "b"));
     }
 
     private static void basic1() {
@@ -31,7 +36,14 @@ public class Main {
 
         MyInfImpl1<Integer> infImpl1 = new MyInfImpl1<>();
         MyInfImpl1<String> infImpl2 = new MyInfImpl1<>();
+        MyInfImpl3<Integer, String> infImpl3 = new MyInfImpl3<>();
         //myInf= infImpl1; //报错
         myInf = infImpl2;
+        myInf = infImpl3;
+
+        infImpl1.set(1);
+        infImpl2.set("ad");
+        myInf.set("da");
+
     }
 }

@@ -10,7 +10,7 @@ public class FileController {
 
     @RequestMapping("/download")
     public ViewResult download(String filename) {
-        String realPath = "E:/image/"+filename;
+        String realPath = "C:/Users/27423/Desktop/"+filename;
         return file(realPath);
 
     }

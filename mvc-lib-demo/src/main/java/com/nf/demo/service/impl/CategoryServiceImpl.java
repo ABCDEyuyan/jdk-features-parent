@@ -10,7 +10,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private CategoryDao categoryDao = new CategoryDaoImpl();
     @Override
-    public List<CategoryEntity> getAll() {
+    public List<CategoryEntity> getAll(){
         return categoryDao.getAll();
     }
 }

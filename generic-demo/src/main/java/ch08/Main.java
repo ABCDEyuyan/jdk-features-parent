@@ -8,10 +8,10 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        //wildcardProblem();
+        wildcardProblem();
         //pe();
         //cs();
-        //pecsDemo();
+        pecsDemo();
 
     }
 
@@ -26,7 +26,7 @@ public class Main {
         //虽然可以取，但由于不知道是什么类型，只能用Object类型来接受返回的数据
         //这其实是违反了泛型的设计的初衷(不需要进行类型转换)，
         // 所以其实等价于取不了数据
-        Integer result = (Integer) box.get();
+        String result = (String) box.get();
         System.out.println(result);
     }
 
@@ -39,10 +39,10 @@ public class Main {
 
     }
     private static void cs() {
-        Box<? super Integer> intSuperBox = new Box<Integer>();
-        intSuperBox.set(5);//super--->consumer
-        //Integer object = intSuperBox.get();
-        // System.out.println(object);
+        Box<? super Number> intSuperBox = new Box<Number>();
+        intSuperBox.set(new Integer(1));//super--->consumer
+//        Integer object = intSuperBox.get();
+//         System.out.println(object);
 
     }
 

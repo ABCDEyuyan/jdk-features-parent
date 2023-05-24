@@ -1,16 +1,20 @@
 package ch08;
 
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+
 public class Main2 {
     public static void main(String[] args) {
-        // basicDemo();
-        basiceDemo2();
-        // basiceDemo3();
+         //basicDemo();
+        //basiceDemo2();
+         basiceDemo3();
         //basicDemo4();
     }
 
     private static void basicDemo() {
-        MyFunction<String, Number> f1 = (s) -> 100;
+        MyFunction<String, Number> f1 = (s) -> 123;
         Number num = f1.apply("asdf");
+
         System.out.println(num);
     }
 
@@ -38,6 +42,8 @@ public class Main2 {
         MyFunction<Object, Integer> f3 = num -> 6;
         MyFunction<String, Integer> f1f2 = f1.andThen2(f2);
         MyFunction<String, Integer> f1f3 = f1.andThen2(f3);
+        BiConsumer<String,Integer> f11= (t,n)->{};
+        BiPredicate<String,String> fbi=(s,n)-> false;
     }
 
     private static void basicDemo4() {

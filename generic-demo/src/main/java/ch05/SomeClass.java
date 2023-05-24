@@ -1,6 +1,7 @@
 package ch05;
 
 public class SomeClass<T> {
+
     /**
      * T这种东西，由于代表的是任意的类型，所以能对他进行的操作是有限制
      * 只有Object类里面的东西是可以用的

@@ -21,8 +21,8 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     ProductDao dao=new ProductDaoImpl();
     @Override
-    public List<ProductEntity> getLimit(String cid,String name, int pageNo, int pageSize) {
-        return dao.getLimit(cid,name,pageNo, pageSize);
+    public List<ProductEntity> getLimit(String cid,String name,String status,int pageNo, int pageSize) {
+        return dao.getLimit(cid,name,status,pageNo, pageSize);
     }
 
     @Override

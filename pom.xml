@@ -19,6 +19,7 @@
         <module>generic-demo</module>
         <module>stream-demo</module>
         <module>thread-demo</module>
+        <module>student-demo</module>
     </modules>
 
     <properties>

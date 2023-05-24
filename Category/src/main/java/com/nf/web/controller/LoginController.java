@@ -19,12 +19,12 @@ import com.nf.utils.vo.ResponseVo;
 public class LoginController {
     LoginService service=new LoginServiceImpl();
     @RequestMapping("/login")
-    public JsonViewResult login(@RequestBody UserEntity user){
+    public JsonViewResult login(UserEntity user){
         Boolean login = service.login(user);
         if (login) {
             return new JsonViewResult(new ResponseVo(200, "ok", user.getName()));
         } else {
-            return new JsonViewResult(new ResponseVo(201, "no", user.getName()));
+            return new JsonViewResult(new ResponseVo(201, "no", null));
         }
     }
 }

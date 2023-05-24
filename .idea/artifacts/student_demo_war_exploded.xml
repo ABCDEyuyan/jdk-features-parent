@@ -1,0 +1,46 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="student-demo:war exploded">
+    <output-path>$PROJECT_DIR$/student-demo/target/student-demo-1.0-SNAPSHOT</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>student-demo</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="student-demo" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="archive" name="mvc-lib-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="mvc-lib" />
+          </element>
+          <element id="library" level="project" name="Maven: org.javassist:javassist:3.29.2-GA" />
+          <element id="library" level="project" name="Maven: io.github.classgraph:classgraph:4.8.157" />
+          <element id="library" level="project" name="Maven: commons-beanutils:commons-beanutils:1.9.4" />
+          <element id="library" level="project" name="Maven: commons-logging:commons-logging:1.2" />
+          <element id="library" level="project" name="Maven: commons-collections:commons-collections:3.2.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.14.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.14.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.14.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2" />
+          <element id="library" level="project" name="Maven: com.github.ben-manes.caffeine:caffeine:2.8.2" />
+          <element id="library" level="project" name="Maven: org.checkerframework:checker-qual:3.3.0" />
+          <element id="library" level="project" name="Maven: com.google.errorprone:error_prone_annotations:2.3.4" />
+          <element id="archive" name="dbutils-lib-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="dbutils-lib" />
+          </element>
+          <element id="library" level="project" name="Maven: com.alibaba:druid:1.2.6" />
+          <element id="library" level="project" name="Maven: mysql:mysql-connector-java:8.0.23" />
+          <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.11.4" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/student-demo/target/student-demo-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="student-demo/web/Web" />
+    </root>
+  </artifact>
+</component>

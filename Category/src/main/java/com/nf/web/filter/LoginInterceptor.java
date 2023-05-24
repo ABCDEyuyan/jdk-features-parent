@@ -2,6 +2,9 @@ package com.nf.web.filter;
 
 import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.Interceptors;
+import com.nf.mvc.util.JacksonUtils;
+import com.nf.mvc.util.StringUtils;
+import com.nf.utils.vo.ResponseVo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,16 +17,20 @@ import javax.servlet.http.HttpServletResponse;
  * @Explain
  **/
 
-@Interceptors(excludePattern={"/user/**","/product/**","/category/**"})
+@Interceptors(value = {"/product/insert","product/update","product/delete"},excludePattern={"/user/login"})
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String auth = request.getHeader("auth");
+//        if(!StringUtils.isNullOrEmpty(auth)) {
+//            return true;
+//        }
+        //TODO:1
+        ResponseVo responseVo=new ResponseVo(501,"未登录",null);
+        String s = JacksonUtils.toJson(responseVo);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().print(s);
         return false;
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HandlerInterceptor.super.postHandle(request, response, handler);
     }
 
 }

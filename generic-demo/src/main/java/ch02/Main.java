@@ -1,9 +1,11 @@
 package ch02;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 泛型类型的声明
+ * RawType:原生类型 Object类型
  */
 public class Main {
 
@@ -19,6 +21,16 @@ public class Main {
         // 不建议把泛型实参化的类型赋值给原生类型的变量
         box = integerBox;//不建议
         integerBox = box; //不建议
+
+        List<String> list=new ArrayList<String>();
+        list.add("a");
+
+        for (String s : list) {
+            s.isEmpty();
+            System.out.println(s);
+        }
+        String s = list.get(0);
+        System.out.println(s);
     }
 
     private static void genericTypeInvocation() {
