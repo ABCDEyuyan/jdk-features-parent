@@ -6,8 +6,17 @@ import java.util.function.Supplier;
 
 
 public class MyStreamImpl<T> implements MyStream<T>{
+    /**
+     * 当前元素
+     */
     private T head;
+    /**
+     * 下一个元素的处理方法，也就是说通过这个函数接口来创建出下一个元素出来
+     */
     private Supplier<MyStreamImpl<T>> nextItemEvalProcess;
+    /**
+     * 流时候已经结束，但这个示例项目对它没处理，看看就好
+     */
     private boolean isEnd;
 
     /**
@@ -89,7 +98,7 @@ public class MyStreamImpl<T> implements MyStream<T>{
     }
 
 
-    //=========================================
+    //===================私有方法，与API实现方法配套使用======================
     private static <T> MyStreamImpl<T> filter(Predicate<T> predicate, MyStreamImpl<T> myStream){
         if(myStream.isEmpty()){
             return MyStream.makeEmptyStream();
@@ -109,8 +118,9 @@ public class MyStreamImpl<T> implements MyStream<T>{
         if(myStream.isEmpty()){
             return;
         }
-
+        // 先消费当前元素
         consumer.accept(myStream.head);
+        //接着调用myStream.eval获取下一个元素（在新的流里），然后再递归消费
         forEach(consumer, myStream.eval());
     }
 
