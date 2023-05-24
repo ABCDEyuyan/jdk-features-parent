@@ -2,6 +2,10 @@ package impl.stream;
 
 import impl.function.*;
 
+/**
+ * impl包的所有代码来自于文章https://www.cnblogs.com/xiaoxiongcanguan/p/10511233.html
+ * @param <T>
+ */
 public interface Stream<T> {
 
     /**
