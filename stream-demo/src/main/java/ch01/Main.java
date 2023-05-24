@@ -20,6 +20,7 @@ public class Main {
     }
 
     private static void hello2() {
+
         //集合创建流：调用stream方法，此方法属于接口Collection
         List<Integer> list = Arrays.asList(9, 12, 65);
         Stream<Integer> stream = list.stream();

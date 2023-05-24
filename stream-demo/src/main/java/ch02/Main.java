@@ -40,7 +40,7 @@ public class Main {
         // 7 利用builder创建流
         Stream<String> streamBuilder =
                 Stream.<String>builder().add("a").add("b").add("c").build();
-        // 8 利用generate创建流（无线容量流）
+        // 8 利用generate创建流（无限容量流）
         Stream<String> streamGenerated =
                 Stream.generate(() -> "element").limit(10);
         // 9 利用iterate方法创建无限流

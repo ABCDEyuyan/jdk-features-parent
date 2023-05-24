@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+
+
         //asList返回的是一个只读的list实现
         List<Integer> list = Arrays.asList(1, 2);
         //下面2个操作都会报错，因为只读
