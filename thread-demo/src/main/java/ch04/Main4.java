@@ -1,7 +1,7 @@
 package ch04;
 
 /**
- * 演示锁对象不一致的问题
+ * 原子性问题:演示锁对象不一致的问题
  */
 public class Main4 {
     public static void main(String[] args) throws InterruptedException {
@@ -30,9 +30,5 @@ public class Main4 {
         t2.join();
 
         System.out.println("count:" + counter.getCount());
-
-
     }
-
-
 }

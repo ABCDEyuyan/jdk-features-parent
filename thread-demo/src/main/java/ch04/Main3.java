@@ -2,7 +2,10 @@ package ch04;
 
 public class Main3 {
     public static void main(String[] args) throws InterruptedException {
+        multiThreadDemo();
+    }
 
+    private static void multiThreadDemo() throws InterruptedException {
         MyCounter2 counter = new MyCounter2();
 
         Runnable r1 = ()->{
@@ -27,21 +30,6 @@ public class Main3 {
         t2.join();
 
         System.out.println("count:" + counter.getCount());
-
-
     }
 
-    private static void singleThreadDemo() {
-        MyCounter counter = new MyCounter();
-
-        for (int i = 0; i < 1000; i++) {
-            counter.incr();
-        }
-        System.out.println("count:" + counter.getCount());
-
-        for (int i = 0; i < 1000; i++) {
-            counter.decre();
-        }
-        System.out.println("count:" + counter.getCount());
-    }
 }

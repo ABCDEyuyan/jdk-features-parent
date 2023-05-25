@@ -2,6 +2,9 @@ package ch04;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 演示可见性问题
+ */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         MyTask runnable = new MyTask();

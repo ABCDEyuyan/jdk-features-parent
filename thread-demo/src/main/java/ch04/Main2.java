@@ -6,6 +6,12 @@ package ch04;
 public class Main2 {
     public static void main(String[] args) throws InterruptedException {
         //singleThreadDemo(); 一定要是同一个对象，不然锁对象不一样就不会有同步效果
+        multiThreadDemo();
+
+
+    }
+
+    private static void multiThreadDemo() throws InterruptedException {
         MyCounter counter = new MyCounter();
 
 
@@ -33,8 +39,6 @@ public class Main2 {
         //因为2个线程交替执行，并且i++与i--不是原子操作
         //解决这个问题，可以用支持原子操作的类代替int类型或者用synchronize
         System.out.println("count:" + counter.getCount());
-
-
     }
 
     private static void singleThreadDemo() {

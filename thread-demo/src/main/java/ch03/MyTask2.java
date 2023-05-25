@@ -39,8 +39,8 @@ public class MyTask2 implements Runnable{
     /**
      * 这个方法就是一个计算结果的处理方法
      *
-     * 缺点：计算结果的处理逻辑完全有MyTask2自己来编写，不灵活
-     * 写死，别人就没法写第二种，第三种，第n种其它的处理逻辑
+     * 缺点：计算结果的处理逻辑完全由MyTask2自己来编写，不灵活
+     * 别人就没法写第二种，第三种，第n种其它的处理逻辑
      * @param data
      */
     public void onComplete(int data) {
