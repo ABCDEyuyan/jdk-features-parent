@@ -1,7 +1,6 @@
 package test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -10,14 +9,44 @@ public class Main {
         //old();
 
         List<Student> students = getData();
-        Stream<Student> stream = students.stream();
+        List<Student> students2 = getData();
+
+        ClassInfo cl = new ClassInfo();
+        cl.setId(185);
+        cl.setName("java1ban");
+        cl.setStudents(students);
+
+        ClassInfo cl2 = new ClassInfo();
+        cl2.setId(186);
+        cl2.setName("java2ban");
+        cl2.setStudents(students2);
+
+        List<ClassInfo> classInfos = new ArrayList<>();
+        classInfos.add(cl);
+        classInfos.add(cl2);
+
+      /*  Optional<Integer> integer1 = classInfos.stream()
+                .flatMap(c -> c.getStudents().stream())
+                .map(s -> s.getHeight())
+                .reduce((i, j) -> i + j);
+        System.out.println(integer1);*/
 
 
+        Stream.of(1,2,3,4,5,6)
+                .filter(s->{
+                    System.out.println("filter-----:" + s);
+                    return s>5;
+                })
+                .map(s->{
+                    System.out.println("map-----:" + s);
+                    return s;
+                }) .forEach(System.out::println);
 
 
-        stream.flatMap(s->Arrays.stream(s.getName().split("")))
-                .distinct().forEach(System.out::println);
-
+      /*  .sorted((s1,s2)->{
+            System.out.println("sort----s1:" + s1 + "s2:" + s2);
+            return s1.compareTo(s2);
+        })*/
     }
 
 
