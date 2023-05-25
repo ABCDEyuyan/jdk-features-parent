@@ -3,6 +3,13 @@ package ch04;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * 流的执行特点
+ * 1.一般没有终止操作，中间指定的lambda不会执行
+ * 2.流水线似的执行方式
+ * 3.让流的量变小的操作放在前面
+ * 4.有些特殊的操作，比如sort就不是流水线似的操作
+ */
 public class Main {
     public static void main(String[] args) {
         //chixu();
