@@ -42,9 +42,5 @@ public class Box<T> {
         this.notifyAll();
         return fruit;
     }
-
-
-    public static void main(String[] args) {
-
-    }
+    
 }

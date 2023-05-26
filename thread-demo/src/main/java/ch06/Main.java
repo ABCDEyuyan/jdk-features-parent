@@ -11,12 +11,14 @@ import java.util.concurrent.*;
 public class Main {
     public static void main(String[] args) throws Exception {
         //poolBasic();
-
         //poolCreated();
+        poolShutdown();
+    }
 
+    private static void poolShutdown() {
         ExecutorService pool = Executors.newFixedThreadPool(2);
 
-        pool.submit(()->{
+        pool.submit(() -> {
             try {
                 System.out.println("---before----");
                 TimeUnit.SECONDS.sleep(3);
@@ -43,16 +45,15 @@ public class Main {
 
         //1.假定corePoolSize =2,maximumPoolSize = 10,BlockingQueue.size=3
         //2.提交一个任务，直接创建一个新的线程来执行这个任务，因为此时还没有达到corePoolsize的设定
-        //  即便此时有一个线程，而且也还没有达到corePoolsize的设定，那么也会床架一个线程来执行任务
+        //  即便此时有一个线程，而且也还没有达到corePoolsize的设定，那么也会创建一个线程来执行任务
         // 也就是：只要线程的数量没有达到corePoolSize，有新任务来就直接创建线程来执行
 
         //3. 再有新任务就放到阻塞队列中，直到队列满
         //4.在这中间如果有任务已经执行完毕，这些闲下来的线程会去任务队列中提取任务来执行
         //5.任务执行完一些，就会有一些空闲的线程，那么这些空闲的线程在等待设定的空闲时间之后会被销毁
-        //6.销毁到只剩下corepoolsize就不再销毁
+        //6.销毁到只剩下corepoolsize设定大小的线程数量后就不再销毁
 
-        //所以阿里巴巴编码规范中，不建议用Executors来创建线程池
-        //  线程池不允许使用Executors去创建，而是通过ThreadPoolExecutor的方式，这样的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。 说明：Executors返回的线程池对象的弊端如下：
+        // 说明：Executors返回的线程池对象的弊端如下：
         //   1）FixedThreadPool和SingleThreadPool:
         //允许的请求队列长度为Integer.MAX_VALUE，可能会堆积大量的请求，从而导致OOM （OutOfMemoryError）
         //  2）CachedThreadPool:
@@ -60,12 +61,15 @@ public class Main {
 
         //队列长度是一个很大的值，比如Integer.MAX_VALUE这样可以认为队列是一个无界队列
 
+        //====所以阿里巴巴编码规范中，不建议用Executors来创建线程池==
+        //  线程池不允许使用Executors去创建，而是通过ThreadPoolExecutor的方式，
+        //  这样的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。
         ExecutorService pool = Executors.newCachedThreadPool();
         //建议在最大线程数量和队列数量上不要搞无界。
         ThreadPoolExecutor executor = new ThreadPoolExecutor(2,
                 6, 1,
                 TimeUnit.MINUTES, new LinkedBlockingQueue<>(48));
-        Runnable r1 = ()->{
+        Runnable r1 = () -> {
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
@@ -74,7 +78,7 @@ public class Main {
             System.out.println(Thread.currentThread().getName() + " 1");
         };
 
-        Runnable r2 = ()->{
+        Runnable r2 = () -> {
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
@@ -83,7 +87,7 @@ public class Main {
             System.out.println(Thread.currentThread().getName() + " 2");
         };
 
-        Runnable r3 = ()->{
+        Runnable r3 = () -> {
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
@@ -91,10 +95,10 @@ public class Main {
             }
             System.out.println(Thread.currentThread().getName() + " 3");
         };
-//提交任务过来：1.立即分配线程执行，
-// 2，线程不够可以创建额外的出来去执行
-//3.先把提交的任务存起来，等其它任务执行完毕之后有空闲的线程就可以执行这个任务了。
-//4.直接拒绝，不执行这个提交的任务。
+        //提交任务过来：1.立即分配线程执行，
+        // 2，线程不够可以创建额外的出来去执行
+        //3.先把提交的任务存起来，等其它任务执行完毕之后有空闲的线程就可以执行这个任务了。
+        //4.直接拒绝，不执行这个提交的任务。
 
         pool.submit(r1);
         pool.submit(r2);
@@ -109,10 +113,10 @@ public class Main {
 
         //创建了一个线程池
         ExecutorService pool = Executors.newFixedThreadPool(2);
-        Runnable runnable = ()-> System.out.println("hello pool");
+        Runnable runnable = () -> System.out.println("hello pool");
         pool.submit(runnable);
 
-        Callable<String> callable = ()->{
+        Callable<String> callable = () -> {
             TimeUnit.SECONDS.sleep(3);
             System.out.println("执行");
             return "这是一个返回数据的接口";
@@ -120,7 +124,7 @@ public class Main {
         Future<String> future = pool.submit(callable);
         System.out.println("干别的事情-----");
 
-//get方法是一个阻塞的方法，线程任务没有执行完毕就一直卡在这里
+        //get方法是一个阻塞的方法，线程任务没有执行完毕就一直卡在这里
         //get是运行在主线程（案例中）
         String result = future.get();
 

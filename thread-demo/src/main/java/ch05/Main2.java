@@ -11,9 +11,5 @@ public class Main2 {
         TimeUnit.SECONDS.sleep(1);
         //如果notify先发生，wait方法是收不到的
        demo2.m2();
-
-       Thread thread;
-
-
     }
 }

@@ -3,7 +3,7 @@ package ch05.box2;
 import java.util.LinkedList;
 
 /**
- * 书上的写法，有bug，没有考虑虚假唤醒的问题
+ * 这是书上的写法，有bug，没有考虑虚假唤醒的问题
  * @param <T>
  */
 public class Box2<T> {
