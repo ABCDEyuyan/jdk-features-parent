@@ -8,7 +8,7 @@ public class MyCounter2 {
 
     //能进到此方法，就表示获取了锁，方法执行完毕就自动解锁，解锁之后别的线程才有机会重新获取锁
     public  void  incr(){
-        //这种写法叫同步代码块，跟MyConter的写法是等价的
+        //这种写法叫同步代码块，跟MyCounter的写法是等价的
         //锁对象都是this
         synchronized (this) {
             count++;

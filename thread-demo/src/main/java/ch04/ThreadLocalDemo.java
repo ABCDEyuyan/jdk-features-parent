@@ -5,12 +5,13 @@ package ch04;
  */
 public class ThreadLocalDemo {
     //只是实例化了一个ThreadLocal的对象，里面还是没有存放数据
-static ThreadLocal<Integer> local = new ThreadLocal<>();
-static ThreadLocal<Integer> local2 = ThreadLocal.withInitial(()->0);
+    static ThreadLocal<Integer> local = new ThreadLocal<>();
+    static ThreadLocal<Integer> local2 = ThreadLocal.withInitial(() -> 0);
+
     public static void main(String[] args) throws InterruptedException {
         //basicUsage();
 
-       // commanUsage();
+        // commanUsage();
 
         commanUsageWithInitValue();
     }
@@ -75,9 +76,9 @@ static ThreadLocal<Integer> local2 = ThreadLocal.withInitial(()->0);
 
     private static void basicUsage() {
         Integer integer = local.get();
-        if(integer==null){
+        if (integer == null) {
             System.out.println("kong");
-            integer=100;
+            integer = 100;
         }
         local.set(integer);
         System.out.println(local.get());
@@ -87,11 +88,9 @@ static ThreadLocal<Integer> local2 = ThreadLocal.withInitial(()->0);
     //每个线程都有自己的一个xx的副本，互不干扰，所以没有线程不安全的问题
 
     //方法的参数与局部变量都是线程私有的，不存在安全性的问题
-    public void x(int a ,int b){
+    public void x(int a, int b) {
         int xx = 100;
     }
-
-
 
 }
 

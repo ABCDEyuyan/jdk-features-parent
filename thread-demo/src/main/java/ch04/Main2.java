@@ -1,7 +1,12 @@
 package ch04;
 
 /**
- * 演示原子性的问题
+ * 《Java并发编程实战》书中给出定义：
+ * 当多个线程访问某个类时，不管运行时环境采用何种调度方式或者这些线程将如何交替执行，
+ * 并且在调用代码中不需要任何额外的同步，这个类都能表现出正确的行为，那么这个类就是线程安全的。
+ *
+ * 多线程环境下三大因素：原子性、有序性与可见性
+ * 演示原子性的问题：用同步方法解决
  */
 public class Main2 {
     public static void main(String[] args) throws InterruptedException {
@@ -13,7 +18,6 @@ public class Main2 {
 
     private static void multiThreadDemo() throws InterruptedException {
         MyCounter counter = new MyCounter();
-
 
         Runnable r1 = ()->{
             for (int i = 0; i < 1000; i++) {

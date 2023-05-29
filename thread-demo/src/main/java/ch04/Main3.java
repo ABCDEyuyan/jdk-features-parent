@@ -1,5 +1,8 @@
 package ch04;
 
+/**
+ * 原子性问题：用同步代码块解决
+ */
 public class Main3 {
     public static void main(String[] args) throws InterruptedException {
         multiThreadDemo();

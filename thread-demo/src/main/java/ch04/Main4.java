@@ -5,7 +5,6 @@ package ch04;
  */
 public class Main4 {
     public static void main(String[] args) throws InterruptedException {
-
         MyCounter3 counter = new MyCounter3();
 
         Runnable r1 = ()->{
@@ -24,7 +23,6 @@ public class Main4 {
 
         t1.start();
         t2.start();
-
 
         t1.join();
         t2.join();
