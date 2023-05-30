@@ -11,6 +11,7 @@ public class Main6 {
     private static boolean flag = false;
 
     public static void main(String[] args) throws Exception {
+
         Thread t1 = new ChangeThread();
         Thread t2 = new DisplayThread();
         t1.start();
