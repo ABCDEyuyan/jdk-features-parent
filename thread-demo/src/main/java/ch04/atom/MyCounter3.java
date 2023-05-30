@@ -1,4 +1,4 @@
-package ch04;
+package ch04.atom;
 
 /**
  * synchronized关键字可以用在3个地方

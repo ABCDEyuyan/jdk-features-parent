@@ -1,11 +1,15 @@
-package ch04;
+package ch04.atom;
 
 /**
- * 原子性问题:演示锁对象不一致的问题
+ * 原子性问题：用同步代码块解决
  */
-public class Main4 {
+public class Main3 {
     public static void main(String[] args) throws InterruptedException {
-        MyCounter3 counter = new MyCounter3();
+        multiThreadDemo();
+    }
+
+    private static void multiThreadDemo() throws InterruptedException {
+        MyCounter2 counter = new MyCounter2();
 
         Runnable r1 = ()->{
             for (int i = 0; i < 1000; i++) {
@@ -15,7 +19,7 @@ public class Main4 {
 
         Runnable r2 = ()->{
             for (int i = 0; i < 1000; i++) {
-                counter.decre();
+                counter.incr();
             }
         };
         Thread t1 = new Thread(r1, "t1");
@@ -24,9 +28,11 @@ public class Main4 {
         t1.start();
         t2.start();
 
+
         t1.join();
         t2.join();
 
         System.out.println("count:" + counter.getCount());
     }
+
 }

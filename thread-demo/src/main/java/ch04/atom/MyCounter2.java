@@ -1,4 +1,4 @@
-package ch04;
+package ch04.atom;
 
 public class MyCounter2 {
     private  int count =0;

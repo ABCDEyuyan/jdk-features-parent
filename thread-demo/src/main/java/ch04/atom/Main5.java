@@ -1,4 +1,4 @@
-package ch04;
+package ch04.atom;
 
 /**
  * 演示原子类的操作，简单的问题能用原子类型解决就用它

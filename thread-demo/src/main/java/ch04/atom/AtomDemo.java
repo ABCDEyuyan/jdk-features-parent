@@ -1,4 +1,4 @@
-package ch04;
+package ch04.atom;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

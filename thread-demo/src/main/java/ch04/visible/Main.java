@@ -1,4 +1,4 @@
-package ch04;
+package ch04.visible;
 
 import java.util.concurrent.TimeUnit;
 

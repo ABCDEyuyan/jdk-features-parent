@@ -1,4 +1,4 @@
-package ch04;
+package ch04.atom;
 
 /**
  * 《Java并发编程实战》书中给出定义：

@@ -1,4 +1,4 @@
-package ch04;
+package ch04.visible;
 
 public class MyTask implements Runnable{
     //volatile解决了可见性的问题
