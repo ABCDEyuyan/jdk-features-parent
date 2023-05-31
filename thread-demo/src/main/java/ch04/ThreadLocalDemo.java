@@ -11,9 +11,9 @@ public class ThreadLocalDemo {
     public static void main(String[] args) throws InterruptedException {
         //basicUsage();
 
-        // commanUsage();
+        commanUsage();
 
-        commanUsageWithInitValue();
+        //commanUsageWithInitValue();
     }
 
     private static void commanUsageWithInitValue() throws InterruptedException {
@@ -38,7 +38,7 @@ public class ThreadLocalDemo {
         t2.start();
         t1.join();
         t2.join();
-        //输出null，因为在主线程没有操作它。没有放过值
+        //输出null，因为在主线程没有操作它，没有设置过值
         System.out.println(Thread.currentThread().getName() + "  --  " + local2.get());
     }
 

@@ -33,7 +33,6 @@ public class PauseResumeDemo {
     public void pause() {
         pause = true;
         System.out.println("after pause--");
-
     }
 
     public void resume() {
@@ -41,7 +40,6 @@ public class PauseResumeDemo {
             pause = false;
             //  lock.notify();
             lock.notifyAll();
-
         }
     }
 
