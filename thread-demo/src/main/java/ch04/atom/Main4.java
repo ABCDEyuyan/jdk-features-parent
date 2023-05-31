@@ -1,11 +1,10 @@
-package ch04;
+package ch04.atom;
 
 /**
- * 演示锁对象不一致的问题
+ * 原子性问题:演示锁对象不一致的问题
  */
 public class Main4 {
     public static void main(String[] args) throws InterruptedException {
-
         MyCounter3 counter = new MyCounter3();
 
         Runnable r1 = ()->{
@@ -25,14 +24,9 @@ public class Main4 {
         t1.start();
         t2.start();
 
-
         t1.join();
         t2.join();
 
         System.out.println("count:" + counter.getCount());
-
-
     }
-
-
 }

@@ -24,7 +24,7 @@ public class PauseResumeDemo {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println( " do ------");
+                System.out.println(" do ------");
             }
 
         }
@@ -39,7 +39,7 @@ public class PauseResumeDemo {
     public void resume() {
         synchronized (lock) {
             pause = false;
-          //  lock.notify();
+            //  lock.notify();
             lock.notifyAll();
 
         }
@@ -52,8 +52,6 @@ public class PauseResumeDemo {
         Thread t = new Thread(demo::doSth);
         t.start();
 
-
-
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
@@ -65,7 +63,7 @@ public class PauseResumeDemo {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//wait方法是会释放锁的，notify和notifyAll是不会释放锁的，只有同步代码执行完毕才会释放锁
+        //wait方法是会释放锁的，notify和notifyAll是不会释放锁的，只有同步代码执行完毕才会释放锁
         demo.resume();
 
     }

@@ -2,11 +2,12 @@ package ch05;
 
 /**
  * 1.wait notify notifyAll来自于Object类，所以所有的对象都有这三个方法
- * 2.它们的调用必须是在同步代码块内
+ * 2.它们的调用必须是在同步代码内
  */
 public class WaitNotifyDemo {
     private Object lock = new Object();//16字节
-    public  synchronized void m1(){
+
+    public synchronized void m1() {
         //
         try {
             System.out.println("before ---");
@@ -18,17 +19,15 @@ public class WaitNotifyDemo {
         }
     }
 
-    public synchronized void m2(){
-            this.notify();
+    public synchronized void m2() {
+        this.notify();
     }
 
-
-    public   void m3(){
-        //
+    public void m3() {
         synchronized (lock) {
             try {
                 System.out.println("before ---");
-               //不能调用this.wait
+                //不能调用this.wait
                 //原因是因为这3个方法能调用的前提是：必须先获得锁
                 //this.wait();
                 lock.wait();
@@ -39,11 +38,10 @@ public class WaitNotifyDemo {
         }
     }
 
-    public  void m4(){
+    public void m4() {
         synchronized (lock) {
-           // this.notify(); //错误
+            // this.notify(); //错误
             lock.notify();
         }
-
     }
 }

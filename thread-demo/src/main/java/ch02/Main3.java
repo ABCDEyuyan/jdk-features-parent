@@ -45,8 +45,8 @@ public class Main3 {
                 System.out.println("-----");
                 i++;
                 try {
-                    //休眠这种可以跑出InterruptedException的方法，会检查打断标志位
-                    //如果检测到了的话，就跑出异常
+                    //休眠这种可以抛出InterruptedException的方法，会检查中断(打断)标志位
+                    //如果检测到了的话，就抛出异常
                     //当sleep方法检测到打断标志位是“true”，sleep干了2个事情
                     //1. 抛出异常，2，清理打断标志位，设置为false
                     TimeUnit.SECONDS.sleep(1);
@@ -57,7 +57,7 @@ public class Main3 {
                     //isInterrupted()方法只是读取打断标志位的值，不会改变这个标志位的值
                     System.out.println("isInterrupted()实例方法:" + Thread.currentThread().isInterrupted());
                     //自己写代码处理打断逻辑，你也可以不管它
-                    break;
+                    break; //结束循环，也就意味着线程执行即将结束
                 }
             }
 

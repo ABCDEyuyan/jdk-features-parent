@@ -1,7 +1,7 @@
 package ch05;
 
 public class WaitNotifyDemo2 {
-    public synchronized void m1(){
+    public synchronized void m1() {
         try {
             System.out.println("before----");
             this.wait();
@@ -12,7 +12,7 @@ public class WaitNotifyDemo2 {
     }
 
 
-    public synchronized void m2(){
+    public synchronized void m2() {
         this.notify();
         System.out.println("after notify*****");
     }

@@ -3,7 +3,10 @@ package ch05.box2;
 import java.util.LinkedList;
 
 /**
- * 书上的写法，有bug，没有考虑虚假唤醒的问题
+ * 这是书上的写法，有bug，没有考虑虚假唤醒的问题
+ * 关于虚假唤醒(spurious wakeup)可以参看：
+ * https://juejin.cn/post/6986292785221468167
+ * 和https://www.cnblogs.com/dk1024/p/14163377.html (这个更好懂)
  * @param <T>
  */
 public class Box2<T> {

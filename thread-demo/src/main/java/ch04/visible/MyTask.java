@@ -1,4 +1,4 @@
-package ch04;
+package ch04.visible;
 
 public class MyTask implements Runnable{
     //volatile解决了可见性的问题
@@ -9,9 +9,7 @@ public class MyTask implements Runnable{
     public void run() {
         while (stop==false){
             //不要写下面的代码，因为println是一个synchronize方法，它解决了可见性的问题
-
            // System.out.println("-----");
-
         }
 
     }

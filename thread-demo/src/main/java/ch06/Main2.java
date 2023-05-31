@@ -33,10 +33,10 @@ public class Main2 {
 
 
         //3.以固定的延迟来反复调度任务
-//        pool.scheduleWithFixedDelay(runnable,
-//                2,
-//                1,
-//                TimeUnit.SECONDS);
+        //        pool.scheduleWithFixedDelay(runnable,
+        //                2,
+        //                1,
+        //                TimeUnit.SECONDS);
         //怎么实现每天晚上12点干活？
 
     }

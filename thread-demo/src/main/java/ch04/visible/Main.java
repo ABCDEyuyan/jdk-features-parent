@@ -1,7 +1,10 @@
-package ch04;
+package ch04.visible;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 演示可见性问题
+ */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         MyTask runnable = new MyTask();
