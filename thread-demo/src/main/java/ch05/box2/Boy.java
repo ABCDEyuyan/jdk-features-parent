@@ -4,10 +4,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Boy extends Thread{
     private Box2<Fruit> box;
-    public Boy(Box2 box) {
+
+    public Boy(Box2<Fruit> box){
         this.box = box;
     }
-
     @Override
     public void run() {
         while (true) {
