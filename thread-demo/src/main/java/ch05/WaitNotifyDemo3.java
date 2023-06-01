@@ -9,7 +9,7 @@ public class WaitNotifyDemo3 {
     public synchronized void m1() {
         try {
             System.out.println("before wait----");
-            //单位是毫秒，下面意思是wait 3秒
+            //单位是毫秒，下面意思是wait 3秒,wait是会释放锁的
             this.wait(3000);
             System.out.println("after wait----");
         } catch (InterruptedException e) {
