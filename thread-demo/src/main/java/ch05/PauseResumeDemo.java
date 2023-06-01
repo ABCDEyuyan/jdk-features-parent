@@ -9,8 +9,7 @@ public class PauseResumeDemo {
     public void doSth() {
         synchronized (lock) {
             while (true) {
-                //为了防止虚假唤醒，就需要循环判断条件是否满足执行要求
-                while (pause == true) {
+                if (pause == true) {
                     try {
                         //卡住并释放了锁
                         lock.wait();

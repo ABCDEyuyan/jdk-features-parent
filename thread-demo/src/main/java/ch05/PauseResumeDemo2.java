@@ -10,6 +10,9 @@ public class PauseResumeDemo2 {
     private Object lock = new Object();
     private volatile boolean pause = false;
 
+    /**
+     * doSth与resume方法不必是同步方法，LockSupport.park不会有释放monitor锁的
+     */
     public void doSth() {
 
         while (true) {
