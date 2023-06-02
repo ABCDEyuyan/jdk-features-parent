@@ -7,6 +7,48 @@ import java.util.concurrent.*;
  * 1.线程池创建
  * 2.提交任务
  * 3.关闭线程池
+ *
+ * 1.线程池创建：
+ * 	Executors.newSingle..
+ * 	Executors.newCached..
+ * 	Executors.newFixed
+ *
+ * 	ExecutorService
+ * 2.线程池关闭：
+ * 	shutdown();优雅关闭---等着提交的任务执行完毕
+ * 	不再接收新任务.正在执行的任务，利用中断关闭
+ * 	还没有开始执行的任务会被执行
+ *
+ * 	shutdownNow:立即马上关闭，正在执行的任务，利用中断关闭
+ * 	还没有开始执行的任务就返回,此方法返回List<Runnable>
+ * 3.提交任务：
+ * 	1.接受Runable(void run())与Callable(T call())
+ *
+ * 	2.submit(runnable)
+ *
+ * 	3.Future<?> future= submit(callable);
+ *
+ * 	future.get()
+ *
+ * new ThreadPoolExecutor(2,5,30,second,queue)
+ *
+ * 1.刚创建出来，此时池里没有线程，除非
+ * 调用prestartAllCoreThreads()
+ *
+ * 2.submit提交任务 ，创建一个线程去执行
+ * 3.又提交--由于现在还没有超过核心线程数量设定（2），
+ * 又创建一个线程去执行,即使池里现在有空闲线程
+ * 4.又提交任务,此时由于core（=2）已经满了，
+ * 此时就不再创建线程，直接让任务入队
+ * 5.再提交任务，不停入队，直达队列满了
+ * 6.再提交任务，此时队列也满了，
+ * 但还没有超过最大线程数量，
+ * 此时就会再创建线程去执行任务
+ * 7.再提交任务，线程最大数量也到了，
+ * 就进行拒绝策略的处理
+ * 8.中间有线程执行任务完毕，线程就空闲了
+ * ，如果达到你设定的空闲时间，就销毁此线程，
+ * 但是不会销毁core线程，也就是我们这里设定5-2 这3个线程
  */
 public class Main {
     public static void main(String[] args) throws Exception {

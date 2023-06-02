@@ -30,6 +30,7 @@ public class Box<T> {
     public synchronized T take() {
         T fruit = null;
         if (box.size() > 0) {
+
             fruit = box.removeFirst();
             System.out.println("取出:" + fruit);
         } else {

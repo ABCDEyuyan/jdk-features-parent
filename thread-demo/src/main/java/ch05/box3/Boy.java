@@ -2,7 +2,6 @@ package ch05.box3;
 
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 public class Boy extends Thread {
     private BlockingQueue<Fruit> box;
@@ -17,15 +16,15 @@ public class Boy extends Thread {
             try {
                 Fruit fruit = new Fruit();
                 box.put(fruit);
-                System.out.println("放了：" + fruit);
+                System.out.println("放了：" + fruit  + " count:" + box.size());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            try {
+         /*   try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 }
