@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Main3 {
     public static void main(String[] args) {
 
-        BlockingQueue<Fruit> blockingQueue = new LinkedBlockingQueue(5);
+        BlockingQueue<Fruit> blockingQueue = new LinkedBlockingQueue(3);
         Boy boy = new Boy(blockingQueue);
         Girl girl = new Girl(blockingQueue);
 
