@@ -21,45 +21,17 @@
 
 - ch07:并发集合
   - HashMap的问题
+  - 如何获取线程安全的集合
+    - 利用Collections类的以synchronized开头的方法把线程不安全的集合类变成线程安全的同步集合类
+    - 利用java.util.concurrent包下的线程安全的集合类（这些集合通常比上种方法获取的线程安全的集合类性能要高）
+      - BlockingQueue及BlockingDeque
+      - ConcurrentHashMap及ConcurrentNavigableMap
+      - CopyOnWriteArrayList与CopyOnWriteArraySet
+  - CopyOnWriteArrayList
   - ConcurrentHashMap
-hashMap并发异常问题
-
-```java
-public class TestHashMap {
-    public static void main(String[] args) {
-        Map map = new HashMap<String, Integer>(1000 * 10);
-
-        for (int i = 0; i < 10; i++) {
-            // new Runner(map).start();
-            //这个方法可以测试,线程安全时,
-            //Hashmap的大小最后能够达到多少 
-            new Runner(map).run();
-        }
-    }
-
-}
-
-class Runner extends Thread {
-Map map;
-
-    Runner(Map map) {
-        this.map = map;
-    }
-
-    @Override
-    public void run() {
-        for (int i = 0; i < 1000; i++) {
-            map.put(this.getName() + i, i);
-        }
-        //如果是线程安全,那么HashMap的大小,最后能够达到1W.           
-        System.out.println(this.getName() + ": " + map.size());
-
-    }
-
-}
-```
-
-
+  - LinkedBlockingQueue
+  - LinkedBlockingDeque
+  
 - ch08:锁
     - ReentrantLock
       - Condition（替代wait,notify)
