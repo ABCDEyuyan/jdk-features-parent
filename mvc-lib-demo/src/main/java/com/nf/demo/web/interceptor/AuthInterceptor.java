@@ -1,8 +1,10 @@
 package com.nf.demo.web.interceptor;
 
-import com.nf.demo.vo.ResponseVO;
+
 import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.Interceptors;
+import com.nf.mvc.support.CommonResultCode;
+import com.nf.mvc.support.ResponseVO;
 import com.nf.mvc.util.JacksonUtils;
 import com.nf.mvc.util.StringUtils;
 
@@ -34,7 +36,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         //因为拦截器注解写了要拦截的地址，所以只会在请求地址就是要拦截的
         //地址时，才会进到此拦截器,因为请求头没有信息，所以阻止请求，要求登录
         //发一个响应给前端
-        ResponseVO responseVO = new ResponseVO(403, "no", null);
+        ResponseVO responseVO = ResponseVO.fail(CommonResultCode.FORBIDDEN);
         String json = JacksonUtils.toJson(responseVO);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().print(json);

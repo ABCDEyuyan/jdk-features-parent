@@ -3,9 +3,9 @@ package com.nf.demo.web.controller;
 import com.nf.demo.entity.CategoryEntity;
 import com.nf.demo.service.CategoryService;
 import com.nf.demo.service.impl.CategoryServiceImpl;
-import com.nf.demo.vo.ResponseVO;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.mapping.RequestMapping;
+import com.nf.mvc.support.ResponseVO;
 
 import java.util.List;
 
