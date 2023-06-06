@@ -7,10 +7,10 @@ import com.nf.demo.entity.ProductEntity;
 import com.nf.demo.service.ProductService;
 import com.nf.demo.service.impl.ProductServiceImpl;
 import com.nf.demo.vo.PagedProductVO;
-import com.nf.demo.vo.ResponseVO;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.argument.RequestParam;
 import com.nf.mvc.mapping.RequestMapping;
+import com.nf.mvc.support.ResponseVO;
 
 import java.util.List;
 
@@ -36,7 +36,8 @@ public class ProductController {
         List<ProductEntity> list = productService.getPagedAll(status, pagination);
 
         PagedProductVO pagedProductVO = new PagedProductVO(paginationText, list);
-        return json(new ResponseVO(200, "ok", pagedProductVO));
+       // return json(new ResponseVO(200, "ok", pagedProductVO));
+        return json(ResponseVO.success(pagedProductVO));
     }
 
     @RequestMapping("/insert")
