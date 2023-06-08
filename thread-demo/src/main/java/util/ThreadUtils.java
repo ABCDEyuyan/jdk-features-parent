@@ -10,4 +10,8 @@ public class ThreadUtils {
             e.printStackTrace();
         }
     }
+
+    public static void printThreadName() {
+        System.out.println("当前线程: " + Thread.currentThread().getName());
+    }
 }
