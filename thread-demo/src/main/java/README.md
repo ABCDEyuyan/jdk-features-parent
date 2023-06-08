@@ -10,15 +10,12 @@
 - ch04: 线程的安全性
     - 线程干扰：synchronize,AtomInteger
     - 内存一致性错误:valotile
-
 - ch05:线程间的通信
   - 线程状态
-  
 - ch06:线程池
   - 池的创建
   - 提交任务与获取结果
   - 任务调度
-
 - ch07:并发集合
   - HashMap的问题
   - 如何获取线程安全的集合
@@ -31,13 +28,13 @@
   - ConcurrentHashMap
   - LinkedBlockingQueue
   - LinkedBlockingDeque
-  
 - ch08:锁
     - ReentrantLock
       - Condition（替代wait,notify)
     - ReadWriteLock(ReentrantReadWriteLock)
     - Semaphore
-- ch09 forkAndJoin
+- ch09:CompletableFuture
+- ch10:ForkAndJoin
 # 概念
 
 多CPU指的下面几种情况
