@@ -126,7 +126,7 @@ public class CompletableFutureDemo {
         CompletableFuture<String> f = future.thenCompose( i ->
              CompletableFuture.supplyAsync(() -> (i * 10) + ""));
 
-        System.out.println(f.get()); //1000
+        System.out.println(f.get()); //"1000"
     }
     public static void allOfTest() {
         CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
