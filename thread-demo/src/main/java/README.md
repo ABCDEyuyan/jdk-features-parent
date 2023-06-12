@@ -18,6 +18,7 @@
   - 线程状态（讲解Thread_state.jpg）
 - ch06:线程池
   - 池的创建
+  - SynchronousQueue
   - 提交任务与获取结果(Callable,Runnable)
   - 获取结果（Future）：get()与isDone()
   - FutureTask(TODO:?)
