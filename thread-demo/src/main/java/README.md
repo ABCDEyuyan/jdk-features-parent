@@ -8,7 +8,7 @@
     - setDaemon
 - ch03:数据传递与接收
 - ch04: 线程的安全性
-    - 并发编程3大问题:可见性、原子性、有序性
+    - 并发编程3大问题源:可见性、原子性、有序性(https://zhuanlan.zhihu.com/p/296301631)
     - synchronize,
     - volatile
     - AtomInteger等
@@ -21,7 +21,7 @@
   - SynchronousQueue
   - 提交任务与获取结果(Callable,Runnable)
   - 获取结果（Future）：get()与isDone()
-  - FutureTask(TODO:?)
+  - FutureTask
 - ch07:并发集合
   - HashMap的问题
   - 如何获取线程安全的集合
@@ -40,10 +40,10 @@
     - ReadWriteLock(ReentrantReadWriteLock)
     - Semaphore
     - CountDownLatch
-    - CyclicBarrier(TODO)
+    - CyclicBarrier
     - 线程活跃性：死锁，活锁，饿死，放在这里主要原因是例子用到了锁
-- ch09:CompletableFuture(TODO)
-- ch10:ForkAndJoin(TODO)
+- ch09:CompletableFuture
+- ch10:ForkAndJoin
 # 概念
 
 多CPU指的下面几种情况
