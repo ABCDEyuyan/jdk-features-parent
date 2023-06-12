@@ -2,6 +2,9 @@ package ch02;
 
 import java.util.stream.IntStream;
 
+/**
+ * 作业：1-60000的和，依据cpu的核心数进行拆分，Runtime类可以获取cpu核心数
+ */
 public class Main {
     static long result = 0;
     public static void main(String[] args) throws InterruptedException {

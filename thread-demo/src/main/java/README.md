@@ -8,17 +8,20 @@
     - setDaemon
 - ch03:数据传递与接收
 - ch04: 线程的安全性
-    - 线程干扰：synchronize,AtomInteger
-    - 内存一致性错误:valotile
-
+    - 并发编程3大问题源:可见性、原子性、有序性(https://zhuanlan.zhihu.com/p/296301631)
+    - synchronize,
+    - volatile
+    - AtomInteger等
+    - ThreadLocal
+    - 讲解waitset_entryList.jpg
 - ch05:线程间的通信
-  - 线程状态
-  
+  - 线程状态（讲解Thread_state.jpg）
 - ch06:线程池
   - 池的创建
-  - 提交任务与获取结果
-  - 任务调度
-
+  - SynchronousQueue
+  - 提交任务与获取结果(Callable,Runnable)
+  - 获取结果（Future）：get()与isDone()
+  - FutureTask
 - ch07:并发集合
   - HashMap的问题
   - 如何获取线程安全的集合
@@ -31,13 +34,16 @@
   - ConcurrentHashMap
   - LinkedBlockingQueue
   - LinkedBlockingDeque
-  
 - ch08:锁
     - ReentrantLock
       - Condition（替代wait,notify)
     - ReadWriteLock(ReentrantReadWriteLock)
     - Semaphore
-- ch09 forkAndJoin
+    - CountDownLatch
+    - CyclicBarrier
+    - 线程活跃性：死锁，活锁，饿死，放在这里主要原因是例子用到了锁
+- ch09:CompletableFuture
+- ch10:ForkAndJoin
 # 概念
 
 多CPU指的下面几种情况
