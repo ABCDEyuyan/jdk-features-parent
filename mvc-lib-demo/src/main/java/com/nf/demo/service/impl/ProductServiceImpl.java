@@ -5,6 +5,7 @@ import com.nf.demo.dao.impl.ProductDaoImpl;
 import com.nf.demo.entity.Pagination;
 import com.nf.demo.entity.ProductEntity;
 import com.nf.demo.service.ProductService;
+import com.nf.demo.util.MinioUtils;
 import com.nf.mvc.file.MultipartFile;
 
 import java.io.IOException;
@@ -51,6 +52,24 @@ public class ProductServiceImpl implements ProductService {
             product.setImage(file.getOriginalFilename());
             try {
                 file.transferTo(Paths.get("D:/tmp",file.getOriginalFilename()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * 把文件上传到minio服务器上
+     * @param product
+     */
+    private void handleFile2(ProductEntity product){
+        MultipartFile file = product.getPfile();
+        if (file != null) {
+            product.setImage(file.getOriginalFilename());
+            try {
+                //这里写死了桶的名字，根据实际情况更改
+                MinioUtils.putObjectStream(file.getInputStream(),file.getOriginalFilename(),"firstbuckets");
             } catch (IOException e) {
                 e.printStackTrace();
             }
