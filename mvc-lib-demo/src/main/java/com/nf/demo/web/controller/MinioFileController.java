@@ -7,7 +7,7 @@ import com.nf.mvc.mapping.RequestMapping;
 
 import java.io.InputStream;
 
-import static com.nf.mvc.handler.HandlerHelper.stream;
+import static com.nf.mvc.handler.HandlerHelper.file;
 
 @RequestMapping("/minio")
 public class MinioFileController {
@@ -15,7 +15,7 @@ public class MinioFileController {
     @RequestMapping("/download")
     public ViewResult download(@RequestParam(defaultValue = "firstbuckets") String bucket, @RequestParam(defaultValue = "1.jpg") String filename) {
         InputStream inputStream = MinioUtils.downloadStream(bucket, filename);
-        return stream(inputStream);
+        return file(inputStream,filename);
 
     }
 }
