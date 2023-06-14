@@ -16,16 +16,8 @@
 
 package com.nf.mvc.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.*;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -160,5 +152,14 @@ public abstract class StreamUtils {
             throw new IllegalArgumentException("路径可能不对:" + realPath + " 无法生成输入流", e);
         }
         return inputStream;
+    }
+
+    public static String getMediaType(String filename) {
+        //guessContentTypeFromName是从文件名猜测其内容类型，如果为null就猜测失败
+        String midiaType = URLConnection.guessContentTypeFromName(filename);
+        if (midiaType == null) {
+            midiaType = StreamUtils.APPLICATION_OCTET_STREAM_VALUE;
+        }
+        return midiaType;
     }
 }

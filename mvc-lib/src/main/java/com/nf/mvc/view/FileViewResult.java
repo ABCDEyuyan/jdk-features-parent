@@ -5,10 +5,12 @@ import com.nf.mvc.util.StreamUtils;
 import com.nf.mvc.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLConnection;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.nf.mvc.util.StreamUtils.getMediaType;
 
 /**
  * 此类是一个响应文件数据给前端的ViewResult，通常用在文件下载以及显示图片等，比如
@@ -32,9 +34,14 @@ public class FileViewResult extends StreamViewResult {
     }
 
     public FileViewResult(String realPath, Map<String,String> headers) {
-        super(StreamUtils.getInputStreamFromRealPath(realPath));
+        super(StreamUtils.getInputStreamFromRealPath(realPath),headers);
         this.realPath = realPath;
         this.filename = StringUtils.getFilename(realPath);
+    }
+
+    public FileViewResult(InputStream inputStream,String filename, Map<String,String> headers) {
+        super(inputStream,headers);
+        this.filename = filename;
     }
 
     @Override
@@ -49,13 +56,5 @@ public class FileViewResult extends StreamViewResult {
         super.writeHeaders(resp);
     }
 
-    protected String getMediaType(String filename) {
-        //guessContentTypeFromName是从文件名猜测其内容类型，如果为null就猜测失败
-        String midiaType = URLConnection.guessContentTypeFromName(filename);
-        if (midiaType == null) {
-            midiaType = StreamUtils.APPLICATION_OCTET_STREAM_VALUE;
-        }
-        return midiaType;
-    }
 }
 

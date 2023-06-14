@@ -53,9 +53,20 @@ public class HandlerHelper {
     }
 
     public static FileViewResult file(String realPath) {
-        return new FileViewResult(realPath);
+        return file(realPath,new HashMap<>());
     }
 
+    public static FileViewResult file(String realPath,Map<String,String> headers) {
+        return new FileViewResult(realPath,headers);
+    }
+
+    public static FileViewResult file(InputStream inputStream,String filename) {
+        return file(inputStream,filename,new HashMap<>());
+    }
+
+    public static FileViewResult file(InputStream inputStream,String filename,Map<String,String> headers) {
+        return new FileViewResult(inputStream,filename,headers);
+    }
     public static StreamViewResult stream(InputStream inputStream) {
         return new StreamViewResult(inputStream);
     }
