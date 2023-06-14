@@ -12,6 +12,5 @@ public class FileController {
     public ViewResult download(String filename) {
         String realPath = "E:/image/"+filename;
         return file(realPath);
-
     }
 }

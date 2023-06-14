@@ -67,9 +67,11 @@ public class HandlerHelper {
     public static FileViewResult file(InputStream inputStream,String filename,Map<String,String> headers) {
         return new FileViewResult(inputStream,filename,headers);
     }
+
     public static StreamViewResult stream(InputStream inputStream) {
         return new StreamViewResult(inputStream);
     }
+
     public static StreamViewResult stream(InputStream inputStream, Map<String,String> headers) {
         return new StreamViewResult(inputStream,headers);
     }
@@ -77,6 +79,7 @@ public class HandlerHelper {
     public static StreamViewResult stream(String realPath) {
         return stream(realPath, new HashMap<>());
     }
+
     public static StreamViewResult stream(String realPath, Map<String,String> headers) {
         return new StreamViewResult(StreamUtils.getInputStreamFromRealPath(realPath),headers);
     }
