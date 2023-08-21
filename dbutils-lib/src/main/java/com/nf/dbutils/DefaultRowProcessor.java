@@ -1,6 +1,7 @@
 package com.nf.dbutils;
 
 import com.nf.dbutils.util.RsMetaUtils;
+import com.nf.dbutils.util.StringUtils;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -32,7 +33,7 @@ public class DefaultRowProcessor implements RowProcessor{
     public DefaultRowProcessor(Map<String, String> propertyOverrides) {
 
         super();
-        if (propertyOverrides == null) {
+        if (propertyOverrides == null || propertyOverrides.isEmpty()) {
             throw new DaoException("不能传一个空的映射集合过来");
         }
 
@@ -278,7 +279,8 @@ public class DefaultRowProcessor implements RowProcessor{
 
     /**
      * 默认情况下是进行同名映射，没有考虑大小写的问题
-     * 字段username 属性的名字是userName
+     * 字段username 属性的名字是username
+     * 如果字段是下划线的，默认转换为驼峰，比如get_by_id转换成为getById
      *
      * 但是提供了一个扩展的机制，是靠Map来建立映射的规则
      * 这个map里面key是数据库字段查询的名字，
@@ -287,9 +289,11 @@ public class DefaultRowProcessor implements RowProcessor{
      * @return
      */
     protected String getMappingPropertyName(String columnName) {
-       String propertyName = propertyOverrides.get(columnName);
-       return propertyName==null?columnName:propertyName;
+       String propertyName = StringUtils.toCamelCase(columnName,'_');
+       String propertyNameInMap = propertyOverrides.get(columnName);
+       return propertyNameInMap!=null?propertyNameInMap:propertyName;
     }
+
     private PropertyDescriptor[] propertyDescriptors(Class<?> clz) {
         BeanInfo beanInfo = null;
         try {

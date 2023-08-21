@@ -12,6 +12,5 @@ public class FileController {
     public ViewResult download(String filename) {
         String realPath = "C:/Users/27423/Desktop/"+filename;
         return file(realPath);
-
     }
 }

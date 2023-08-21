@@ -15,8 +15,8 @@ import java.util.Map;
 public class MinioTest {
     public static void main(String[] args)
             throws Exception {
-        //    minioHello();
-        //    minioStream();
+        // minioHello();
+        // minioStream();
         getObjectUrl();
     }
 
@@ -26,7 +26,7 @@ public class MinioTest {
             MinioClient minioClient =
                     MinioClient.builder()
                             .endpoint("http://127.0.0.1:9000")
-                            .credentials("heomSzxWE3xUMuZNFH20", "P1chfRwfrdIo4hSApUolfrekFFzYUiCjUE7qeec4")
+                            .credentials("0fHsVQbJozJ4gHCqTIMh", "b8KdV04R9D7iXhp5qSJrxBm9GSlKbBuPUD2RT8aK")
                             .build();
 
             boolean found =
@@ -55,13 +55,15 @@ public class MinioTest {
     }
 
     private static void minioStream() throws Exception {
+
+
         InputStream inputStream = new FileInputStream("e:/image/2.jpg");
         try {
             // Create a minioClient with the MinIO server playground, its access key and secret key.
             MinioClient minioClient =
                     MinioClient.builder()
                             .endpoint("http://127.0.0.1:9000")
-                            .credentials("heomSzxWE3xUMuZNFH20", "P1chfRwfrdIo4hSApUolfrekFFzYUiCjUE7qeec4")
+                            .credentials("0fHsVQbJozJ4gHCqTIMh", "b8KdV04R9D7iXhp5qSJrxBm9GSlKbBuPUD2RT8aK")
                             .build();
 
 
@@ -98,11 +100,11 @@ public class MinioTest {
         MinioClient minioClient =
                 MinioClient.builder()
                         .endpoint("http://127.0.0.1:9000")
-                        .credentials("heomSzxWE3xUMuZNFH20", "P1chfRwfrdIo4hSApUolfrekFFzYUiCjUE7qeec4")
+                        .credentials("0fHsVQbJozJ4gHCqTIMh", "b8KdV04R9D7iXhp5qSJrxBm9GSlKbBuPUD2RT8aK")
                         .build();
         //用来添加额外的查询字符串的
         Map<String, String> reqParams = new HashMap<String, String>();
-        reqParams.put("a","123");
+        reqParams.put("a", "123");
 
         GetPresignedObjectUrlArgs objectUrlArgs = GetPresignedObjectUrlArgs.builder()
                 .method(Method.GET)
