@@ -47,7 +47,12 @@ public enum Delimiters {
     }
 
     /**
-     * TODO:补上Delimiters EnumSet的使用方法
+     * 此方法是用来处理定制的分隔符组合的pattern的
+     * <h3>基本用法</h3>
+     * <pre class="code">
+     *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.Space, Delimiters.Colon);
+     *    String pattern = getCombinedPattern(spaceAndColon);
+     * </pre>
      * @param delimiters
      * @return
      */
