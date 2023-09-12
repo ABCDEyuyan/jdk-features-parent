@@ -55,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 不需要先调用方法{@link #supports(MethodParameter)}</p>
  * @see com.nf.mvc.adapter.RequestMappingHandlerAdapter
  * @see com.nf.mvc.support.MethodInvoker
- * @see ComplexTypeMethodArgumentResolver
+ * @see BeanPropertyMethodArgumentResolver
  * @see com.nf.mvc.HandlerExceptionResolver
  */
 public class HandlerMethodArgumentResolverComposite implements MethodArgumentResolver {

@@ -46,6 +46,11 @@ public enum Delimiters {
         return desc;
     }
 
+    /**
+     * TODO:补上Delimiters EnumSet的使用方法
+     * @param delimiters
+     * @return
+     */
     public static String getCombinedPattern(EnumSet<Delimiters> delimiters) {
         List<String> patternList = delimiters.stream().map(Delimiters::getPattern).collect(Collectors.toList());
         return String.join("|",patternList);
