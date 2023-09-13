@@ -1,7 +1,7 @@
 package com.nf.mvc.support;
 
 
-import com.nf.mvc.argument.HandlerMethodArgumentResolverComposite;
+import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.util.ReflectionUtils;
 
@@ -15,9 +15,9 @@ import java.util.List;
  */
 public class MethodInvoker {
 
-    private final HandlerMethodArgumentResolverComposite resolvers ;
+    private final MethodArgumentResolverComposite resolvers ;
 
-    public MethodInvoker(HandlerMethodArgumentResolverComposite resolvers) {
+    public MethodInvoker(MethodArgumentResolverComposite resolvers) {
         this.resolvers = resolvers;
     }
 

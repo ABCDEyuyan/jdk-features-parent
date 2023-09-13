@@ -11,12 +11,13 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
- * 这是一个后备(fallback)类型的参数解析器，但其它解析器都不能解析参数时，由这个解析器进行参数的解析，
- * 所以这个解析器要求是参数解析器链中的最后一个解析器。
- * <h3>主要能解析的类型</h3>
- * <p>虽然说是一个后备，但设计出来主要是为了解析复杂类型，也就是解析通常编写的pojo bean类型，
- * 此解析器支持嵌套bean的解析，数据源的key是属性名，嵌套bean的话属性名用句号分隔，类似于el表达式的写法</p>
- * <p>
+ * 这是一个解析参数类型为自定义的bean类型的参数解析器，此解析器只处理bean的属性（setter方法），
+ * 如果属性的类型是非bean类型，那么交给其它的参数解析器去解析，如果仍然是bean类型，就进行递归解析处理<br/>
+ *
+ * <i>这个解析器要求是参数解析器链中的最后一个解析器。</i>
+ * <h3>解析说明</h3>
+ * <p>此解析器解析通常编写的pojo bean类型，也支持嵌套bean的解析，
+ * 数据源的key是属性名，嵌套bean的话属性名用句号分隔，类似于el表达式的写法</p>
  * 假定有下面这样一个控制器方法，其参数是POJO类Emp，那么request对象的map中如果有对应的key就可以把此Emp解析出来
  * <pre class="code">
  *     public class SomeController{
@@ -60,19 +61,19 @@ import java.util.stream.Collectors;
  *     <li>如果setter方法的参数其它解析器解析不了，就重复第一步，递归处理</li>
  * </ol>
  * <h3>自定义解析链</h3>
- * <p>此类利用了{@link HandlerMethodArgumentResolverComposite}类进行了自定义的解析器组合，
+ * <p>此类利用了{@link MethodArgumentResolverComposite}类进行了自定义的解析器组合，
  * 先利用这个解析器组合进行解析，解析不了就交给本类解析</p>
  * <p>
- *     需要注意的是复杂类型解析器本身是单例的，频繁创建自定义的解析器组合，明显并不是一个好主意，这里通过创建一次后，
+ *     需要注意的是BeanProperty解析器本身是单例的，频繁创建自定义的解析器组合，明显并不是一个好主意，这里通过创建一次后，
  *     后续直接返回解析器组合的方式避免重复创建的问题，但由于参数解析器是运行在多线程的环境下，所以为了线程安全性，
  *     这里采用双重检查+volatile的形式解决这一问题，具体见{@link #getResolvers()}方法
  * </p>
- * @see HandlerMethodArgumentResolverComposite
+ * @see MethodArgumentResolverComposite
  * @see MethodArgumentResolver
  */
-public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver {
+public class BeanPropertyMethodArgumentResolver implements MethodArgumentResolver {
 
-    private volatile HandlerMethodArgumentResolverComposite resolvers = null;
+    private volatile MethodArgumentResolverComposite resolvers = null;
 
     @Override
     public boolean supports(MethodParameter parameter) {
@@ -167,16 +168,19 @@ public class ComplexTypeMethodArgumentResolver implements MethodArgumentResolver
 
     /**
      * 此复杂类型的解析器利用其它的解析器来进行数据解析，所以要排除掉自己
-     * <p>参数解析器是单例的，但其运行在多线程环境下，下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性</p>
+     * <p>参数解析器是单例的，但其运行在多线程环境下，
+     * 下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性</p>
      * @return
      */
-    private HandlerMethodArgumentResolverComposite getResolvers() {
+    private MethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {
-            synchronized (ComplexTypeMethodArgumentResolver.class) {
-                resolvers = new HandlerMethodArgumentResolverComposite().addResolvers(
-                        MvcContext.getMvcContext().getArgumentResolvers().stream()
-                                .filter(r -> !(r instanceof ComplexTypeMethodArgumentResolver))
-                                .collect(Collectors.toList()));
+            synchronized (BeanPropertyMethodArgumentResolver.class) {
+                if(resolvers == null) {
+                    resolvers = new MethodArgumentResolverComposite().addResolvers(
+                            MvcContext.getMvcContext().getArgumentResolvers().stream()
+                                    .filter(r -> !(r instanceof BeanPropertyMethodArgumentResolver))
+                                    .collect(Collectors.toList()));
+                }
             }
         }
 

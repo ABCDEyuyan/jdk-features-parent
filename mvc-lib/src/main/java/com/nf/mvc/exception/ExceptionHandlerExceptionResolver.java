@@ -38,12 +38,13 @@ import static com.nf.mvc.util.ExceptionUtils.getRootCause;
  * </p>
  *
  * <p>
- *     如果一个异常有多个异常处理方法都是可以处理的，那么会用方法参数的类型最接近(指的是继承链条上)引发的异常的方法来处理异常，
+ *     如果一个异常有多个异常处理方法都是可以处理的，那么会用ExceptionHandler注解中指定的能处理类型最接近(指的是继承链条上)引发的异常的方法来处理异常，
  *     比如引发了一个ArithmeticException，那么上面的示例代码中handleArithmeticException方法会被用来处理异常，
  *     如果类中没有能处理ArithmeticException异常的方法，那么就会交给handleRuntime方法去处理
  * </p>
  * <p>
  *     这些异常处理方法必须有一个参数，并且类型只能是Exception类型或其子类型，
+ *     并不能像Handler那样支持各种类型，你如果有兴趣可以改写此类的实现来达成此目的
  *     其方法返回值与handler的方法返回值是一样的，可以是void，ViewResult或其它类型，
  *     异常解析器负责把其都适配为ViewResult类型
  * </p>
@@ -64,10 +65,13 @@ import static com.nf.mvc.util.ExceptionUtils.getRootCause;
  * 也不会存在线程不安全的问题</p>
  * @see com.nf.mvc.DispatcherServlet
  * @see HandlerExceptionResolver
+ * @see ExceptionHandler
  * @see MultiExceptionHandlerExceptionResolver
  */
 public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolver {
-    // 子类不要直接访问此字段，通过对应的getter方法来访问此字段
+    /** 子类不要直接访问此字段，通过对应的getter方法来访问此字段，
+     * 这里用HandlerMethod类型而不用Method类型是为了以后可能功能增强，比如支持的参数与Handler一直，
+     * RequestMappingHandlerAdapter 处理的handler就是HandlerMethod*/
     private List<HandlerMethod> exceptionHandlerMethods = new ArrayList<>();
 
     public ExceptionHandlerExceptionResolver() {
@@ -84,13 +88,13 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
         Method method = handlerMethod.getHandlerMethod();
         try {
             Object instance = handlerMethod.getHandlerObject();
-            /*从这里可以看出，我们的全局异常处理只能有一个参数，而且必须有,参数的类型就是异常*/
+            /** 从这里可以看出，我们的全局异常处理只能有一个参数，而且必须有,参数的类型就是异常 */
             Object handleResult = method.invoke(instance, exposedException);
             return adaptHandlerResult(handleResult);
         } catch (Exception e) {
-           /* 进入到这里就是异常处理方法本身的执行出了错，catch里什么都不干，相当于吞掉异常处理方法本身的异常，
-            异常处理方法无法正确的处理异常，也就是说本异常解析器无法处理异常，这样，通过返回null的形式，
-            就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递的第四个参数的值 */
+           /** 进入到这里就是异常处理方法本身的执行出了错，catch里如果什么都不干，相当于吞掉异常处理方法本身的异常;
+            异常处理方法无法正确的处理异常，也就是说本异常解析器无法处理异常.因此，通过在catch这里返回null的形式，
+            就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递进来的第四个参数的值 */
             return null;
         }
     }
@@ -109,7 +113,8 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
      *         }
      *      </pre>
      *      而如果重写了scanExceptionHandlerMethods方法，那么可以完全改写扫描获取异常处理的逻辑，具有更大的灵活性,
-     *      子类把解析到异常处理方法添加到调用方法{@link #getExceptionHandlerMethods()}返回的集合中
+     *      子类可以通过调用方法{@link #getExceptionHandlerMethods()}来获取所有的异常处理方法的集合类型,
+     *      这样子类在编写自定义异常方法扫描逻辑时就可以把找到的处理方法添加到这个集合中，以便后续的方法使用，比如handleExceptionHandlerMethods
      * </p>
      */
     protected void resolveExceptionHandlerMethods(){

@@ -46,6 +46,16 @@ public enum Delimiters {
         return desc;
     }
 
+    /**
+     * 此方法是用来处理定制的分隔符组合的pattern的
+     * <h3>基本用法</h3>
+     * <pre class="code">
+     *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.Space, Delimiters.Colon);
+     *    String pattern = getCombinedPattern(spaceAndColon);
+     * </pre>
+     * @param delimiters
+     * @return
+     */
     public static String getCombinedPattern(EnumSet<Delimiters> delimiters) {
         List<String> patternList = delimiters.stream().map(Delimiters::getPattern).collect(Collectors.toList());
         return String.join("|",patternList);

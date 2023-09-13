@@ -104,7 +104,7 @@ import java.util.function.Consumer;
  *              <ol>
  *                  <li>获取Handler类型的实例化</li>
  *                  <li>遍历方法的每一个参数，解析出此参数的值，解析的时候是遍历每一个参数解析器，找到能支持的解析器就结束遍历，并利用解析器解析出值，
- *                  如果找不到能解析的解析就抛出异常，具体见{@link HandlerMethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)} </li>
+ *                  如果找不到能解析的解析就抛出异常，具体见{@link MethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)} </li>
  *                  <li>执行Handler的方法</li>
  *                  <li>适配Handler执行结果为ViewResult类型</li>
  *              </ol>
@@ -287,7 +287,7 @@ public class DispatcherServlet extends HttpServlet {
         //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArguementResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
-        argumentResolvers.add(new ComplexTypeMethodArgumentResolver());
+        argumentResolvers.add(new BeanPropertyMethodArgumentResolver());
 
         return argumentResolvers;
     }
@@ -476,9 +476,9 @@ public class DispatcherServlet extends HttpServlet {
 
     protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception {
         for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
-            Object result = exceptionResolver.resolveException(req, resp, handler, ex);
+            ViewResult result = exceptionResolver.resolveException(req, resp, handler, ex);
             if (result != null) {
-                return (ViewResult) result;
+                return  result;
             }
         }
         /* 表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出,会交给doService方法去处理，因而也不会进行渲染处理 */

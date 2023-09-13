@@ -1,5 +1,7 @@
 package com.nf.mvc;
 
+import com.nf.mvc.argument.BeanPropertyMethodArgumentResolver;
+import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.argument.MethodParameter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,18 +17,18 @@ import javax.servlet.http.HttpServletRequest;
  *   }
  * </pre>
  * <p>只有在supports方法返回true的情况下才会调用resolveArgument进行参数解析,
- * 如果参数类型没有一个解析器可以解析，那么通常就会抛出异常，见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)}</p>
+ * 如果参数类型没有一个解析器可以解析，那么通常就会抛出异常，见{@link MethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)}</p>
  *
  * <p>解析通常是基于方法的参数名从请求中获取对象的字符串数据或者Part类型的数据，这个参数名是利用反射的方式获取,
  * 所以编译项目时需要添加-parameters编译选项，如果不想用这种方式获取参数名或者想指定别名，可以通过注解RequestParam的value属性来实现
  * </p>
  * @see MethodParameter
- * @see com.nf.mvc.argument.HandlerMethodArgumentResolverComposite
+ * @see MethodArgumentResolverComposite
  * @see com.nf.mvc.argument.RequestParam
  * @see com.nf.mvc.argument.RequestBodyMethodArguementResolver
  * @see com.nf.mvc.argument.MultipartFileMethodArgumentResolver
  * @see com.nf.mvc.argument.SimpleTypeMethodArguementResolver
- * @see com.nf.mvc.argument.ComplexTypeMethodArgumentResolver
+ * @see BeanPropertyMethodArgumentResolver
  */
 public interface MethodArgumentResolver {
 
