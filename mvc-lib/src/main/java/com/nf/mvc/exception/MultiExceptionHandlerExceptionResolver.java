@@ -15,10 +15,11 @@ import java.util.List;
  *
  *     }
  * </pre>
- * 注意，这种情况异常处理方法的参数仍然只能是一个异常类型的参数，而且是它声明的多个异常类型的共同父类才可以
- * <p>本类没有应用在框架中，只是用来写着玩的，也没有经过严格的测试</p>
+ * <b>注意，这种情况异常处理方法的参数仍然只能是一个异常类型的参数，而且是它声明的多个异常类型的共同父类才可以</b>
+ * <p><b><i>注意:本类没有应用在框架中，只是用来写着玩的，也没有经过严格的测试</i></b></p>
  * @see com.nf.mvc.DispatcherServlet
  * @see HandlerExceptionResolver
+ * @see MultiExceptionHandler
  * @see ExceptionHandlerExceptionResolver
  */
 public class MultiExceptionHandlerExceptionResolver extends ExceptionHandlerExceptionResolver {
