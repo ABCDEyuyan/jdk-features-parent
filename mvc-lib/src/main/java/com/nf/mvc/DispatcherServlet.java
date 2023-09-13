@@ -104,7 +104,7 @@ import java.util.function.Consumer;
  *              <ol>
  *                  <li>获取Handler类型的实例化</li>
  *                  <li>遍历方法的每一个参数，解析出此参数的值，解析的时候是遍历每一个参数解析器，找到能支持的解析器就结束遍历，并利用解析器解析出值，
- *                  如果找不到能解析的解析就抛出异常，具体见{@link HandlerMethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)} </li>
+ *                  如果找不到能解析的解析就抛出异常，具体见{@link MethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)} </li>
  *                  <li>执行Handler的方法</li>
  *                  <li>适配Handler执行结果为ViewResult类型</li>
  *              </ol>

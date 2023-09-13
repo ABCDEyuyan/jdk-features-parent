@@ -61,19 +61,19 @@ import java.util.stream.Collectors;
  *     <li>如果setter方法的参数其它解析器解析不了，就重复第一步，递归处理</li>
  * </ol>
  * <h3>自定义解析链</h3>
- * <p>此类利用了{@link HandlerMethodArgumentResolverComposite}类进行了自定义的解析器组合，
+ * <p>此类利用了{@link MethodArgumentResolverComposite}类进行了自定义的解析器组合，
  * 先利用这个解析器组合进行解析，解析不了就交给本类解析</p>
  * <p>
  *     需要注意的是BeanProperty解析器本身是单例的，频繁创建自定义的解析器组合，明显并不是一个好主意，这里通过创建一次后，
  *     后续直接返回解析器组合的方式避免重复创建的问题，但由于参数解析器是运行在多线程的环境下，所以为了线程安全性，
  *     这里采用双重检查+volatile的形式解决这一问题，具体见{@link #getResolvers()}方法
  * </p>
- * @see HandlerMethodArgumentResolverComposite
+ * @see MethodArgumentResolverComposite
  * @see MethodArgumentResolver
  */
 public class BeanPropertyMethodArgumentResolver implements MethodArgumentResolver {
 
-    private volatile HandlerMethodArgumentResolverComposite resolvers = null;
+    private volatile MethodArgumentResolverComposite resolvers = null;
 
     @Override
     public boolean supports(MethodParameter parameter) {
@@ -172,11 +172,11 @@ public class BeanPropertyMethodArgumentResolver implements MethodArgumentResolve
      * 下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性</p>
      * @return
      */
-    private HandlerMethodArgumentResolverComposite getResolvers() {
+    private MethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {
             synchronized (BeanPropertyMethodArgumentResolver.class) {
                 if(resolvers == null) {
-                    resolvers = new HandlerMethodArgumentResolverComposite().addResolvers(
+                    resolvers = new MethodArgumentResolverComposite().addResolvers(
                             MvcContext.getMvcContext().getArgumentResolvers().stream()
                                     .filter(r -> !(r instanceof BeanPropertyMethodArgumentResolver))
                                     .collect(Collectors.toList()));

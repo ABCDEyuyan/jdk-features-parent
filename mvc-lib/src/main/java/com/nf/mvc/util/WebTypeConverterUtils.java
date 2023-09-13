@@ -1,5 +1,6 @@
 package com.nf.mvc.util;
 
+import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.support.WebTypeConverter;
 import com.nf.mvc.support.converter.*;
 
@@ -21,7 +22,7 @@ public abstract class WebTypeConverterUtils {
      * 设置一个初始的容量，可以避免一些不必要的多次扩容
      * </p>
      *
-     * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite}</p>
+     * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link MethodArgumentResolverComposite}</p>
      */
 
     private static Map<Class<?>, WebTypeConverter> cachedConverters = new ConcurrentHashMap<>(32);

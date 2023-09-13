@@ -3,6 +3,7 @@ package com.nf.mvc.mapping;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.nf.mvc.*;
+import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.support.PathMatcher;
@@ -33,7 +34,7 @@ import java.util.*;
  * </p>
  * <h3>缓存</h3>
  * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能
- * 整个Mvc框架在缓存上的应用的详细介绍见{@link com.nf.mvc.argument.HandlerMethodArgumentResolverComposite}</p>
+ * 整个Mvc框架在缓存上的应用的详细介绍见{@link MethodArgumentResolverComposite}</p>
  * @see com.nf.mvc.HandlerMapping
  * @see PathMatcher
  * @see AntPathMatcher

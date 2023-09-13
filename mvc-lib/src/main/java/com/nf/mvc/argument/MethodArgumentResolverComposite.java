@@ -4,11 +4,9 @@ import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.MvcContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * composite:复合，组合的意思，就是表示此类管理很多的解析器
@@ -19,7 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 构建解析器组合的使用方式如下：
  *     <ul>
- *         <li>直接实例化此类的一个对象，这样的对象不包含任何的解析器,然后通过调用addResolver之类的方法进行组合</li>
+ *         <li>直接实例化此类的一个对象，这样的对象不包含任何的解析器,然后通过调用addResolver与insertResolver的重载方法进行解析器组合，
+ *         add开头的方法是在后面添加，insert开头的方法是在前面添加</li>
  *         <li>调用此类的静态方法{@link #defaultInstance()}方法来创建实例，此方法创建的实例包含所有的解析器</li>
  *         <li>有了此类的实例之后，调用addResolver之类的方法进行解析器的组合</li>
  *     </ul>
@@ -53,43 +52,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * <h3>使用注意事项</h3>
  * <p>想用此类解析参数时，直接调用{@link #resolveArgument(MethodParameter, HttpServletRequest)}方法即可，
  * 不需要先调用方法{@link #supports(MethodParameter)}</p>
+ *
  * @see com.nf.mvc.adapter.RequestMappingHandlerAdapter
  * @see com.nf.mvc.support.MethodInvoker
  * @see BeanPropertyMethodArgumentResolver
  * @see com.nf.mvc.HandlerExceptionResolver
  */
-public class HandlerMethodArgumentResolverComposite implements MethodArgumentResolver {
+public class MethodArgumentResolverComposite implements MethodArgumentResolver {
 
     private final List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
-
     private final Map<MethodParameter, MethodArgumentResolver> resolverCache = new ConcurrentHashMap<>(16);
-
-    public HandlerMethodArgumentResolverComposite addResolver(MethodArgumentResolver resolver) {
-        argumentResolvers.add(resolver);
-        return this;
-    }
-
-    public HandlerMethodArgumentResolverComposite addResolvers(MethodArgumentResolver... resolvers) {
-        if (resolvers != null) {
-            Collections.addAll(this.argumentResolvers, resolvers);
-        }
-        return this;
-    }
-
-    public HandlerMethodArgumentResolverComposite addResolvers(List<MethodArgumentResolver> resolvers) {
-        if (resolvers != null) {
-            this.argumentResolvers.addAll(resolvers);
-        }
-        return this;
-    }
-
-    public List<MethodArgumentResolver> getResolvers() {
-        return Collections.unmodifiableList(this.argumentResolvers);
-    }
-
-    public void clear() {
-        this.argumentResolvers.clear();
-    }
 
     @Override
     public boolean supports(MethodParameter parameter) {
@@ -101,13 +73,11 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
         MethodArgumentResolver resolver = getArgumentResolver(parameter);
         if (resolver == null) {
             throw new IllegalArgumentException("不支持的参数类型 [" +
-                    parameter.getParameterType() + "]. 当前解析的参数名是:["+ parameter.getParameterName()
-                    +"],所在的方法是:["+ parameter.getMethod().getName() + "]，所在的类是:["+ parameter.getContainingClass().getName() +"]");
+                    parameter.getParameterType() + "]. 当前解析的参数名是:[" + parameter.getParameterName()
+                    + "],所在的方法是:[" + parameter.getMethod().getName() + "]，所在的类是:[" + parameter.getContainingClass().getName() + "]");
         }
         return resolver.resolveArgument(parameter, request);
-
     }
-
 
     private MethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
         MethodArgumentResolver result = resolverCache.get(parameter);
@@ -124,13 +94,61 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
     }
 
     /**
-     * 此方法创建的实例已经包含mvc框架内提供的解析器与用户提供的定制解析器集合了，你可以在此基础上额外再添加一些解析器
-     *
-     * @return
+     * 此方法创建的实例已经包含mvc框架内提供的解析器与用户提供的定制解析器集合了，你可以在此基础上额外再添加一些解析器<br/>
+     * <p><b><i>注意：此默认实例中的解析器集合并不包含此类型的实例</i></b></p>
+     * @return HandlerMethodArgumentResolverComposite，里面包含着真正有解析能力的参数解析器集合
      */
-    public static HandlerMethodArgumentResolverComposite defaultInstance() {
-        return new HandlerMethodArgumentResolverComposite()
+    public static MethodArgumentResolverComposite defaultInstance() {
+        return new MethodArgumentResolverComposite()
                 .addResolvers(MvcContext.getMvcContext().getArgumentResolvers());
 
+    }
+
+
+    public MethodArgumentResolverComposite addResolver(MethodArgumentResolver resolver) {
+        argumentResolvers.add(resolver);
+        return this;
+    }
+
+    public MethodArgumentResolverComposite addResolvers(MethodArgumentResolver... resolvers) {
+        if (resolvers != null) {
+            Collections.addAll(this.argumentResolvers, resolvers);
+        }
+        return this;
+    }
+
+    public MethodArgumentResolverComposite addResolvers(List<MethodArgumentResolver> resolvers) {
+        if (resolvers != null) {
+            this.argumentResolvers.addAll(resolvers);
+        }
+        return this;
+    }
+
+    public MethodArgumentResolverComposite insertResolver(MethodArgumentResolver resolver) {
+        argumentResolvers.add(0, resolver);
+        return this;
+    }
+
+    public MethodArgumentResolverComposite insertResolvers(MethodArgumentResolver... resolvers) {
+        if (resolvers != null) {
+            List<MethodArgumentResolver> resolverList = Arrays.stream(resolvers).collect(Collectors.toList());
+            argumentResolvers.addAll(0, resolverList);
+        }
+        return this;
+    }
+
+    public MethodArgumentResolverComposite insertResolvers(List<MethodArgumentResolver> resolvers) {
+        if (resolvers != null) {
+            argumentResolvers.addAll(0, resolvers);
+        }
+        return this;
+    }
+
+    public List<MethodArgumentResolver> getResolvers() {
+        return Collections.unmodifiableList(this.argumentResolvers);
+    }
+
+    public void clear() {
+        this.argumentResolvers.clear();
     }
 }

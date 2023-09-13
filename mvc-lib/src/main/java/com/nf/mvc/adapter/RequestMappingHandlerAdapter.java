@@ -2,7 +2,7 @@ package com.nf.mvc.adapter;
 
 import com.nf.mvc.HandlerAdapter;
 import com.nf.mvc.ViewResult;
-import com.nf.mvc.argument.HandlerMethodArgumentResolverComposite;
+import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.MethodInvoker;
 
@@ -18,22 +18,22 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
  * <p>此HandlerAdapter对Handler的返回类型会进行适配，适配的逻辑见{@link ViewResult#adaptHandlerResult(Object)},
  * 详细解释见{@link HandlerAdapter}的注释说明</p>
  * @see HandlerAdapter
- * @see HandlerMethodArgumentResolverComposite
+ * @see MethodArgumentResolverComposite
  * @see MethodInvoker
  * @see HandlerMethod
  */
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
-    private static final HandlerMethodArgumentResolverComposite defaultResolvers = HandlerMethodArgumentResolverComposite.defaultInstance();
+    private static final MethodArgumentResolverComposite defaultResolvers = MethodArgumentResolverComposite.defaultInstance();
 
-    private final HandlerMethodArgumentResolverComposite resolvers;
+    private final MethodArgumentResolverComposite resolvers;
     private final MethodInvoker methodInvoker;
 
     public RequestMappingHandlerAdapter() {
         this(defaultResolvers);
     }
 
-    public RequestMappingHandlerAdapter(HandlerMethodArgumentResolverComposite resolvers) {
+    public RequestMappingHandlerAdapter(MethodArgumentResolverComposite resolvers) {
         this.resolvers = resolvers;
         methodInvoker = new MethodInvoker(resolvers);
     }
