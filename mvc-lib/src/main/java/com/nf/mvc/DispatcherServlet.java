@@ -476,9 +476,9 @@ public class DispatcherServlet extends HttpServlet {
 
     protected ViewResult resolveException(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex) throws Exception {
         for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
-            Object result = exceptionResolver.resolveException(req, resp, handler, ex);
+            ViewResult result = exceptionResolver.resolveException(req, resp, handler, ex);
             if (result != null) {
-                return (ViewResult) result;
+                return  result;
             }
         }
         /* 表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出,会交给doService方法去处理，因而也不会进行渲染处理 */

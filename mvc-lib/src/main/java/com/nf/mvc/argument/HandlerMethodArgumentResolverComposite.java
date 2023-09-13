@@ -62,7 +62,7 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
 
     private final List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
 
-    private final Map<MethodParameter, MethodArgumentResolver> resolverCache = new ConcurrentHashMap<>(256);
+    private final Map<MethodParameter, MethodArgumentResolver> resolverCache = new ConcurrentHashMap<>(16);
 
     public HandlerMethodArgumentResolverComposite addResolver(MethodArgumentResolver resolver) {
         argumentResolvers.add(resolver);
@@ -76,19 +76,19 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
         return this;
     }
 
+    public HandlerMethodArgumentResolverComposite addResolvers(List<MethodArgumentResolver> resolvers) {
+        if (resolvers != null) {
+            this.argumentResolvers.addAll(resolvers);
+        }
+        return this;
+    }
+
     public List<MethodArgumentResolver> getResolvers() {
         return Collections.unmodifiableList(this.argumentResolvers);
     }
 
     public void clear() {
         this.argumentResolvers.clear();
-    }
-
-    public HandlerMethodArgumentResolverComposite addResolvers(List<MethodArgumentResolver> resolvers) {
-        if (resolvers != null) {
-            this.argumentResolvers.addAll(resolvers);
-        }
-        return this;
     }
 
     @Override
@@ -101,7 +101,8 @@ public class HandlerMethodArgumentResolverComposite implements MethodArgumentRes
         MethodArgumentResolver resolver = getArgumentResolver(parameter);
         if (resolver == null) {
             throw new IllegalArgumentException("不支持的参数类型 [" +
-                    parameter.getParameterType() + "]. supportsParameter 方法应该先调用");
+                    parameter.getParameterType() + "]. 当前解析的参数名是:["+ parameter.getParameterName()
+                    +"],所在的方法是:["+ parameter.getMethod().getName() + "]，所在的类是:["+ parameter.getContainingClass().getName() +"]");
         }
         return resolver.resolveArgument(parameter, request);
 

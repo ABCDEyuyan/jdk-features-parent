@@ -19,7 +19,7 @@ public class LogHandlerExceptionResolver implements HandlerExceptionResolver {
         System.out.println("\n==============");
         System.out.println("异常消息是:" + ex.getMessage());
         System.out.println("==============");
-
+        //故意这样写，表示此异常解析器不能解析异常，继续往链条的下一个解析器走
         return null;
     }
 }
