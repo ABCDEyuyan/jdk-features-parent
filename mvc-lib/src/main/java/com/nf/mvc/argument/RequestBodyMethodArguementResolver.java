@@ -1,7 +1,5 @@
 package com.nf.mvc.argument;
 
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.nf.mvc.MethodArgumentResolver;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +25,7 @@ public class RequestBodyMethodArguementResolver implements MethodArgumentResolve
             //假定方法参数是List<Emp>的话，那么下面的actualTypeArgument变量指的就是Emp
             Class<?> actualTypeArgument = parameter.getFirstActualTypeArgument();
             //可以理解为实例化一个集合，比如new ArrayList<Emp>();
-            CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(List.class, actualTypeArgument);
-            return fromJson(request.getInputStream(), collectionType);
+            return fromJson(request.getInputStream(), List.class,actualTypeArgument);
         } else {
             return fromJson(request.getInputStream(), parameter.getParameterType());
         }
