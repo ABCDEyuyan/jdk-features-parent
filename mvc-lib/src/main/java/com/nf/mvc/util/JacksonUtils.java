@@ -110,7 +110,7 @@ public abstract class JacksonUtils {
      *       // getters and setters...
      *      }
      *      //反序列化为一个泛型类
-     *     Response<User> res = JacksontUtils.fromJson(str,Reponse.class,User.class);
+     *     Response<User> res = JacksonUtils.fromJson(str,Response.class,User.class);
      *     //也可以反序列化为一个集合
      *     List<User> users = JacksontUtils.fromJson(str,List.class,User.class);
      * </pre>
