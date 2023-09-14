@@ -47,7 +47,7 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
             }
             source = matchedParts.toArray();
         } catch (IOException | ServletException e) {
-            /** 没有上传文件时，调用request.getParts()方法是会抛异常的. 这里不抛出异常，什么也不干，相当于返回null,
+            /* 没有上传文件时，调用request.getParts()方法是会抛异常的. 这里不抛出异常，什么也不干，相当于返回null,
              * 针对的一种场景是：比如修改商品记录不牵涉到图片的修改，那么文件类型的参数属性直接赋值为null即可 ，抛异常的话会中断控制器方法的执行
              * */
         }
