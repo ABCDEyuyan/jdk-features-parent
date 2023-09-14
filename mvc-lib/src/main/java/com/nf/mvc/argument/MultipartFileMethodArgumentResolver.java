@@ -31,7 +31,7 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
             return null;
         }
 
-        return handleSingleFile((Part) parameterValue, scalarType);
+        return resolveUploadedFile((Part) parameterValue, scalarType);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
                 MultipartFile.class == fileType;
     }
 
-    protected <T> T handleSingleFile(Part part, Class<T> paramType) {
-        if (Part.class == paramType) {
+    protected <T> T resolveUploadedFile(Part part, Class<T> fileType) {
+        if (Part.class == fileType) {
             return (T) part;
         } else {
             return (T) new StandardMultipartFile(part, getFileName(part));
