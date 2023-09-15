@@ -37,7 +37,8 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         /* 如果source为null，会返回一个长度为0的空数组，toObjectArray方法并不是一定要调用的，调用可以避免空引用与数组索引越界的异常 */
         Object[] objectArray = ObjectUtils.toObjectArray(source);
 
-        // 关于if else的常见优化方案见https://www.cnblogs.com/jay-huaxiao/p/12586598.html 这里分支不多，保留if else写法显得更清晰，所以没有优化
+     /*   // 关于if else的常见优化方案见https://www.cnblogs.com/jay-huaxiao/p/12586598.html
+          // 这里分支不多，保留if else写法显得更清晰，可以不用优化，比较有效的优化方式是利用三目运算符
         if (isScalarType(parameter)) {
             return resolveScalarType(parameter.getParameterType(), Array.getLength(objectArray) == 0 ? null : objectArray[0], parameter);
         } else if (isScalarTypeArray(parameter)) {
@@ -45,9 +46,12 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         } else if (isScalarTypeList(parameter)) {
             return resolveScalarTypeList(parameter.getFirstActualTypeArgument(), objectArray, parameter);
         }
+        // 代码基本不会走到这里，因为supports方法只会对通常的类型进行处理，在上面的几个if else分支都分别进行了处理
+        return null;*/
 
-        /* 代码基本不会走到这里，因为supports方法只会对通常的类型进行处理，在上面的几个if else分支都分别进行了处理 */
-        return null;
+        return isScalarType(parameter) ? resolveScalarType(parameter.getParameterType(), Array.getLength(objectArray) == 0 ? null : objectArray[0], parameter)
+                : isScalarTypeArray(parameter) ? resolveScalarTypeArray(parameter.getComponentType(), objectArray, parameter)
+                : resolveScalarTypeList(parameter.getFirstActualTypeArgument(), objectArray, parameter);
     }
 
     /**

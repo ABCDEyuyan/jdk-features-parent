@@ -41,8 +41,8 @@ public interface MethodArgumentResolver {
 
     /**
      * 通常是基于方法参数的类型与名称从请求传递过来的字符串解析出兼容类型的值
-     * @param parameter
-     * @param request
+     * @param parameter 方法参数
+     * @param request servlet请求对象
      * @return 返回兼容类型的值，也可能返回null值，null并不表示此解析器解析不了，这点与HandlerMapping是不一样的,<br/>
      * 请求端没有传递过来数据就有可能解析结果为null
      * @throws Exception 通常是请求端有数据，但无法解析成兼容类型的参数值时就抛出异常，建议抛一个RuntimeException
