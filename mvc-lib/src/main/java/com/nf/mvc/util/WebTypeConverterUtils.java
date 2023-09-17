@@ -25,7 +25,7 @@ public abstract class WebTypeConverterUtils {
      * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link MethodArgumentResolverComposite}</p>
      */
 
-    private static Map<Class<?>, WebTypeConverter> cachedConverters = new ConcurrentHashMap<>(32);
+    private final static Map<Class<?>, WebTypeConverter> cachedConverters = new ConcurrentHashMap<>(32);
 
     static {
         cachedConverters.put(BigDecimal.class, new BigDecimalTypeConverter());
