@@ -7,13 +7,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public JsonViewResult handleRuntime(RuntimeException re){
         System.out.println("re = " + re);
-        return new JsonViewResult(new ResponseVO(10001,"订单超时。。","runtime--"));
+        return new JsonViewResult(new ResponseVO(10001,"运行异常:" + re.getMessage(),"runtime--"));
     }
 
     @ExceptionHandler(ArithmeticException.class)
     public JsonViewResult handleArithmeticException(ArithmeticException re){
         System.out.println("suan shu re = " + re);
-        return new JsonViewResult(new ResponseVO(10002,"sdfa","算数--"));
+        return new JsonViewResult(new ResponseVO(10002,"算术异常:" + re.getMessage(),"算数--"));
     }
 
 
