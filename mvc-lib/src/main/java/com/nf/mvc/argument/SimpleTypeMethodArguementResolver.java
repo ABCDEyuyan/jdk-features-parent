@@ -31,7 +31,8 @@ public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodA
         if (value == null && ReflectionUtils.isPrimitive(scalarType)) {
             throw new IllegalArgumentException("参数名:" + methodParameter.getParameterName() +" 的值为null，不能把null给简单类型:" + scalarType);
         }
-        // 值不为null才进行类型转换，这个不为null的值可能是从请求端获取的，也可能是默认值提供的。转换是可能失败的，比如把字符串abc值转换为整数，所以这里是可能抛异常的
+        // 值不为null才进行类型转换，这个不为null的值可能是从请求端获取的，也可能是默认值提供的。注解提供的默认值也是需要进行类型转换的
+        // 转换是可能失败的，比如把字符串abc值转换为整数，所以这里是可能抛异常的
         if (value != null) {
             value =  WebTypeConverterUtils.toSimpleTypeValue(scalarType, value.toString());
         }
