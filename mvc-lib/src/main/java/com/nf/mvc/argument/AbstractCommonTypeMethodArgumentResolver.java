@@ -98,9 +98,11 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     // 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
     // 那么在处理int[]这种简单类型数组作为控制器参数时，会导致报无法把简单类型数组转换为Object[]数组的异常的问题，所以没有把本类或这3个解析方法设计为泛型
-    // 因而也导致了resolveScalarTypeList方法用到了raw类型的写法，暂时没有找到非常满意的解决办法
     private Object resolveScalarTypeArray(Class<?> scalarType, Object[] values, MethodParameter parameter) throws Exception {
-        /* 如果数据源为null，那么length就=0，那么array就是一个长度为0的数组，并不会进入到循环里面执行真正的参数处理 */
+        /* 如果数据源为null，那么length就=0，那么array就是一个长度为0的数组，并不会进入到循环里面执行真正的参数处理
+        //不要写这样的代码，因为实例化后可能是一个int[]或者double[],是不能转换为Object[]的
+        //Object[] values = (Object[]) Array.newInstance(scalarType, length); */
+
         int length = Array.getLength(values);
         Object array = Array.newInstance(scalarType, length);
         for (int i = 0; i < length; i++) {
@@ -109,10 +111,10 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         return array;
     }
 
-    private List resolveScalarTypeList(Class<?> scalarType, Object[] values, MethodParameter parameter) throws Exception {
-        List list = new ArrayList<>();
+    private <T> List<T> resolveScalarTypeList(Class<T> scalarType, Object[] values, MethodParameter parameter) throws Exception {
+        List<T> list = new ArrayList<>();
         for (int i = 0; i < Array.getLength(values); i++) {
-            list.add(resolveScalarType(scalarType, Array.get(values, i), parameter));
+            list.add((T) resolveScalarType(scalarType, Array.get(values, i), parameter));
         }
         return list;
     }
