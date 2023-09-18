@@ -4,19 +4,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum HttpMethod {
+	/**
+	 * get请求
+	 */
+	GET,
+	/**
+	 * head请求
+	 */
+	HEAD,
+	/**
+	 * post请求
+	 */
+	POST,
+	/**
+	 * put请求
+	 */
+	PUT,
+	/**
+	 * patch请求
+	 */
+	PATCH,
+	/**
+	 * delete请求
+	 */
+	DELETE,
+	/**
+	 * options请求
+	 */
+	OPTIONS,
+	/**
+	 * trace
+	 */
+	TRACE;
 
-	GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
-
-	private static final Map<String, HttpMethod> mappings = new HashMap<>(16);
+	private static final Map<String, HttpMethod> MAPPINGS = new HashMap<>(16);
 
 	static {
 		for (HttpMethod httpMethod : values()) {
-			mappings.put(httpMethod.name(), httpMethod);
+			MAPPINGS.put(httpMethod.name(), httpMethod);
 		}
 	}
 
 	public static HttpMethod resolve( String method) {
-		return (method != null ? mappings.get(method) : null);
+		return (method != null ? MAPPINGS.get(method) : null);
 	}
 
 	public boolean matches(String method) {

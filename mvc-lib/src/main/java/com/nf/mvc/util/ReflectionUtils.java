@@ -26,22 +26,25 @@ public abstract class ReflectionUtils {
      * ==符号表示指向的是同一个对象，equals表示的内容相等，简单来说，==是true就表示两者完全一样，
      * 那么equals也肯定是true，但equals是true不一定==也是true
      */
-    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(9);
-    private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new IdentityHashMap<>(9);
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(9);
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(9);
 
+    private static final String GETTER_METHOD_NAME = "^get[A-Z].*";
+    private static final String GETTER_IS_METHOD_NAME = "^is[A-Z].*";
+    private static final String SETTER_METHOD_NAME = "^set[A-Z].*";
     static {
-        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
-        primitiveWrapperTypeMap.put(Byte.class, byte.class);
-        primitiveWrapperTypeMap.put(Character.class, char.class);
-        primitiveWrapperTypeMap.put(Double.class, double.class);
-        primitiveWrapperTypeMap.put(Float.class, float.class);
-        primitiveWrapperTypeMap.put(Integer.class, int.class);
-        primitiveWrapperTypeMap.put(Long.class, long.class);
-        primitiveWrapperTypeMap.put(Short.class, short.class);
-        primitiveWrapperTypeMap.put(Void.class, void.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Float.class, float.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Void.class, void.class);
 
-        for (Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperTypeMap.entrySet()) {
-            primitiveTypeToWrapperMap.put(entry.getValue(), entry.getKey());
+        for (Map.Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPER_TYPE_MAP.entrySet()) {
+            PRIMITIVE_TYPE_TO_WRAPPER_MAP.put(entry.getValue(), entry.getKey());
         }
     }
 
@@ -165,18 +168,20 @@ public abstract class ReflectionUtils {
         return Modifier.isPublic(method.getModifiers()) &&
                 method.getReturnType().equals(void.class) &&
                 method.getParameterTypes().length == 1 &&
-                method.getName().matches("^set[A-Z].*");
+                method.getName().matches(SETTER_METHOD_NAME);
     }
 
     public static boolean isGetter(Method method) {
         if (Modifier.isPublic(method.getModifiers()) &&
                 method.getParameterTypes().length == 0) {
-            if (method.getName().matches("^get[A-Z].*") &&
-                    !method.getReturnType().equals(void.class))
+            if (method.getName().matches(GETTER_METHOD_NAME) &&
+                    !method.getReturnType().equals(void.class)) {
                 return true;
-            if (method.getName().matches("^is[A-Z].*") &&
-                    method.getReturnType().equals(boolean.class))
+            }
+            if (method.getName().matches(GETTER_IS_METHOD_NAME) &&
+                    method.getReturnType().equals(boolean.class)) {
                 return true;
+            }
         }
         return false;
     }
@@ -281,7 +286,7 @@ public abstract class ReflectionUtils {
      * @return
      */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
-        return primitiveWrapperTypeMap.containsKey(clazz);
+        return PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz);
     }
 
 
@@ -313,10 +318,10 @@ public abstract class ReflectionUtils {
             return true;
         }
         if (lhsType.isPrimitive()) {
-            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+            Class<?> resolvedPrimitive = PRIMITIVE_WRAPPER_TYPE_MAP.get(rhsType);
             return (lhsType == resolvedPrimitive);
         } else {
-            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+            Class<?> resolvedWrapper = PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(rhsType);
             return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
         }
     }

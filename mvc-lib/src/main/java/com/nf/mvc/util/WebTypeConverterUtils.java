@@ -25,31 +25,31 @@ public abstract class WebTypeConverterUtils {
      * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link MethodArgumentResolverComposite}</p>
      */
 
-    private final static Map<Class<?>, WebTypeConverter> cachedConverters = new ConcurrentHashMap<>(32);
+    private final static Map<Class<?>, WebTypeConverter> CACHED_CONVERTERS = new ConcurrentHashMap<>(32);
 
     static {
-        cachedConverters.put(BigDecimal.class, new BigDecimalTypeConverter());
-        cachedConverters.put(Boolean.class, new BooleanTypeConverter());
-        cachedConverters.put(Boolean.TYPE, new BooleanTypeConverter());
-        cachedConverters.put(Byte.class, new ByteTypeConverter());
-        cachedConverters.put(Byte.TYPE, new ByteTypeConverter());
-        cachedConverters.put(Character.class, new CharacterTypeConverter());
-        cachedConverters.put(Character.TYPE, new CharacterTypeConverter());
-        cachedConverters.put(Date.class, new DateTypeConverter());
-        cachedConverters.put(Double.class, new DoubleTypeConverter());
-        cachedConverters.put(Double.TYPE, new DoubleTypeConverter());
-        cachedConverters.put(Float.class, new FloatTypeConverter());
-        cachedConverters.put(Float.TYPE, new FloatTypeConverter());
-        cachedConverters.put(Integer.class, new IntegerTypeConverter());
-        cachedConverters.put(Integer.TYPE, new IntegerTypeConverter());
-        cachedConverters.put(LocalDateTime.class, new LocalDateTimeTypeConverter());
-        cachedConverters.put(LocalDate.class, new LocalDateTypeConverter());
-        cachedConverters.put(LocalTime.class, new LocalTimeTypeConverter());
-        cachedConverters.put(Long.class, new LongTypeConverter());
-        cachedConverters.put(Long.TYPE, new LongTypeConverter());
-        cachedConverters.put(Short.class, new ShortTypeConverter());
-        cachedConverters.put(Short.TYPE, new ShortTypeConverter());
-        cachedConverters.put(String.class, new StringTypeConverter());
+        CACHED_CONVERTERS.put(BigDecimal.class, new BigDecimalTypeConverter());
+        CACHED_CONVERTERS.put(Boolean.class, new BooleanTypeConverter());
+        CACHED_CONVERTERS.put(Boolean.TYPE, new BooleanTypeConverter());
+        CACHED_CONVERTERS.put(Byte.class, new ByteTypeConverter());
+        CACHED_CONVERTERS.put(Byte.TYPE, new ByteTypeConverter());
+        CACHED_CONVERTERS.put(Character.class, new CharacterTypeConverter());
+        CACHED_CONVERTERS.put(Character.TYPE, new CharacterTypeConverter());
+        CACHED_CONVERTERS.put(Date.class, new DateTypeConverter());
+        CACHED_CONVERTERS.put(Double.class, new DoubleTypeConverter());
+        CACHED_CONVERTERS.put(Double.TYPE, new DoubleTypeConverter());
+        CACHED_CONVERTERS.put(Float.class, new FloatTypeConverter());
+        CACHED_CONVERTERS.put(Float.TYPE, new FloatTypeConverter());
+        CACHED_CONVERTERS.put(Integer.class, new IntegerTypeConverter());
+        CACHED_CONVERTERS.put(Integer.TYPE, new IntegerTypeConverter());
+        CACHED_CONVERTERS.put(LocalDateTime.class, new LocalDateTimeTypeConverter());
+        CACHED_CONVERTERS.put(LocalDate.class, new LocalDateTypeConverter());
+        CACHED_CONVERTERS.put(LocalTime.class, new LocalTimeTypeConverter());
+        CACHED_CONVERTERS.put(Long.class, new LongTypeConverter());
+        CACHED_CONVERTERS.put(Long.TYPE, new LongTypeConverter());
+        CACHED_CONVERTERS.put(Short.class, new ShortTypeConverter());
+        CACHED_CONVERTERS.put(Short.TYPE, new ShortTypeConverter());
+        CACHED_CONVERTERS.put(String.class, new StringTypeConverter());
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class WebTypeConverterUtils {
      * @return 返回null表示没有此类型的类型转换器
      */
     public static WebTypeConverter getTypeConverter(Class<?> paramType) {
-        return cachedConverters.get(paramType);
+        return CACHED_CONVERTERS.get(paramType);
     }
 
     /**

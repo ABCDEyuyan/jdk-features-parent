@@ -13,6 +13,7 @@ import java.util.List;
  * MultipartFile，MultipartFile[],List<MultipartFile>这样的情况。
  * 并不要求所有的参数解析器继承此类型，比如@RequestBody修饰的参数的解析器就完全没有必要继承此类型,servlet Api的参数解析器也不需要继承此类
  *
+ * @author cj
  * @see RequestBodyMethodArguementResolver
  * @see MultipartFileMethodArgumentResolver
  * @see SimpleTypeMethodArguementResolver
@@ -26,7 +27,13 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
                 isScalarTypeList(parameter);
     }
 
-    // 这里加final修饰方法，是不想让子类重写，因为支持的情况就这三种，逻辑是固定的
+    /**
+     * 这里加final修饰方法，是不想让子类重写，因为支持的情况就这三种，逻辑是固定的
+     * @param parameter 方法参数
+     * @param request servlet请求对象
+     * @return
+     * @throws Exception
+     */
     @Override
     public final Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         /*  请求中根本没有对应参数名的请求数据时，source可能就是null的，
@@ -96,8 +103,15 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         return methodParameter.isList() && supportsInternal(methodParameter.getFirstActualTypeArgument());
     }
 
-    // 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
-    // 那么在处理int[]这种简单类型数组作为控制器参数时，会导致报无法把简单类型数组转换为Object[]数组的异常的问题，所以没有把本类或这3个解析方法设计为泛型
+    /**
+     * 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
+     * 那么在处理int[]这种简单类型数组作为控制器参数时，会导致报无法把简单类型数组转换为Object[]数组的异常的问题，所以没有把本类或这3个解析方法设计为泛型
+     * @param scalarType
+     * @param values
+     * @param parameter
+     * @return
+     * @throws Exception
+     */
     private Object resolveScalarTypeArray(Class<?> scalarType, Object[] values, MethodParameter parameter) throws Exception {
         /* 如果数据源为null，那么length就=0，那么array就是一个长度为0的数组，并不会进入到循环里面执行真正的参数处理
         //不要写这样的代码，因为实例化后可能是一个int[]或者double[],是不能转换为Object[]的

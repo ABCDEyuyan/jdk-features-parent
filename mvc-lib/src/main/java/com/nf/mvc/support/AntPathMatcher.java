@@ -23,6 +23,7 @@ import java.util.Comparator;
  * 但如果在设置了matchStart的情况下，pattern的前面一部分就已经匹配了整个path的话，也算匹配，比如a/ * /c/d模式与a/b0/c路径
  * 而trimToken主要是时候忽略一些空白字符的情况
  * 参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）
+ * @author cj
  */
 public class AntPathMatcher implements PathMatcher{
 
@@ -30,6 +31,7 @@ public class AntPathMatcher implements PathMatcher{
     private static final char QUESTION = '?';
     private static final char BLANK = ' ';
     private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
+    private static final int LENGTH_OF_TWO_PATTERN_CHAR = 2;
 
     private final char pathSeparator;
     private final boolean ignoreCase;
@@ -71,7 +73,7 @@ public class AntPathMatcher implements PathMatcher{
         } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
             if (matchStart) {
                 return true;
-            } else if (pattern.length() == 2 && pattern.charAt(1) == ASTERISK) {
+            } else if (pattern.length() == LENGTH_OF_TWO_PATTERN_CHAR && pattern.charAt(1) == ASTERISK) {
                 return false;
             }
             return isMatch(pattern.substring(1), path);
@@ -105,7 +107,7 @@ public class AntPathMatcher implements PathMatcher{
     private boolean doubleAsteriskMatch(final String pattern, final String path) {
         if (pattern.charAt(1) != ASTERISK) {
             return false;
-        } else if (pattern.length() > 2) {
+        } else if (pattern.length() > LENGTH_OF_TWO_PATTERN_CHAR) {
             return isMatch(pattern.substring(3), path);
         }
 
@@ -275,7 +277,7 @@ public class AntPathMatcher implements PathMatcher{
                 this.pattern = pattern;
                 if (this.pattern != null) {
                     initCounters();
-                    this.catchAllPattern = this.pattern.equals("/**");
+                    this.catchAllPattern = "/**".equals(this.pattern);
                     this.prefixPattern = !this.catchAllPattern && this.pattern.endsWith("/**");
                 }
                 if (this.uriVars == 0) {
@@ -296,7 +298,7 @@ public class AntPathMatcher implements PathMatcher{
                                 this.doubleWildcards++;
                                 pos += 2;
                             }
-                            else if (pos > 0 && !this.pattern.substring(pos - 1).equals(".*")) {
+                            else if (pos > 0 && !".*".equals(this.pattern.substring(pos - 1))) {
                                 this.singleWildcards++;
                                 pos++;
                             }

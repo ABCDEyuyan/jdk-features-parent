@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 此类主要是给用户编写的控制用的一些便利方法，利用java的静态方法导入的形式使用，
- * 利用这些方法，方便创建ViewResult对象，典型的使用方法如下：
+ * 此类都是一些静态方法，主要是给用户编写的控制器方法处理返回值时提供一些便利方法。
+ * 通常是在用户编写的控制器类采用java的静态方法导入的形式使用这些便利方法，
+ * 典型的使用方法如下：
  * <pre class="code">
  *   import static com.nf.mvc.handler.HandlerHelper.json
  *   public class SomeController{
+ *      &#064;RequestMapping("/demo")
  *      public ViewResult json(...){
  *          return json(new ResponseVO(...));
  *      }
@@ -53,7 +55,7 @@ public class HandlerHelper {
     }
 
     public static FileViewResult file(String realPath) {
-        return file(realPath,new HashMap<>());
+        return file(realPath,new HashMap<>(4));
     }
 
     public static FileViewResult file(String realPath,Map<String,String> headers) {
@@ -61,7 +63,7 @@ public class HandlerHelper {
     }
 
     public static FileViewResult file(InputStream inputStream,String filename) {
-        return file(inputStream,filename,new HashMap<>());
+        return file(inputStream,filename,new HashMap<>(4));
     }
 
     public static FileViewResult file(InputStream inputStream,String filename,Map<String,String> headers) {
@@ -77,7 +79,7 @@ public class HandlerHelper {
     }
 
     public static StreamViewResult stream(String realPath) {
-        return stream(realPath, new HashMap<>());
+        return stream(realPath, new HashMap<>(4));
     }
 
     public static StreamViewResult stream(String realPath, Map<String,String> headers) {

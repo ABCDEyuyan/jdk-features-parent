@@ -141,8 +141,10 @@ public class DispatcherServlet extends HttpServlet {
     private final List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
     private final List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
-    // 用这种方式实例化是因为其调用了applyDefaultConfiguration方法，创建出来的对象是有了一些默认设置的
-    // 因为我现在的策略是：不管有没有配置器对跨域进行定制配置，都要全局进行跨域支持的处理
+    /**
+     * 用这种方式实例化是因为其调用了applyDefaultConfiguration方法，创建出来的对象是有了一些默认设置的
+     * 因为我现在的策略是：不管有没有配置器对跨域进行定制配置，都要全局进行跨域支持的处理
+     */
     private final CorsConfiguration corsConfiguration = CorsConfiguration.defaultInstance();
 
     //region 初始化逻辑
@@ -524,8 +526,8 @@ public class DispatcherServlet extends HttpServlet {
 
     protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        /*利用default servlet来处理当前请求找不到handler的情况，默认servlet也可以处理静态资源，
-        具体见spring mvc的DefaultServletHttpRequestHandler类*/
+        /* 利用default servlet来处理当前请求找不到handler的情况，默认servlet也可以处理静态资源，
+        具体见spring mvc的DefaultServletHttpRequestHandler类 */
         req.getServletContext().getNamedDispatcher("default").forward(req, resp);
     }
 

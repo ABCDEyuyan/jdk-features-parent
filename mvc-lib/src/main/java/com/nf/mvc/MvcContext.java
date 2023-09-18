@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class MvcContext {
 
-    private static final MvcContext instance = new MvcContext();
+    private static final MvcContext INSTANCE = new MvcContext();
 
     private ScanResult scanResult;
 
@@ -58,7 +58,7 @@ public class MvcContext {
     }
 
     public static MvcContext getMvcContext() {
-        return instance;
+        return INSTANCE;
     }
 
     /**
@@ -163,7 +163,10 @@ public class MvcContext {
         return Collections.unmodifiableList(allScannedClasses);
     }
 
-    // 以下这些方法是默认修饰符，主要是在框架内调用，用户不能调用
+    /**
+     * 以下这些方法是默认修饰符，主要是在框架内调用，用户不能调用
+     * @return
+     */
     ScanResult getScanResult() {
         return this.scanResult;
     }

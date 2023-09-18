@@ -23,12 +23,30 @@ import java.util.stream.Collectors;
  * @see com.nf.mvc.DispatcherServlet
  */
 public enum Delimiters {
+    /**
+     * 逗号分隔符
+     */
     Comma(",+","逗号分隔符"),
+    /**
+     * 空格分隔符
+     */
     Space("\\s+","空格分隔符"),
+    /**
+     * 分号分隔符
+     */
     SemiColon(";+","分号分隔符"),
+    /**
+     * spring常用的分隔符，逗号，空格，分号
+     */
     Common("[\\s,;]+","spring常用的分隔符，逗号，空格，分号"),
+    /**
+     * 连字符分隔符
+     */
     Hyphen("-+","连字符分隔符"),
-    Colon(":+","冒号")
+    /**
+     * 冒号分隔符
+     */
+    Colon(":+","冒号分隔符")
     ;
     private String pattern;
     private String desc;

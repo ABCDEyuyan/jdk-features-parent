@@ -42,7 +42,7 @@ import java.util.*;
  */
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
-    private static final PathMatcher defaultPathMatcher = new AntPathMatcher.Builder().build();
+    private static final PathMatcher DEFAULT_PATH_MATCHER = new AntPathMatcher.Builder().build();
 
     private Map<String, HandlerMethod> handlers = new HashMap<>();
 

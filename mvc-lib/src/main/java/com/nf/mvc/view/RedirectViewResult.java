@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class RedirectViewResult extends ViewResult {
 
+    private static final int LENGTH_OF_QUESTION_AND_AMP = 2;
     private String url;
     private Map<String,String> model;
 
@@ -29,7 +30,7 @@ public class RedirectViewResult extends ViewResult {
 
     private  String initModel(){
         //ur?a=10&b=20
-        if(model.size()==0) return "";
+        if(model.size()==0) {return "";}
 
         StringBuilder builder = new StringBuilder("?");
         for (Map.Entry<String, String> entry : model.entrySet()) {
@@ -40,7 +41,7 @@ public class RedirectViewResult extends ViewResult {
         }
 
         //这里写大于2的逻辑是前面的？加上最后多余的那个&
-        if(builder.length()>=2){
+        if(builder.length()>=LENGTH_OF_QUESTION_AND_AMP){
             builder.deleteCharAt(builder.length()-1);
         }
         return builder.toString();
