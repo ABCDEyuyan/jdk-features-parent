@@ -70,7 +70,7 @@ import java.util.function.Consumer;
  *     <li>{@link MethodArgumentResolver}</li>
  *     <li>{@link HandlerExceptionResolver}</li>
  *     <li>{@link ViewResult}</li>
- *     <li>{@link WebMvcConfigurer}</li>
+ *     <li>{@link MvcConfigurer}</li>
  *     <li>{@link HandlerInterceptor}</li>
  * </ul>
  * </p>
@@ -227,7 +227,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final void configMvc() {
         MvcContext mvcContext = MvcContext.getMvcContext();
-        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        MvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
         // 没有配置器，不需要配置，提前结束configMvc方法的执行
         if (mvcConfigurer == null) {
             return;
@@ -242,23 +242,23 @@ public class DispatcherServlet extends HttpServlet {
         configGlobalCors(this.corsConfiguration, mvcConfigurer);
     }
 
-    protected void configArgumentResolvers(List<MethodArgumentResolver> argumentResolvers, WebMvcConfigurer mvcConfigurer) {
+    protected void configArgumentResolvers(List<MethodArgumentResolver> argumentResolvers, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(argumentResolvers, mvcConfigurer::configureArgumentResolver);
     }
 
-    protected void configHandlerMappings(List<HandlerMapping> handlerMappings, WebMvcConfigurer mvcConfigurer) {
+    protected void configHandlerMappings(List<HandlerMapping> handlerMappings, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(handlerMappings, mvcConfigurer::configureHandlerMapping);
     }
 
-    protected void configHandlerAdapters(List<HandlerAdapter> handlerAdapters, WebMvcConfigurer mvcConfigurer) {
+    protected void configHandlerAdapters(List<HandlerAdapter> handlerAdapters, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(handlerAdapters, mvcConfigurer::configureHandlerAdapter);
     }
 
-    protected void configExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers, WebMvcConfigurer mvcConfigurer) {
+    protected void configExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(exceptionResolvers, mvcConfigurer::configureExceptionResolver);
     }
 
-    protected void configGlobalCors(CorsConfiguration configuration, WebMvcConfigurer mvcConfigurer) {
+    protected void configGlobalCors(CorsConfiguration configuration, MvcConfigurer mvcConfigurer) {
         // 不需要再调用默认设置，全局实例化时已经设置过了，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
         //configuration.applyDefaultConfiguration();
         mvcConfigurer.configureCors(configuration);

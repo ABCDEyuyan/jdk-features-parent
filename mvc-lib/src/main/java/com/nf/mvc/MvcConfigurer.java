@@ -1,7 +1,5 @@
 package com.nf.mvc;
 
-import com.nf.mvc.mapping.RequestMappingHandlerMapping;
-
 /**
  * 此接口是用来给mvc框架内部的一些核心组件提供配置使用的,在整个mvc框架中，对mvc框架内部的组件有2种方式进行定制配置的
  * <ul>
@@ -43,7 +41,7 @@ import com.nf.mvc.mapping.RequestMappingHandlerMapping;
  * @see HandlerExceptionResolver
  * @see CorsConfiguration
  */
-public interface WebMvcConfigurer {
+public interface MvcConfigurer {
     default void configureHandlerMapping(HandlerMapping handlerMapping) {
 
     }

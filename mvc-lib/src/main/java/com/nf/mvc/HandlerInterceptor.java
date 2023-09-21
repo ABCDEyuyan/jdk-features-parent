@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *     <li>I1.postHandle</li>
  * </ol>
  * <p>
- *     如果创建的拦截器没有通过注解{@link Interceptors}进行拦截url方面的设置，那么此拦截器默认拦截所有的请求，
+ *     如果创建的拦截器没有通过注解{@link Intercepts}进行拦截url方面的设置，那么此拦截器默认拦截所有的请求，
  *     如果拦截器经过了注解的设置，那么只会对符合设置条件的请求进行拦截，实现逻辑见{@link com.nf.mvc.mapping.RequestMappingHandlerMapping#getInterceptors(HttpServletRequest)}
  * </p>
  * <p>
@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  *          }
  *     </pre>
  * </p>
- * @see Interceptors
+ * @see Intercepts
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
  * @see com.nf.mvc.util.JacksonUtils
  */

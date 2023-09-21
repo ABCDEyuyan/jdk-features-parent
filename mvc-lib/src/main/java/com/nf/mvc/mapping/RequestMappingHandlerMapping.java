@@ -126,8 +126,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         String requestUrl = RequestUtils.getRequestUrl(request);
         for (HandlerInterceptor interceptor : interceptors) {
             Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
-            if (interceptorClass.isAnnotationPresent(Interceptors.class)) {
-                Interceptors annotation = interceptorClass.getDeclaredAnnotation(Interceptors.class);
+            if (interceptorClass.isAnnotationPresent(Intercepts.class)) {
+                Intercepts annotation = interceptorClass.getDeclaredAnnotation(Intercepts.class);
                 String[] includesPattern = annotation.value();
                 String[] excludesPattern = annotation.excludePattern();
                 if (shouldApply(requestUrl,includesPattern ) == true && shouldApply(requestUrl,excludesPattern) == false) {

@@ -17,7 +17,7 @@ import java.io.File;
  *
  * @author cj
  */
-public class WebMvcApplication {
+public class MvcApplication {
     public static void run() {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);

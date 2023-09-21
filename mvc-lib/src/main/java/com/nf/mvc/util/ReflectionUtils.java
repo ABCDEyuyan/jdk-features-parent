@@ -1,9 +1,12 @@
 package com.nf.mvc.util;
 
+import com.nf.mvc.argument.MethodParameter;
+import com.nf.mvc.handler.HandlerClass;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
@@ -51,19 +54,23 @@ public abstract class ReflectionUtils {
     /**
      * 现在这种写法是默认调用class的默认构造函数来实例化对象的
      * 暂时没有考虑调用其它构造函数的情况
-     *
+     * <h3>使用地方</h3>
+     * <p>整个mvc框架都用的这个方法来创建被mvc管理的类的对象，主要使用的地方有以下几个
+     * <ul>
+     *     <li>实例化扫描到的类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class)}</li>
+     *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)}</li>
+     *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()}  }</li>
+     * </ul>
+     * </p>
      * @param clz
      * @return
      */
     public static <T> T newInstance(Class<? extends T> clz) {
         try {
             return clz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("无法实例化对象，类:" + clz.getName() + " 是否没有提供默认构造函数?", e);
         }
-        return null;
     }
 
     public static List<Method> getAllSetterMethods(Class<?> clz) {

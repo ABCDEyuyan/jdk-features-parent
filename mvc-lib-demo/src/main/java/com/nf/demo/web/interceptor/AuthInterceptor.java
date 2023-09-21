@@ -2,7 +2,7 @@ package com.nf.demo.web.interceptor;
 
 
 import com.nf.mvc.HandlerInterceptor;
-import com.nf.mvc.Interceptors;
+import com.nf.mvc.Intercepts;
 import com.nf.mvc.support.CommonResultCode;
 import com.nf.mvc.support.ResponseVO;
 import com.nf.mvc.util.JacksonUtils;
@@ -11,7 +11,7 @@ import com.nf.mvc.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Interceptors(value = {"/product/insert","/product/update","/product/delete"},excludePattern = "/user/login")
+@Intercepts(value = {"/product/insert","/product/update","/product/delete"},excludePattern = "/user/login")
 public class AuthInterceptor implements HandlerInterceptor {
 
 

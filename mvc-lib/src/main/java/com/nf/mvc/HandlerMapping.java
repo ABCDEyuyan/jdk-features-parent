@@ -17,7 +17,7 @@ import java.util.List;
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
  * @see HandlerExecutionChain
  * @see HandlerInterceptor
- * @see Interceptors
+ * @see Intercepts
  * @see DispatcherServlet
  */
 public interface HandlerMapping {
