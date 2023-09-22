@@ -14,6 +14,7 @@ import java.io.File;
  * <h3>参考资料</h3>
  * <a href="https://devcenter.heroku.com/articles/create-a-java-web-application-using-embedded-tomcat">嵌入式tomcat</a>
  * <a href="https://www.cnblogs.com/develon/p/11602969.html">嵌入式tomcat以及集成spring</a>
+ * <a href="https://www.cnblogs.com/pilihaotian/p/8822926.html">spring boot 处理jsp的分析</a>
  *
  * @author cj
  */
@@ -22,11 +23,11 @@ public class MvcApplication {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
         // 这种写法意味着web资源放置在src/main/webapp目录里 TODO
-        String webAppBaseDir = new File(".").getAbsolutePath();
-        System.out.println("项目的目录为: " + new File("./" + webAppBaseDir).getAbsolutePath());
+        String docBase = new File(".").getAbsolutePath();
+        System.out.println("项目的目录为: " + new File("." + docBase).getAbsolutePath());
         // 在这篇文章里有说明addContext与addWebApp的区别https://stackoverflow.com/questions/67253024/tomcat-catalina-context-add-existing-servlet-to-context
         // 如果仅仅只是把addContext方法换成addWebApp方法会导致DispatcherServlet注册url-pattern为/失效
-        Context ctx = tomcat.addContext("/mvc", webAppBaseDir);
+        Context ctx = tomcat.addContext("/mvc", docBase);
 
         Wrapper wrapper = Tomcat.addServlet(ctx, "dispatcherServlet", new DispatcherServlet());
         ctx.addServletMappingDecoded("/", "dispatcherServlet");
@@ -45,6 +46,7 @@ public class MvcApplication {
 
         try {
             tomcat.start();
+            printBanner();
             tomcat.getServer().await();
         } catch (LifecycleException e) {
             e.printStackTrace();
@@ -68,5 +70,17 @@ public class MvcApplication {
             // Swallow and continue
         }
         return null;
+    }
+
+    private static void printBanner(){
+        //ascii 文本生成是借助于https://tools.kalvinbg.cn/txt/ascii提供的工具生成(采用starwars字体)
+        String bannerText = "  ______  __    __   _______ .__   __.        __   __    __  .__   __. \n" +
+                " /      ||  |  |  | |   ____||  \\ |  |       |  | |  |  |  | |  \\ |  | \n" +
+                "|  ,----'|  |__|  | |  |__   |   \\|  |       |  | |  |  |  | |   \\|  | \n" +
+                "|  |     |   __   | |   __|  |  . `  | .--.  |  | |  |  |  | |  . `  | \n" +
+                "|  `----.|  |  |  | |  |____ |  |\\   | |  `--'  | |  `--'  | |  |\\   | \n" +
+                " \\______||__|  |__| |_______||__| \\__|  \\______/   \\______/  |__| \\__| \n" +
+                "                                                                       ";
+        System.out.println(bannerText);
     }
 }
