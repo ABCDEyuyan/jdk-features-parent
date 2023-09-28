@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * <h3>典型用法</h3>
  * <ul>
  *     <li>在入口类上添加注解{@link EnableConfigurationProperties}指定有哪些配置属性类</li>
- *     <li>编写配置属性类，并在此类上指定注解{@link ConfigurationProperties},并指定前缀</li>
+ *     <li>编写配置属性类，并在此类上指定注解{@link ConfigurationProperties},并指定前缀，配置文件中对应前缀下的配置项会赋值给本类的相关属性</li>
  *     <li>在要使用配置属性的类中，声明一个类型为配置属性类的字段，并在其上添加注解{@link com.nf.mvc.ioc.Autowired}</li>
  *     <li>有了这个字段后，就可以调用其属性来获取从application.yml中获取的配置了</li>
  * </ul>

@@ -1,9 +1,13 @@
 package com.nf.mvc.configuration;
 
+/**
+ * @author cj
+ */
 @ConfigurationProperties("server")
 public class ServerConfiguration {
-    private int port;
-    private String contextPath;
+    private int port = 8080;
+    private String contextPath ="";
+    private String urlPattern ="/";
 
     public int getPort() {
         return port;
@@ -19,5 +23,13 @@ public class ServerConfiguration {
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getUrlPattern() {
+        return urlPattern;
+    }
+
+    public void setUrlPattern(String urlPattern) {
+        this.urlPattern = urlPattern;
     }
 }

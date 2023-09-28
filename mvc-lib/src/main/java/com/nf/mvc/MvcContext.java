@@ -82,6 +82,7 @@ public class MvcContext {
             resolveMvcClass(scanedClass);
             allScannedClasses.add(scanedClass);
         }
+
     }
 
     /**
