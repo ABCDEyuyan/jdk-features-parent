@@ -1,174 +1,143 @@
 package com.nf.mvc.configuration;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
-import java.util.List;
+import java.lang.reflect.Field;
 import java.util.Map;
 
+import static com.nf.mvc.util.StringUtils.hasText;
+
 /**
+ * 此类是用来解析yml文件用的,不提供文件名的话,默认是解析类路径下的application.yml文件.
+ * <p>此类只解析了map结构的数据,并把这个map结构解析成一个bean对象,并没有对其它情况进行处理,
+ * 比如yml中的list类型等</p>
+ * 此类参考了网上的代码并稍作修改,并没有严格的测试
+ * <h3>基本使用</h3>
+ * 假定你有一个如下的配置属性类
  * <pre class="code">
- *
+ *   &#064;ConfigurationProperties("s1")
+ * public class MyConfigurationProperties1 {
+ *     private int id;
+ *     private String name;
+ *     //省略掉getter,setter
+ * }
+ * </pre>
+ * 那么你在yml文件中配置内容如下就可以顺利把yml中的数据赋值给配置属性类了
+ * <pre class="code">
+ *    s1:
+ *      id: 100
+ *      name: abc
+ * </pre>
+ * 解析器代码使用方法如下
+ * <pre class="code">
+ *   MyConfigurationProperties1 s1 = YmlParser.getInstance().parse("s1", MyConfigurationProperties1.class);
  * </pre>
  * <h3>参考资料</h3>
  * <a href="https://juejin.cn/post/7034489501284040711">yaml解析工具类</a>
  * <a href="https://www.baeldung.com/java-snake-yaml">用snakeYml库解析yml文件 </a>
+ *
  * @author cj
  */
 public class YmlParser {
-
-    /**
-     * 读取的资源名
-     */
-    private String fileName ="application.yml";
-    /**
-     * 获取的对象
-     */
-    private Object temp;
-
-
-    /**
-     * 创建一个资源获取对象,默认获取resources下的application.yml文件
-     */
-    public YmlParser() {
-        this.load();
-    }
-
-    /**
-     * 创建一个资源获取对象,默认获取resources下的fileName文件
-     * @param fileName
-     */
-    public YmlParser(String fileName) {
-        this.fileName =fileName;
-        this.load();
-    }
-
-    /**
-     * 加载指定的文件
-     */
-    private YmlParser load() {
-        Yaml yaml = new Yaml();
-        InputStream inputStream = this.getClass()
-                .getClassLoader()
-                .getResourceAsStream(this.fileName);
-        this.temp= yaml.load(inputStream);
-        return this;
-    }
+  private volatile static YmlParser instance;
+  /**
+   * 读取的资源名
+   */
+  private static final String DEFAULT_CONFIG_FILE = "application.yml";
+  private boolean haveConfigFile = false;
+  private Object origin;
+  /**
+   * 获取的对象
+   */
+  private Object current;
 
 
+  /**
+   * 创建一个资源获取对象,默认获取resources下的application.yml文件
+   */
+  private YmlParser() {
 
-    /**
-     * eg "zdc.config.list"
-     * eg ""
-     * @param prefix
-     */
-    public YmlParser prefix(String prefix){
+  }
 
-        if(prefix==null || "".equals(prefix.trim())){
-            return this;
+  public static YmlParser getInstance() {
+    if (instance == null) {
+      synchronized (YmlParser.class) {
+        if (instance == null) {
+          instance = new YmlParser();
+          instance.load(DEFAULT_CONFIG_FILE);
         }
-        //获取层级关系
-        String[] keys = prefix.trim().split("\\.");
-        for (String key : keys) {
-            //判断数据类型
-            if(this.temp instanceof Map){
-                this.temp= ((Map) this.temp).get(key);
-            }
-            else if(this.temp instanceof List){
-                if (isNumeric(key)) {
-                    this.temp= ((List) this.temp).get(Integer.parseInt(key));
-                }else{
-                    throw new RuntimeException(String.format("当前层级类型为List,不能使用[%s]获取子集数据",key));
-                }
-            }else{
-                throw new RuntimeException("暂时没有解析该类型或不支持再次解析");
-            }
-        }
-        return this;
+      }
     }
+    return instance;
+  }
+  /**
+   * 加载默认的配置文件
+   */
+  private void load(String fileName) {
 
-    /**
-     * 返回对象类型的数据,可能是List,Map,Obj
-     * @return
-     */
-    public Object getObj(){
-       return this.temp;
+    InputStream inputStream = this.getClass()
+            .getClassLoader()
+            .getResourceAsStream(fileName);
+    if (inputStream != null) {
+      this.haveConfigFile = true;
+      Yaml yaml = new Yaml();
+      this.origin = yaml.load(inputStream);
+      this.current = this.origin;
     }
+  }
 
-    /**
-     * 返回Map类型的数据
-     * @return
-     */
-    public Map getMap()  {
-     if(this.temp instanceof Map){
-         return (Map)this.temp;
-     }
-     return null;
+  public  boolean haveConfigFile(){
+    return haveConfigFile;
+  }
+  public void reset() {
+    this.current = this.origin;
+  }
+
+  /**
+   * 依据层级关系进行解析,如果没有配置文件并不会抛异常,仅仅只会返回null,这样配置属性类就是一个null值
+   *
+   * @param prefix 配置的前缀,用句号(.)表示层级关系
+   * @return 解析器本身, 便于链式调用
+   */
+  public <T> T parse(String prefix, Class<T> configurationPropertiesCLass) {
+    if (!haveConfigFile() || !hasText(prefix)) {
+      return null;
     }
-
-    /**
-     * 返回List类型的数据
-     * @return
-     */
-    public List getList()  {
-        if(this.temp instanceof List){
-            return (List)this.temp;
-        }
-        return null;
+    //每次要解析之前先恢复
+    reset();
+    //获取层级关系
+    String[] keys = prefix.trim()
+            .split("\\.");
+    for (String key : keys) {
+      //判断数据类型
+      if (this.current instanceof Map) {
+        this.current = ((Map) this.current).get(key);
+      }
+      //只对map类型进行了处理,没有处理current是其它类型的情况
     }
+    return populateBean(configurationPropertiesCLass,((Map)this.current));
+  }
 
-    /**
-     * 返回对象类型数据,如果集成其他类库可以直接调用其他类库的map2bean方法 该处引用的是 commons-beanutils-core ,可以根据自己本地环境替换
-     *
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    public <T> T getT(Class<T> clazz) throws Exception {
-        T obj = clazz.newInstance();
-        Map map = this.getMap();
-        BeanUtils.populate(obj,map);
-        return obj;
+  /**
+   * @param clazz
+   * @param <T>
+   * @return
+   */
+  private  <T> T populateBean(Class<T> clazz,Map map) {
+    T obj = null;
+    try {
+      obj = clazz.newInstance();
+      Field[] fields = clazz.getDeclaredFields();
+      for (Field field : fields) {
+        field.setAccessible(true);
+        field.set(obj, map.get(field.getName()));
+        field.setAccessible(false);
+      }
+
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
-
-    /**
-     * 返回String类型的数据
-     * @return
-     */
-    public String getString()  {
-        return this.temp==null ? "":this.temp.toString();
-    }
-
-    /**
-     * 返回Integer类型的数据
-     * @return
-     */
-    public Integer getInteger()  {
-        String string = getString();
-       return string!=null? Integer.parseInt(string):null;
-    }
-
-//TODO 可以自定也解析其他类型
-
-
-
-    /**
-     * 判断是否是数字
-     * @param cs
-     * @return
-     */
-    public static boolean isNumeric(final CharSequence cs) {
-        if (cs == null || cs.length() == 0) {
-            return false;
-        }
-        final int sz = cs.length();
-        for (int i = 0; i < sz; i++) {
-            if (!Character.isDigit(cs.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
+    return obj;
+  }
 }

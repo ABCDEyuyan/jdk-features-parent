@@ -1,12 +1,15 @@
 package com.nf.mvc.util;
 
+import com.nf.mvc.MvcContext;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerClass;
+import com.nf.mvc.ioc.Injected;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
@@ -57,19 +60,40 @@ public abstract class ReflectionUtils {
      * <h3>使用地方</h3>
      * <p>整个mvc框架都用的这个方法来创建被mvc管理的类的对象，主要使用的地方有以下几个
      * <ul>
-     *     <li>实例化扫描到的类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class)}</li>
-     *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)}</li>
-     *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()}  }</li>
+     *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class)},这些类型是单例的</li>
+     *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)},这些实例是原型的</li>
+     *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()},这些实例是原型的</li>
      * </ul>
      * </p>
      * @param clz
      * @return
      */
     public static <T> T newInstance(Class<? extends T> clz) {
+        T instance ;
         try {
-            return clz.newInstance();
+            instance =  clz.newInstance();
+            injectConfigurationProperties(instance);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("无法实例化对象，类:" + clz.getName() + " 是否没有提供默认构造函数?", e);
+        }
+        return instance;
+    }
+
+    /**
+     * 此方法目前只是用来注入配置属性类使用的
+     * @param instance
+     * @param <T>
+     * @throws IllegalAccessException
+     */
+    private static <T> void injectConfigurationProperties(T instance) throws IllegalAccessException {
+        Field[] fields = instance.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Injected.class)) {
+                field.setAccessible(true);
+                Object configProperties = MvcContext.getMvcContext().getConfigurationProperties().get(field.getType());
+                field.set(instance,configProperties );
+                field.setAccessible(false);
+            }
         }
     }
 

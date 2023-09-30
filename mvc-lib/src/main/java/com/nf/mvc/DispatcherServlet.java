@@ -198,11 +198,9 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
-        //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());
-
-        //获取要扫描的类所在的基础包的名字
+        // 获取要扫描的类所在的基础包的名字
         String[] basePackages = getBasePackages(config);
-        //去执行类扫描的功能
+        // 去执行类扫描的功能
         ScanResult scanResult = ScanUtils.scan(basePackages);
         /*
             initMvc与configMvc方法设置为private final是为了阻止子类重写，因为mvc组件的处理是有先后顺序要求的，
@@ -214,7 +212,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private final void initMvcContext(ScanResult scanResult) {
-        MvcContext.getMvcContext().config(scanResult);
+        MvcContext.getMvcContext().resolveScannedResult(scanResult);
     }
 
     private final void initMvc() {
@@ -362,7 +360,6 @@ public class DispatcherServlet extends HttpServlet {
         resolvers.add(new ExceptionHandlerExceptionResolver());
         return resolvers;
     }
-
 
     private String[] getBasePackages(ServletConfig config) {
         String pkg = config.getInitParameter(BASE_PACKAGE);

@@ -276,4 +276,16 @@ public abstract class StringUtils {
         return path.substring(extIndex + 1);
     }
 
+    public static boolean isNumeric(final CharSequence str) {
+        if (str == null || str.length() == 0) {
+            return false;
+        }
+        final int size = str.length();
+        for (int i = 0; i < size; i++) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

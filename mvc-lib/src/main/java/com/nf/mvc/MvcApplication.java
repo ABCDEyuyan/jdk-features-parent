@@ -2,7 +2,7 @@ package com.nf.mvc;
 
 
 import com.nf.mvc.configuration.ServerConfiguration;
-import com.nf.mvc.ioc.Autowired;
+import com.nf.mvc.ioc.Injected;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
@@ -42,19 +42,19 @@ import java.time.LocalTime;
  * @author cj
  */
 public class MvcApplication {
-    @Autowired
+    @Injected
     private ServerConfiguration serverConfiguration;
 
-    public static final String CONTEXTPATH = "contextPath";
+    public static final String CONTEXT_PATH = "contextPath";
     public static final String PORT = "port";
-    public static final String BASEPACKAGE = "basePackage";
-    public static final String URLPATTERN = "urlPattern";
+    public static final String BASE_PACKAGE = "basePackage";
+    public static final String URL_PATTERN = "urlPattern";
 
-    private static final String CONTEXTPATH_DEFAULT = "/mvc";
+    private static final String CONTEXT_PATH_DEFAULT = "/mvc";
     private static final int PORT_DEFAULT = 8080;
-    private static final String BASEPACKAGE_DEFAULT = "mvcdemo";
-    private static final String URLPATTERN_DEFAULT = "/";
-    private static final String TEMPDIR_DEFAULT = System.getProperty("java.io.tmpdir");
+    private static final String BASE_PACKAGE_DEFAULT = "mvcdemo";
+    private static final String URL_PATTERN_DEFAULT = "/";
+    private static final String TEMP_DIR_DEFAULT = System.getProperty("java.io.tmpdir");
 
 
     private  String contextPath ;
@@ -79,37 +79,37 @@ public class MvcApplication {
         registerDispatcherServlet(ctx);
         registerShutdownHook(tomcat);
 
-        startEmbededTomcat(tomcat);
+        startEmbeddedTomcat(tomcat);
     }
 
     private void parseArgs(String... args) {
         // 先赋值为默认值
-        contextPath = CONTEXTPATH_DEFAULT;
+        contextPath = CONTEXT_PATH_DEFAULT;
         port = PORT_DEFAULT;
-        basePackage = BASEPACKAGE_DEFAULT;
-        urlPattern = URLPATTERN_DEFAULT;
+        basePackage = BASE_PACKAGE_DEFAULT;
+        urlPattern = URL_PATTERN_DEFAULT;
 
         //解析参数中设定的值
         for (String arg : args) {
             String[] argument = arg.split("=");
             String key = argument[0];
             String value = argument[1];
-            if (CONTEXTPATH.equalsIgnoreCase(key)) {
+            if (CONTEXT_PATH.equalsIgnoreCase(key)) {
                 contextPath = value;
             }
             if (PORT.equalsIgnoreCase(key)) {
                 port = Integer.parseInt(value);
             }
-            if (BASEPACKAGE.equalsIgnoreCase(key)) {
+            if (BASE_PACKAGE.equalsIgnoreCase(key)) {
                 basePackage = value;
             }
-            if (URLPATTERN.equalsIgnoreCase(key)) {
+            if (URL_PATTERN.equalsIgnoreCase(key)) {
                 urlPattern = value;
             }
         }
     }
 
-    private void startEmbededTomcat(Tomcat tomcat) {
+    private void startEmbeddedTomcat(Tomcat tomcat) {
         try {
             tomcat.start();
             printBanner();
@@ -131,7 +131,7 @@ public class MvcApplication {
         ctx.addServletMappingDecoded(urlPattern, "dispatcherServlet");
 
         wrapper.addInitParameter("base-package", basePackage);
-        wrapper.setMultipartConfigElement(new MultipartConfigElement(TEMPDIR_DEFAULT));
+        wrapper.setMultipartConfigElement(new MultipartConfigElement(TEMP_DIR_DEFAULT));
         wrapper.setLoadOnStartup(1);
     }
 
@@ -159,10 +159,10 @@ public class MvcApplication {
         System.out.println("=======================================================================");
         System.out.println("Mvc框架项目启动成功了:" + LocalTime.now());
         System.out.println(PORT + ":" + this.port);
-        System.out.println(CONTEXTPATH + ":" + this.contextPath);
-        System.out.println(URLPATTERN + ":" + this.urlPattern);
-        System.out.println(BASEPACKAGE + ":" + this.basePackage);
-        System.out.println("文件上传用的临时目录:" + ":" + TEMPDIR_DEFAULT);
+        System.out.println(CONTEXT_PATH + ":" + this.contextPath);
+        System.out.println(URL_PATTERN + ":" + this.urlPattern);
+        System.out.println(BASE_PACKAGE + ":" + this.basePackage);
+        System.out.println("文件上传用的临时目录:" + ":" + TEMP_DIR_DEFAULT);
         System.out.println("=======================================================================");
     }
 }

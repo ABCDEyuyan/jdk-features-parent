@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student {
+@ConfigurationProperties("s2")
+public class Student2 {
     private int id;
     private String name;
 

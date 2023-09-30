@@ -3,8 +3,10 @@ package mvcdemo.web.controller;
 import com.nf.mvc.HandlerContext;
 import com.nf.mvc.argument.RequestBody;
 import com.nf.mvc.argument.RequestParam;
+import com.nf.mvc.ioc.Injected;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
+import mvcdemo.MyConfigurationProperties1;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -13,11 +15,15 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
 
+    @Injected
+    private MyConfigurationProperties1 config1;
     @RequestMapping("/simple")
     public JsonViewResult simple(@RequestParam(defaultValue = "100")int id,@RequestParam(defaultValue = "abc",value = "username") String name){
         System.out.println("=========简单类型测试============");
         System.out.println("id = " + id);
         System.out.println("name = " + name);
+        System.out.println("config1 = " + config1);
+        System.out.println(this.hashCode());
         return new JsonViewResult(new ResponseVO(200,"ok",true));
 
     }
