@@ -204,7 +204,4 @@ public class MvcContext {
         this.exceptionResolvers = exceptionResolvers;
     }
 
-    void setConfigurationProperties(Map<Class<?>, Object> configurationProperties) {
-        this.configurationProperties = configurationProperties;
-    }
 }

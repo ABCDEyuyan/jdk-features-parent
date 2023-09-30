@@ -40,58 +40,35 @@ import static com.nf.mvc.util.StringUtils.hasText;
  * @author cj
  */
 public class YmlParser {
-  private volatile static YmlParser instance;
-  /**
-   * 读取的资源名
-   */
   private static final String DEFAULT_CONFIG_FILE = "application.yml";
+  private volatile static YmlParser instance;
   private boolean haveConfigFile = false;
-  private Object origin;
+  /**
+   * 解析yml配置文件后获得的顶层map结构
+   */
+  private Map origin;
   /**
    * 获取的对象
    */
-  private Object current;
+  private Map current;
 
-
-  /**
-   * 创建一个资源获取对象,默认获取resources下的application.yml文件
-   */
   private YmlParser() {
-
   }
 
   public static YmlParser getInstance() {
+    return getInstance(DEFAULT_CONFIG_FILE);
+  }
+
+  public static YmlParser getInstance(String fileName) {
     if (instance == null) {
       synchronized (YmlParser.class) {
         if (instance == null) {
           instance = new YmlParser();
-          instance.load(DEFAULT_CONFIG_FILE);
+          instance.load(fileName);
         }
       }
     }
     return instance;
-  }
-  /**
-   * 加载默认的配置文件
-   */
-  private void load(String fileName) {
-
-    InputStream inputStream = this.getClass()
-            .getClassLoader()
-            .getResourceAsStream(fileName);
-    if (inputStream != null) {
-      this.haveConfigFile = true;
-      Yaml yaml = new Yaml();
-      this.origin = yaml.load(inputStream);
-      this.current = this.origin;
-    }
-  }
-
-  public  boolean haveConfigFile(){
-    return haveConfigFile;
-  }
-  public void reset() {
-    this.current = this.origin;
   }
 
   /**
@@ -110,13 +87,33 @@ public class YmlParser {
     String[] keys = prefix.trim()
             .split("\\.");
     for (String key : keys) {
-      //判断数据类型
-      if (this.current instanceof Map) {
-        this.current = ((Map) this.current).get(key);
-      }
       //只对map类型进行了处理,没有处理current是其它类型的情况
+      this.current = (Map) (this.current.get(key));
     }
-    return populateBean(configurationPropertiesCLass,((Map)this.current));
+    return populateBean(configurationPropertiesCLass, ((Map) this.current));
+  }
+
+  /**
+   * 加载配置文件
+   */
+  private void load(String fileName) {
+    InputStream inputStream = this.getClass()
+            .getClassLoader()
+            .getResourceAsStream(fileName);
+    if (inputStream != null) {
+      this.haveConfigFile = true;
+      Yaml yaml = new Yaml();
+      this.origin = yaml.load(inputStream);
+      this.current = this.origin;
+    }
+  }
+
+  private boolean haveConfigFile() {
+    return haveConfigFile;
+  }
+
+  private void reset() {
+    this.current = this.origin;
   }
 
   /**
@@ -124,7 +121,7 @@ public class YmlParser {
    * @param <T>
    * @return
    */
-  private  <T> T populateBean(Class<T> clazz,Map map) {
+  private <T> T populateBean(Class<T> clazz, Map map) {
     T obj = null;
     try {
       obj = clazz.newInstance();

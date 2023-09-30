@@ -14,7 +14,7 @@ public class YmlParserTest {
   private static void testYmlParser() throws Exception {
     InputStream inputStream = YmlParser.class
             .getClassLoader()
-            .getResourceAsStream("application2.yml");
+            .getResourceAsStream("application.yml");
     if (inputStream != null) {
       YmlParser parser = YmlParser.getInstance();
       MyConfigurationProperties1 s1 = parser.parse("s1", MyConfigurationProperties1.class);
