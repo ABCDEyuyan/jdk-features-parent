@@ -84,10 +84,7 @@ public class MvcApplication {
 
     private void parseArgs(String... args) {
         // 先赋值为默认值
-        contextPath = CONTEXT_PATH_DEFAULT;
-        port = PORT_DEFAULT;
-        basePackage = BASE_PACKAGE_DEFAULT;
-        urlPattern = URL_PATTERN_DEFAULT;
+        setDefaultValues();
 
         //解析参数中设定的值
         for (String arg : args) {
@@ -107,6 +104,13 @@ public class MvcApplication {
                 urlPattern = value;
             }
         }
+    }
+
+    private void setDefaultValues() {
+        contextPath = CONTEXT_PATH_DEFAULT;
+        port = PORT_DEFAULT;
+        basePackage = BASE_PACKAGE_DEFAULT;
+        urlPattern = URL_PATTERN_DEFAULT;
     }
 
     private void startEmbeddedTomcat(Tomcat tomcat) {

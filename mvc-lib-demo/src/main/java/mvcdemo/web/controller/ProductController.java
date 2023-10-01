@@ -85,6 +85,10 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
+    @RequestMapping("/ex")
+    public JsonViewResult ex(){
+        throw new ArithmeticException("1/0...");
+    }
     @RequestMapping("/**")
     public void wildcardTest(){
         String method = HandlerContext.getContext().getRequest().getMethod();

@@ -2,7 +2,7 @@ package mvcdemo.web.controller;
 
 import com.nf.mvc.mapping.RequestMapping;
 
-@RequestMapping("/prodUct2")
+@RequestMapping("/prodyct2")
 public class ProductController2 {
 
 

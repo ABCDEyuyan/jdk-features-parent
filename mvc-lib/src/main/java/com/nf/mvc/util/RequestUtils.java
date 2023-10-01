@@ -9,11 +9,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class RequestUtils {
     /**
-     * 用来获取当前请求地址，排除掉上下文（contextPath）的部分,
-     * 此方法的实现参考了spring中UrlPathHelper的代码(通过找HandlerMapping源码中路径实现可以找到这个类)
-     * TODO:有bug,如果DispatcherServlet的模式为*.do这样的设置,要去掉.do这三个字符
-     * @param request
-     * @return
+     * 用来获取当前请求地址，排除掉上下文（contextPath）的部分,剩下的部分就当做请求地址交给{@link com.nf.mvc.HandlerMapping}去处理
+     * <p>这种实现比较简单,不是非常完整科学,比如DispatcherServlet的模式为/test/*,而当前请求地址为/test/abc,
+     * 那么请求地址应该是/abc,{@link  com.nf.mvc.HandlerMapping}应该处理的地址也应该是/abc</p>
+     * <p>如果你想实现这样的效果,可以直接把spring-web依赖中,UrlPathHelper类中的方法getLookupPathForRequest或getPathWithinServletMapping源码复制到这里来</p>
+     * @param request 当前请求
+     * @return 请求地址,此地址会交给HandlerMapping处理
      */
     public static String getRequestUrl(HttpServletRequest request) {
         String contextPath = request.getContextPath();

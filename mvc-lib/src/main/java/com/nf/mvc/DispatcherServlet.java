@@ -5,6 +5,7 @@ import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.*;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.LogHandlerExceptionResolver;
+import com.nf.mvc.exception.ParameterizedMultiExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
@@ -358,6 +359,7 @@ public class DispatcherServlet extends HttpServlet {
         resolvers.add(new LogHandlerExceptionResolver());
         resolvers.add(new PrintStackTraceHandlerExceptionResolver());
         resolvers.add(new ExceptionHandlerExceptionResolver());
+        //resolvers.add(new ParameterizedMultiExceptionHandlerExceptionResolver());
         return resolvers;
     }
 
@@ -445,7 +447,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, HandlerExecutionChain chain) throws Throwable {
         ViewResult viewResult;
         try {
-            //这里返回false，执行完拦截器的后置逻辑后直接return，结束后续流程
+            // 这里返回false，执行完拦截器的后置逻辑后直接return，结束后续流程
             if (!chain.applyPreHandle(req, resp)) {
                 chain.applyPostHandle(req, resp);
                 return;
@@ -455,9 +457,7 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception ex) {
             // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器的后置逻辑即便出了异常也需要执行
             chain.applyPostHandle(req,resp);
-            /*
-                这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
-             */
+            // 这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
         /**

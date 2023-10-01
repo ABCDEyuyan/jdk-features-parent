@@ -25,7 +25,7 @@ import java.util.List;
 public class MultiExceptionHandlerExceptionResolver extends ExceptionHandlerExceptionResolver {
 
     /**
-     * 这样重写之后，相当于只有scan功能，没有添加handle的功能，等价于把方法{@link #handleExceptionHandlerMethods(List)}
+     * 这样重写之后，相当于只有scan功能，没有添加后置处理的功能，等价于把方法{@link #postHandleExceptionHandlerMethods(List)}
      * 重写为一个空的方法
      */
     @Override
