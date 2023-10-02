@@ -58,9 +58,16 @@ public class MyTest {
 
     @Test
     public void s4() {
-        String str = "abc|d|e|f";
-        String[] strings = str.split("\\|");
-        System.out.println(strings.length);
-        System.out.println(Arrays.toString(strings));
+        AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();
+        String pattern = "a/*/c/d";
+        String path = "a/b0/c";
+
+        boolean match = pathMatcher.isMatch(pattern, path);
+        System.out.println("match = " + match);
+
+        AntPathMatcher pathMatcher2 = new AntPathMatcher.Builder().withMatchStart().build();
+        boolean matchStart = pathMatcher2.isMatch(pattern, path);
+        System.out.println("matchStart = " + matchStart);
+
     }
 }
