@@ -1,8 +1,13 @@
 package com.nf.mvc.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 /**
@@ -287,5 +292,102 @@ public abstract class StringUtils {
             }
         }
         return true;
+    }
+
+    public static String[] toStringArray( Collection<String> collection) {
+        return (!CollectionUtils.isEmpty(collection) ? collection.toArray(EMPTY_STRING_ARRAY) : EMPTY_STRING_ARRAY);
+    }
+
+    public static String deleteAny(String inString,  String charsToDelete) {
+        if (!hasLength(inString) || !hasLength(charsToDelete)) {
+            return inString;
+        }
+
+        StringBuilder sb = new StringBuilder(inString.length());
+        for (int i = 0; i < inString.length(); i++) {
+            char c = inString.charAt(i);
+            if (charsToDelete.indexOf(c) == -1) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 把一个字符串拆分成字符串数组,支持分隔符是多个字符,也支持拆分后删掉一些字符.
+     * <p>假定你这样调用delimitedListToStringArray("abcxxdexxfg", "xx","acg")此方法,
+     *   那么最终的结果就是三个字符串的数组:[b, de, f]
+     * </p>
+     * <p>此方法的代码来自于spring框架中的同名方法源代码</p>
+     * @param str
+     * @param delimiter
+     * @param charsToDelete
+     * @return
+     */
+    public static String[] delimitedListToStringArray(
+           String str,  String delimiter,  String charsToDelete) {
+
+        if (str == null) {
+            return EMPTY_STRING_ARRAY;
+        }
+        if (delimiter == null) {
+            return new String[] {str};
+        }
+
+        List<String> result = new ArrayList<>();
+        if (delimiter.isEmpty()) {
+            for (int i = 0; i < str.length(); i++) {
+                result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
+            }
+        }
+        else {
+            int pos = 0;
+            int delPos;
+            while ((delPos = str.indexOf(delimiter, pos)) != -1) {
+                result.add(deleteAny(str.substring(pos, delPos), charsToDelete));
+                pos = delPos + delimiter.length();
+            }
+            if (str.length() > 0 && pos <= str.length()) {
+                // Add rest of String, but not in case of empty input.
+                result.add(deleteAny(str.substring(pos), charsToDelete));
+            }
+        }
+        return toStringArray(result);
+    }
+
+    public static String[] addStringToArray(String[] array, String str) {
+        if (ObjectUtils.isEmpty(array)) {
+            return new String[] {str};
+        }
+
+        String[] newArr = new String[array.length + 1];
+        System.arraycopy(array, 0, newArr, 0, array.length);
+        newArr[array.length] = str;
+        return newArr;
+    }
+
+    public static String[] tokenizeToStringArray( String str, String delimiters) {
+        return tokenizeToStringArray(str, delimiters, true, true);
+    }
+
+    public static String[] tokenizeToStringArray(
+             String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
+
+        if (str == null) {
+            return EMPTY_STRING_ARRAY;
+        }
+
+        StringTokenizer st = new StringTokenizer(str, delimiters);
+        List<String> tokens = new ArrayList<>();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (trimTokens) {
+                token = token.trim();
+            }
+            if (!ignoreEmptyTokens || token.length() > 0) {
+                tokens.add(token);
+            }
+        }
+        return toStringArray(tokens);
     }
 }

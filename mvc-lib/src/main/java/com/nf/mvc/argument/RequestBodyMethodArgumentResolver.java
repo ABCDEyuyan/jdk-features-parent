@@ -13,7 +13,7 @@ import static com.nf.mvc.util.JacksonUtils.fromJson;
  * 集合的反序列化参考了文章:<a href="https://stackoverflow.com/questions/9829403/deserialize-json-to-arraylistpojo-using-jackson">jackson反序列化为ArrayList</a>
  * @see RequestBody
  */
-public class RequestBodyMethodArguementResolver implements MethodArgumentResolver {
+public class RequestBodyMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean supports(MethodParameter parameter) {
         return parameter.isPresent(RequestBody.class);

@@ -14,7 +14,7 @@ import java.util.List;
  * 并不要求所有的参数解析器继承此类型，比如@RequestBody修饰的参数的解析器就完全没有必要继承此类型,servlet Api的参数解析器也不需要继承此类
  *
  * @author cj
- * @see RequestBodyMethodArguementResolver
+ * @see RequestBodyMethodArgumentResolver
  * @see MultipartFileMethodArgumentResolver
  * @see SimpleTypeMethodArguementResolver
  * @see ServletApiMethodArgumentResolver

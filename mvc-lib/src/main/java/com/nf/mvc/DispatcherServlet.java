@@ -5,7 +5,6 @@ import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.*;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.LogHandlerExceptionResolver;
-import com.nf.mvc.exception.ParameterizedMultiExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
@@ -286,7 +285,8 @@ public class DispatcherServlet extends HttpServlet {
         argumentResolvers.add(new ServletApiMethodArgumentResolver());
         argumentResolvers.add(new MultipartFileMethodArgumentResolver());
         //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
-        argumentResolvers.add(new RequestBodyMethodArguementResolver());
+        argumentResolvers.add(new RequestBodyMethodArgumentResolver());
+        argumentResolvers.add(new PathVariableMethodArgumentResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
         argumentResolvers.add(new BeanPropertyMethodArgumentResolver());
 

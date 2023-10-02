@@ -46,7 +46,11 @@ public enum Delimiters {
     /**
      * 冒号分隔符
      */
-    Colon(":+","冒号分隔符")
+    Colon(":+","冒号分隔符"),
+    /**
+     * 竖线分隔符(Vertical Line),也叫管道符
+     */
+    Pipe("\\|","竖线分隔符")
     ;
     private String pattern;
     private String desc;

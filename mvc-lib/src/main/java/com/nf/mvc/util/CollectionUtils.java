@@ -2,7 +2,6 @@ package com.nf.mvc.util;
 
 import com.nf.mvc.support.MultiValueMap;
 import com.nf.mvc.support.MultiValueMapAdapter;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,5 +29,9 @@ public abstract class CollectionUtils {
 
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMap(int expectedSize) {
         return new LinkedHashMap<>((int) (expectedSize / DEFAULT_LOAD_FACTOR), DEFAULT_LOAD_FACTOR);
+    }
+
+    public static boolean isEmpty( Collection<?> collection) {
+        return (collection == null || collection.isEmpty());
     }
 }

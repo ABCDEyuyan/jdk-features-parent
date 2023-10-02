@@ -113,15 +113,19 @@ public class MethodParameter {
         return getParameterType().isArray();
     }
 
+    public boolean isList() {
+        return ReflectionUtils.isList( getParameterType());
+    }
+
+    public boolean isSimpleType() {
+        return ReflectionUtils.isSimpleType( getParameterType());
+    }
+
     public Class<?> getComponentType() {
         if (isArray()) {
             return getParameterType().getComponentType();
         }
         throw new IllegalStateException("不是数组，无法获取组件类型");
-    }
-
-    public boolean isList() {
-        return ReflectionUtils.isList( getParameterType());
     }
 
     /**

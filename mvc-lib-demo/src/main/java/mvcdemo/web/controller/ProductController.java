@@ -1,6 +1,7 @@
 package mvcdemo.web.controller;
 
 import com.nf.mvc.HandlerContext;
+import com.nf.mvc.argument.PathVariable;
 import com.nf.mvc.argument.RequestBody;
 import com.nf.mvc.argument.RequestParam;
 import com.nf.mvc.ioc.Injected;
@@ -17,6 +18,17 @@ public class ProductController {
 
     @Injected
     private MyConfigurationProperties1 config1;
+
+    @RequestMapping("/list/{pageno}/{pagesize}")
+    public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize,int size){
+        System.out.println("=========PathVariable测试============");
+        System.out.println("pageNo = " + pageNo);
+        System.out.println("pageSize = " + pageSize);
+        System.out.println("size = " + size);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+
+    }
+
     @RequestMapping("/simple")
     public JsonViewResult simple(@RequestParam(defaultValue = "100")int id,@RequestParam(defaultValue = "abc",value = "username") String name){
         System.out.println("=========简单类型测试============");

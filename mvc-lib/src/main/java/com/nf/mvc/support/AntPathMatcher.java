@@ -1,7 +1,11 @@
 package com.nf.mvc.support;
 
 
+import com.nf.mvc.util.StringUtils;
+
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /** 此类参考spring 的AntPathMatcher实现，下面是spring关于AntPathMatcher的一个说明
  * Path matcher implementation for Ant-style path patterns. This implementation matches URLs using the following rules:
@@ -22,7 +26,11 @@ import java.util.Comparator;
  * 其中match Start的含义是如果path与patter完全匹配，那么肯定是算匹配的，比如a/ * /c模式与a/b0/c
  * 但如果在设置了matchStart的情况下，pattern的前面一部分就已经匹配了整个path的话，也算匹配，比如a/ * /c/d模式与a/b0/c路径
  * 而trimToken主要是时候忽略一些空白字符的情况
- * 参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）
+ *
+ * <h3>参考资料</h3>
+ * <p>参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）</p>
+ * <a href="https://github.com/azagniotov/ant-style-path-matcher">AntPathMatcher简单实现</a>
+ * <a href="https://my.oschina.net/iqoFil/blog/221623">spring AntPathMatcher匹配算法解析</a>
  * @author cj
  */
 public class AntPathMatcher implements PathMatcher{
@@ -30,6 +38,7 @@ public class AntPathMatcher implements PathMatcher{
     private static final char ASTERISK = '*';
     private static final char QUESTION = '?';
     private static final char BLANK = ' ';
+    private static final String PATH_VARIABLE_PATTERN = "\\{.*?\\}";
     private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
     private static final int LENGTH_OF_TWO_PATTERN_CHAR = 2;
 
@@ -67,7 +76,11 @@ public class AntPathMatcher implements PathMatcher{
     }
 
     @Override
-    public boolean isMatch(final String pattern, final String path) {
+    public boolean isMatch( String pattern, final String path) {
+        //这个if块就是用来把路径变量替换为一个*来处理匹配问题的
+        if (StringUtils.hasText(pattern)) {
+            pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
+        }
         if (pattern.isEmpty()) {
             return path.isEmpty();
         } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
@@ -104,6 +117,23 @@ public class AntPathMatcher implements PathMatcher{
                 && isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
+    public Map<String, String> extractPathVariables(String pattern, String path) {
+        Map<String,String> pathVariables = new LinkedHashMap<>();
+        if (isMatch(pattern, path)) {
+            String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, ""+this.pathSeparator,this.trimTokens,true);
+            String[] pathSegments = StringUtils.tokenizeToStringArray(path, ""+this.pathSeparator,this.trimTokens,true);
+            for (int i=0; i< pathSegments.length;i++) {
+                String patternSegment = patternSegments[i];
+                if (patternSegment.startsWith("{") && patternSegment.endsWith("}")) {
+                    String variableName = patternSegment.substring(1,patternSegment.length()-1);
+                    String variableValue = pathSegments[i];
+                    pathVariables.put(variableName, variableValue);
+                }
+            }
+
+        }
+        return pathVariables;
+    }
     private boolean doubleAsteriskMatch(final String pattern, final String path) {
         if (pattern.charAt(1) != ASTERISK) {
             return false;
