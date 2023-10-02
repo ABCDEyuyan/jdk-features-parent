@@ -25,12 +25,11 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  *   <li>matchStart:模式前面部分匹配路径就算匹配,默认值是false</li>
  * </ul>
  * 关于matchStart的含义,下面一个示例代码解释了其具体含义,其中pathMatcher2设置matchStart为true,
- * <i>其中pattern变量的* 符号左右是没有空格的,这里加上空格是为了在文档化注释中显示正确.</i>
  * 可以看到当设置matchStart位true之后,整个路径只要与pattern对应的前面部分匹配,模式即使多了一些内容,
  * 比如这里的d这一部分,也算是匹配
  * <pre class="code">
  *         AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();
- *         String pattern = "a/ * /c/d";
+ *         String pattern = "a/&#042;/c/d";
  *         String path = "a/b0/c";
  *
  *         boolean match = pathMatcher.isMatch(pattern, path);//false
@@ -44,6 +43,7 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  * <p>参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）</p>
  * <a href="https://github.com/azagniotov/ant-style-path-matcher">AntPathMatcher简单实现</a>
  * <a href="https://my.oschina.net/iqoFil/blog/221623">spring AntPathMatcher匹配算法解析</a>
+ * <a href="https://www.nationalfinder.com/html/char-asc.htm">html ascii码字母,文档注释中*的转译</a>
  * @author cj
  */
 public class AntPathMatcher implements PathMatcher{
