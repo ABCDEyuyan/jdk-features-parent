@@ -6,6 +6,7 @@ import com.nf.mvc.ioc.Injected;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
 
 import javax.servlet.MultipartConfigElement;
@@ -38,6 +39,7 @@ import java.time.LocalTime;
  * <a href="https://devcenter.heroku.com/articles/create-a-java-web-application-using-embedded-tomcat">嵌入式tomcat</a>
  * <a href="https://www.cnblogs.com/develon/p/11602969.html">嵌入式tomcat以及集成spring</a>
  * <a href="https://www.cnblogs.com/pilihaotian/p/8822926.html">spring boot 处理jsp的分析</a>
+ * <a href="https://www.cnblogs.com/lihw-study/p/17281721.html">嵌入式tomcat添加default servlet</a>
  * <i>此类的编写参考了spring boot中的TomcatServletWebServerFactory中的代码(重点是getWebServer方法)</i>
  * @author cj
  */
@@ -72,14 +74,19 @@ public class MvcApplication {
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(port);
+        //获取当前用户路径,类似于System.getProperty("user.dir")的效果
         String docBase = new File(".").getAbsolutePath();
-        System.out.println("项目的目录为: " + docBase);
+        System.out.println("项目的目录为(静态资源放在这个目录): " + docBase);
 
         Context ctx = registerContext(tomcat, docBase);
+        //这行代码也会注册默认servlet,细节见https://stackoverflow.com/questions/6349472/embedded-tomcat-not-serving-static-content
+        Tomcat.initWebappDefaults(ctx);
+        //registerDefaultServlet(ctx);
         registerDispatcherServlet(ctx);
         registerShutdownHook(tomcat);
 
         startEmbeddedTomcat(tomcat);
+
     }
 
     private void parseArgs(String... args) {
@@ -130,6 +137,10 @@ public class MvcApplication {
         return ctx;
     }
 
+    private void registerDefaultServlet(Context ctx) {
+        Tomcat.addServlet(ctx,"default", DefaultServlet.class.getTypeName());
+        ctx.addServletMappingDecoded("/", "default");
+    }
     private void registerDispatcherServlet(Context ctx) {
         Wrapper wrapper = Tomcat.addServlet(ctx, "dispatcherServlet", new DispatcherServlet());
         ctx.addServletMappingDecoded(urlPattern, "dispatcherServlet");
