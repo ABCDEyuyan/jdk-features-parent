@@ -1,8 +1,6 @@
 package com.nf.mvc;
 
 
-import com.nf.mvc.configuration.ServerConfiguration;
-import com.nf.mvc.ioc.Injected;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
@@ -10,7 +8,6 @@ import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
 
 import javax.servlet.MultipartConfigElement;
-import java.io.File;
 import java.time.LocalTime;
 
 /**
@@ -41,9 +38,6 @@ import java.time.LocalTime;
  * @author cj
  */
 public class MvcApplication {
-    @Injected
-    private ServerConfiguration serverConfiguration;
-
     public static final String CONTEXT_PATH = "contextPath";
     public static final String PORT = "port";
     public static final String BASE_PACKAGE = "basePackage";

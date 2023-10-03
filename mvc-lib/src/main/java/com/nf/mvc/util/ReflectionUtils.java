@@ -389,6 +389,15 @@ public abstract class ReflectionUtils {
             actualTypeArguments[i] = (Class) types[i];
         }
         return actualTypeArguments;
+    }
 
+    public static void setFieldValue(Object instance, Field field, Object value)  {
+        try {
+            field.setAccessible(true);
+            field.set(instance, value);
+            field.setAccessible(false);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("字段值设置失败",e);
+        }
     }
 }

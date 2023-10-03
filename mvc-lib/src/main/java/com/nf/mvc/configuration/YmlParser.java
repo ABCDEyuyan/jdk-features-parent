@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import static com.nf.mvc.util.ReflectionUtils.setFieldValue;
 import static com.nf.mvc.util.StringUtils.hasText;
 
 /**
@@ -42,7 +43,7 @@ import static com.nf.mvc.util.StringUtils.hasText;
 public class YmlParser {
   private static final String DEFAULT_CONFIG_FILE = "application.yml";
   private volatile static YmlParser instance;
-  private boolean haveConfigFile = false;
+  private boolean fileLoaded = false;
   /**
    * 解析yml配置文件后获得的顶层map结构
    */
@@ -54,7 +55,6 @@ public class YmlParser {
 
   private YmlParser() {
   }
-
   public static YmlParser getInstance() {
     return getInstance(DEFAULT_CONFIG_FILE);
   }
@@ -78,14 +78,13 @@ public class YmlParser {
    * @return 解析器本身, 便于链式调用
    */
   public <T> T parse(String prefix, Class<T> configurationPropertiesCLass) {
-    if (!haveConfigFile() || !hasText(prefix)) {
+    if (!isFileLoaded() || !hasText(prefix)) {
       return null;
     }
     //每次要解析之前先恢复
     reset();
     //获取层级关系
-    String[] keys = prefix.trim()
-            .split("\\.");
+    String[] keys = prefix.trim().split("\\.");
     for (String key : keys) {
       //只对map类型进行了处理,没有处理current是其它类型的情况
       this.current = (Map) (this.current.get(key));
@@ -101,15 +100,15 @@ public class YmlParser {
             .getClassLoader()
             .getResourceAsStream(fileName);
     if (inputStream != null) {
-      this.haveConfigFile = true;
+      this.fileLoaded = true;
       Yaml yaml = new Yaml();
       this.origin = yaml.load(inputStream);
       this.current = this.origin;
     }
   }
 
-  private boolean haveConfigFile() {
-    return haveConfigFile;
+  private boolean isFileLoaded() {
+    return fileLoaded;
   }
 
   private void reset() {
@@ -122,18 +121,16 @@ public class YmlParser {
    * @return
    */
   private <T> T populateBean(Class<T> clazz, Map map) {
-    T obj = null;
+    T obj;
     try {
+      //实例化配置属性类,不能使用ReflectionUtils.newInstance,因为它还有一个作用就是用来注入配置属性类的
       obj = clazz.newInstance();
       Field[] fields = clazz.getDeclaredFields();
       for (Field field : fields) {
-        field.setAccessible(true);
-        field.set(obj, map.get(field.getName()));
-        field.setAccessible(false);
+        setFieldValue(obj,field,map.get(field.getName()));
       }
-
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("配置属性类注入失败,是否是配置属性没有默认构造函数?",e);
     }
     return obj;
   }
