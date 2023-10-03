@@ -148,6 +148,7 @@ public class MvcApplication {
     private void registerShutdownHook(Tomcat tomcat) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
+                        tomcat.stop();
                         tomcat.destroy();
                     } catch (LifecycleException e) {
                         e.printStackTrace();
