@@ -108,6 +108,15 @@ public class AntPathMatcher implements PathMatcher{
                 && isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
+    /**
+     * 获取路径变量及其值的方法,这是个简化的实现,没有使用spring的实现.
+     * 使用此方法时不要把matchStart设置为true,否则是有bug的.
+     * <p>比如路径模式是/list/{pageNo}/{pageSize},路径是/list/2/5,
+     * 那么返回的map大致是这样的:[{pageNo:2},{pageSize:5}]</p>
+     * @param pattern 路径模式
+     * @param path 路径
+     * @return 包含各个路径变量及其值的Map
+     */
     public Map<String, String> extractPathVariables(String pattern, String path) {
         Map<String,String> pathVariables = new LinkedHashMap<>();
         if (isMatch(pattern, path)) {

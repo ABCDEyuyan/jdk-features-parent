@@ -78,7 +78,7 @@ public abstract class JacksonUtils {
     /**
      * 典型的反序列化用法
      * <pre class="code">
-     *     User u = JacksontUtils.fromJson(str,User.class);
+     *     User u = JacksonUtils.fromJson(str,User.class);
      * </pre>
      * @param json
      * @param type
