@@ -127,8 +127,8 @@ public class MvcApplication {
     }
 
     /**
-     * 这个方法不建议使用,建议用Tomcat.initWebappDefaults(ctx);这行代码除了注册默认servlet,还有欢迎页等其他常见的默认初始化设置
-     * 保留是为了知识展示用.
+     * 使用这个方法而不使用Tomcat.initWebappDefaults(ctx)可以剔除掉pom中一些关于jsp的相关依赖,
+     * Tomcat.initWebappDefaults(ctx)这行代码除了注册默认servlet,还有欢迎页等其他常见的默认初始化设置
      * @param ctx
      */
     private void registerDefaultServlet(Context ctx) {

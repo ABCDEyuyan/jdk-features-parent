@@ -73,7 +73,7 @@
             <version>8.5.93</version>
         </dependency>
 
-
+        <!--下面几个依赖是处理jsp的相关依赖,不需要处理的话可以删除-->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
