@@ -71,10 +71,8 @@ public class MvcApplication {
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(port);
-        //获取当前用户路径,类似于System.getProperty("user.dir")的效果
-        String docBase = new File(".").getAbsolutePath();
-        System.out.println("项目的目录为(静态资源放在这个目录): " + docBase);
-
+        //等价于new File(".").getAbsolutePath();
+        String docBase = System.getProperty("user.dir");
         Context ctx = registerContext(tomcat, docBase);
         //这行代码也会注册默认servlet,细节见https://stackoverflow.com/questions/6349472/embedded-tomcat-not-serving-static-content
         Tomcat.initWebappDefaults(ctx);
@@ -148,6 +146,7 @@ public class MvcApplication {
         ctx.addServletMappingDecoded(urlPattern, "dispatcherServlet");
 
         wrapper.addInitParameter("base-package", basePackage);
+        //这行代码是让DispatcherServlet能支持servlet 3.0标准的文件上传能力
         wrapper.setMultipartConfigElement(new MultipartConfigElement(TEMP_DIR_DEFAULT));
         wrapper.setLoadOnStartup(1);
     }
@@ -174,11 +173,12 @@ public class MvcApplication {
                 "                                                                       ";
         System.out.println(bannerText);
         System.out.println("=======================================================================");
-        System.out.println("Mvc框架项目启动成功了:" + LocalTime.now());
+        System.out.println("Mvc项目启动成功了:" + LocalTime.now());
         System.out.println(PORT + ":" + this.port);
         System.out.println(CONTEXT_PATH + ":" + this.contextPath);
         System.out.println(URL_PATTERN + ":" + this.urlPattern);
         System.out.println(BASE_PACKAGE + ":" + this.basePackage);
+        System.out.println("web资源路径:"+ System.getProperty("user.dir"));
         System.out.println("文件上传用的临时目录:" + ":" + TEMP_DIR_DEFAULT);
         System.out.println("=======================================================================");
     }
