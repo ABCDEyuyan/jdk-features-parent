@@ -31,15 +31,12 @@ import java.time.LocalTime;
  *     <li>urlPattern=/</li>
  *     <li>文件上传时使用的临时目录=System.getProperty("java.io.tmpdir")</li>
  * </ul>
- * <h3>使用限制</h3>
- * <ul>
- *     <li>暂时没有处理默认servlet的问题，所以静态资源采用默认servlet的方式就不可行</li>
- * </ul>
  * <h3>参考资料</h3>
  * <a href="https://devcenter.heroku.com/articles/create-a-java-web-application-using-embedded-tomcat">嵌入式tomcat</a>
  * <a href="https://www.cnblogs.com/develon/p/11602969.html">嵌入式tomcat以及集成spring</a>
  * <a href="https://www.cnblogs.com/pilihaotian/p/8822926.html">spring boot 处理jsp的分析</a>
  * <a href="https://www.cnblogs.com/lihw-study/p/17281721.html">嵌入式tomcat添加default servlet</a>
+ * <a href="https://stackoverflow.com/questions/16239130/java-user-dir-property-what-exactly-does-it-mean">解释了user.dir的含义以及其它各种属性含义的链接</a>
  * <i>此类的编写参考了spring boot中的TomcatServletWebServerFactory中的代码(重点是getWebServer方法)</i>
  * @author cj
  */
@@ -137,6 +134,11 @@ public class MvcApplication {
         return ctx;
     }
 
+    /**
+     * 这个方法不建议使用,建议用Tomcat.initWebappDefaults(ctx);这行代码除了注册默认servlet,还有欢迎页等其他常见的默认初始化设置
+     * 保留是为了知识展示用.
+     * @param ctx
+     */
     private void registerDefaultServlet(Context ctx) {
         Tomcat.addServlet(ctx,"default", DefaultServlet.class.getTypeName());
         ctx.addServletMappingDecoded("/", "default");
