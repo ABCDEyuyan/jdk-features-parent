@@ -81,6 +81,7 @@ public abstract class ReflectionUtils {
 
     /**
      * 此方法目前只是用来注入配置属性类使用的
+     * <p>此方法本不应该写在这里,因为它与注入有关,但不想增加复杂性,也不想给mvc框架提供ioc的能力,就简单注入配置属性类,所以就写在了这里</p>
      * @param instance
      * @param <T>
      * @throws IllegalAccessException

@@ -94,6 +94,8 @@ public class MvcContext {
 
     /**
      * 解析扫描到的类是否是mvc框架核心功能类
+     * <p>解析参数解析器要放在解析HandlerAdapter之前,因为一些HandlerAdapter的构造函数用到了参数解析器,
+     * Mvc框架并不是一个容器管理框架,并没有对bean的依赖顺序进行管理</p>
      * @param scannedClass
      */
     private void resolveMvcClasses(Class<?> scannedClass) {
