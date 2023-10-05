@@ -65,7 +65,8 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <!--下面几个嵌入式tomcat的相关依赖,如果你想支持多嵌入式的容器,那么这些依赖都应该设置为optional,
+        这里不想实现这种多嵌入式容器的功能,所以依赖都没有设置为可选的-->
         <!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
@@ -78,7 +79,6 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <version>8.5.93</version>
-            <optional>true</optional>
         </dependency>
 
         <dependency>

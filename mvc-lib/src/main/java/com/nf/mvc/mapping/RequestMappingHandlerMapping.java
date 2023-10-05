@@ -14,6 +14,8 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
+
 /**
  * 此类是Mvc框架的核心{@link HandlerMapping}实现，其核心的功能有
  * <h3>什么是Handler</h3>
@@ -61,12 +63,12 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
 
         for (Class<?> clz : classList) {
-            String urlInClass = getUrl(clz);
+            String urlInClass = getUrlPattern(clz);
             Method[] methods = clz.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     HandlerMethod handlerMethod = new HandlerMethod(method);
-                    String urlInMethod = getUrl(method);
+                    String urlInMethod = getUrlPattern(method);
                     String url = urlInClass + urlInMethod;
                     addHandler(url, handlerMethod);
                 }
@@ -109,14 +111,6 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
             }
         }
         return handler;
-    }
-    /**
-     * @param element AnnotatedElement类型代表着所有可以放置注解的元素，比如类，方法参数，字段等
-     * @return 返回RequestMapping注解中指定的url值
-     */
-    private String getUrl(AnnotatedElement element) {
-        return element.isAnnotationPresent(RequestMapping.class) ?
-                element.getDeclaredAnnotation(RequestMapping.class).value() : "";
     }
 
     @Override

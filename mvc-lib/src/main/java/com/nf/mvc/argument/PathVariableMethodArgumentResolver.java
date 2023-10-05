@@ -9,6 +9,8 @@ import com.nf.mvc.util.WebTypeConverterUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
+
 /**
  * 路径变量参数解析器,基本只对简单类型数据做解析,因为数据来源是路径上的某一个片段的值
  * <p>此参数解析器最好放置在{@link SimpleTypeMethodArguementResolver}之前使用</p>
@@ -22,8 +24,8 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
 
   @Override
   public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-    String patternInClass = parameter.getContainingClass().getDeclaredAnnotation(RequestMapping.class).value();
-    String patternInMethod = parameter.getMethod().getDeclaredAnnotation(RequestMapping.class).value();
+    String patternInClass = getUrlPattern(parameter.getContainingClass());
+    String patternInMethod = getUrlPattern(parameter.getMethod());
     String pattern = patternInClass + patternInMethod;
 
     String path = RequestUtils.getRequestUrl(request);
