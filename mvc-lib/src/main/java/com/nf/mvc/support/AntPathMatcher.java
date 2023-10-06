@@ -1,35 +1,60 @@
 package com.nf.mvc.support;
 
 
-import java.util.Comparator;
+import com.nf.mvc.util.StringUtils;
 
-/** 此类参考spring 的AntPathMatcher实现，下面是spring关于AntPathMatcher的一个说明
- * Path matcher implementation for Ant-style path patterns. This implementation matches URLs using the following rules:
- * <p/>
- * '?' - matches one character
- * '*' - matches zero or more characters
- * '**' - matches zero or more directories in a path
- * <p/>
- * The instances of this class can be configured via its {@link Builder} to:
- * (1) Use a custom path separator. The default is '/' character
- * (2) Ignore character case during comparison. The default is {@code false}
- * (3) Match start. Determines whether the pattern at least matches as far as the given base path goes,
- * assuming that a full path may then match as well. The default is {@code false}
- * <p/>
- * (4) Specify whether to trim tokenized paths. The default is {@code false}
- * The custom path separator & ignoring character case options were inspired by Spring's AntPathMatcher
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static com.nf.mvc.util.StringUtils.skipBlanks;
+
+/** 此类参考spring 的AntPathMatcher实现.
+ * <p>ant地址主要用在web的url路径匹配上,其中三个核心通配符含义如下</p>
+ * <ul>
+ *   <li>'?' - 匹配一个字符</li>
+ *   <li>'*' - 匹配0个或多个字符</li>
+ *   <li>'**' - 在一个路径中匹配0个或多个部分(directory)</li>
+ * </ul>
+ * <h3>核心特性</h3>
+ * 在此类的实现中,有4个选项是可以调整的,可以利用{@link AntPathMatcher.Builder}的对应方法进行调整
+ * <ul>
+ *   <li>pathSeparator:路径分隔符,默认值是"/"</li>
+ *   <li>ignoreCase:忽略大小写,默认值是false</li>
+ *   <li>trimTokens:删除前后空白,默认是false</li>
+ *   <li>matchStart:模式前面部分匹配路径就算匹配,默认值是false</li>
+ * </ul>
+ * 关于matchStart的含义,下面一个示例代码解释了其具体含义,其中pathMatcher2设置matchStart为true,
+ * 可以看到当设置matchStart位true之后,整个路径只要与pattern对应的前面部分匹配,模式即使多了一些内容,
+ * 比如这里的d这一部分,也算是匹配
+ * <pre class="code">
+ *         AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();
+ *         String pattern = "a/&#042;/c/d";
+ *         String path = "a/b0/c";
  *
- * 其中match Start的含义是如果path与patter完全匹配，那么肯定是算匹配的，比如a/ * /c模式与a/b0/c
- * 但如果在设置了matchStart的情况下，pattern的前面一部分就已经匹配了整个path的话，也算匹配，比如a/ * /c/d模式与a/b0/c路径
- * 而trimToken主要是时候忽略一些空白字符的情况
- * 参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）
+ *         boolean match = pathMatcher.isMatch(pattern, path);//false
+ *         System.out.println("match = " + match);
+ *
+ *         AntPathMatcher pathMatcher2 = new AntPathMatcher.Builder().withMatchStart().build();
+ *         boolean matchStart = pathMatcher2.isMatch(pattern, path); //true
+ *         System.out.println("matchStart = " + matchStart);
+ * </pre>
+ * <h3>参考资料</h3>
+ * <p>参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）</p>
+ * <a href="https://github.com/azagniotov/ant-style-path-matcher">AntPathMatcher简单实现</a>
+ * <a href="https://my.oschina.net/iqoFil/blog/221623">spring AntPathMatcher匹配算法解析</a>
+ * <a href="https://www.nationalfinder.com/html/char-asc.htm">html ascii码字母,文档注释中*的转译</a>
+ * @author cj
  */
 public class AntPathMatcher implements PathMatcher{
-
     private static final char ASTERISK = '*';
     private static final char QUESTION = '?';
-    private static final char BLANK = ' ';
+    /**
+     * 路径变量写法的正则表达式,比如{pageSize}这种写法就匹配这个正则表达式
+     */
+    private static final String PATH_VARIABLE_PATTERN = "\\{.*?\\}";
     private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
+    private static final int LENGTH_OF_TWO_PATTERN_CHAR = 2;
 
     private final char pathSeparator;
     private final boolean ignoreCase;
@@ -42,36 +67,18 @@ public class AntPathMatcher implements PathMatcher{
         this.matchStart = matchStart;
         this.trimTokens = trimTokens;
     }
-
-    public boolean isPattern( String path) {
-        if (path == null) {
-            return false;
-        }
-        boolean uriVar = false;
-        for (int i = 0; i < path.length(); i++) {
-            char c = path.charAt(i);
-            if (c == '*' || c == '?') {
-                return true;
-            }
-            if (c == '{') {
-                uriVar = true;
-                continue;
-            }
-            if (c == '}' && uriVar) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
-    public boolean isMatch(final String pattern, final String path) {
+    public boolean isMatch( String pattern, String path) {
+        //这个if块就是用来把路径变量替换为一个*来处理匹配问题的
+        if (StringUtils.hasText(pattern)) {
+            pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
+        }
         if (pattern.isEmpty()) {
             return path.isEmpty();
         } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
             if (matchStart) {
                 return true;
-            } else if (pattern.length() == 2 && pattern.charAt(1) == ASTERISK) {
+            } else if (pattern.length() == LENGTH_OF_TWO_PATTERN_CHAR && pattern.charAt(1) == ASTERISK) {
                 return false;
             }
             return isMatch(pattern.substring(1), path);
@@ -79,7 +86,6 @@ public class AntPathMatcher implements PathMatcher{
 
         final char patternStart = pattern.charAt(0);
         if (patternStart == ASTERISK) {
-
             if (pattern.length() == 1) {
                 return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
             } else if (doubleAsteriskMatch(pattern, path)) {
@@ -96,30 +102,44 @@ public class AntPathMatcher implements PathMatcher{
             return isMatch(pattern.substring(1), path.substring(start));
         }
 
-        int pointer = skipBlanks(path);
+        int pointer = trimTokens==true?skipBlanks(path):0;
 
         return !path.isEmpty() && (equal(path.charAt(pointer), patternStart) || patternStart == QUESTION)
                 && isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
+    /**
+     * 获取路径变量及其值的方法,这是个简化的实现,没有使用spring的实现.
+     * 使用此方法时不要把matchStart设置为true,否则是有bug的.
+     * <p>比如路径模式是/list/{pageNo}/{pageSize},路径是/list/2/5,
+     * 那么返回的map大致是这样的:[{pageNo:2},{pageSize:5}]</p>
+     * @param pattern 路径模式
+     * @param path 路径
+     * @return 包含各个路径变量及其值的Map
+     */
+    public Map<String, String> extractPathVariables(String pattern, String path) {
+        Map<String,String> pathVariables = new LinkedHashMap<>();
+        if (isMatch(pattern, path)) {
+            String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, ""+this.pathSeparator,this.trimTokens,true);
+            String[] pathSegments = StringUtils.tokenizeToStringArray(path, ""+this.pathSeparator,this.trimTokens,true);
+            for (int i=0; i< pathSegments.length;i++) {
+                String patternSegment = patternSegments[i];
+                if (patternSegment.startsWith("{") && patternSegment.endsWith("}")) {
+                    String variableName = patternSegment.substring(1,patternSegment.length()-1);
+                    String variableValue = pathSegments[i];
+                    pathVariables.put(variableName, variableValue);
+                }
+            }
+        }
+        return pathVariables;
+    }
     private boolean doubleAsteriskMatch(final String pattern, final String path) {
         if (pattern.charAt(1) != ASTERISK) {
             return false;
-        } else if (pattern.length() > 2) {
+        } else if (pattern.length() > LENGTH_OF_TWO_PATTERN_CHAR) {
             return isMatch(pattern.substring(3), path);
         }
-
         return false;
-    }
-
-    private int skipBlanks(final String path) {
-        int pointer = 0;
-        if (trimTokens) {
-            while (!path.isEmpty() && pointer < path.length() && path.charAt(pointer) == BLANK) {
-                pointer++;
-            }
-        }
-        return pointer;
     }
 
     @Override
@@ -170,174 +190,6 @@ public class AntPathMatcher implements PathMatcher{
 
         public AntPathMatcher build() {
             return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);
-        }
-    }
-
-    protected static class AntPatternComparator implements Comparator<String> {
-
-        private final String path;
-
-        public AntPatternComparator(String path) {
-            this.path = path;
-        }
-
-        /**
-         * Compare two patterns to determine which should match first, i.e. which
-         * is the most specific regarding the current path.
-         * @return a negative integer, zero, or a positive integer as pattern1 is
-         * more specific, equally specific, or less specific than pattern2.
-         */
-        @Override
-        public int compare(String pattern1, String pattern2) {
-            PatternInfo info1 = new PatternInfo(pattern1);
-            PatternInfo info2 = new PatternInfo(pattern2);
-
-            if (info1.isLeastSpecific() && info2.isLeastSpecific()) {
-                return 0;
-            }
-            else if (info1.isLeastSpecific()) {
-                return 1;
-            }
-            else if (info2.isLeastSpecific()) {
-                return -1;
-            }
-
-            boolean pattern1EqualsPath = pattern1.equals(this.path);
-            boolean pattern2EqualsPath = pattern2.equals(this.path);
-            if (pattern1EqualsPath && pattern2EqualsPath) {
-                return 0;
-            }
-            else if (pattern1EqualsPath) {
-                return -1;
-            }
-            else if (pattern2EqualsPath) {
-                return 1;
-            }
-
-            if (info1.isPrefixPattern() && info2.isPrefixPattern()) {
-                return info2.getLength() - info1.getLength();
-            }
-            else if (info1.isPrefixPattern() && info2.getDoubleWildcards() == 0) {
-                return 1;
-            }
-            else if (info2.isPrefixPattern() && info1.getDoubleWildcards() == 0) {
-                return -1;
-            }
-
-            if (info1.getTotalCount() != info2.getTotalCount()) {
-                return info1.getTotalCount() - info2.getTotalCount();
-            }
-
-            if (info1.getLength() != info2.getLength()) {
-                return info2.getLength() - info1.getLength();
-            }
-
-            if (info1.getSingleWildcards() < info2.getSingleWildcards()) {
-                return -1;
-            }
-            else if (info2.getSingleWildcards() < info1.getSingleWildcards()) {
-                return 1;
-            }
-
-            if (info1.getUriVars() < info2.getUriVars()) {
-                return -1;
-            }
-            else if (info2.getUriVars() < info1.getUriVars()) {
-                return 1;
-            }
-
-            return 0;
-        }
-
-
-        /**
-         * Value class that holds information about the pattern, e.g. number of
-         * occurrences of "*", "**", and "{" pattern elements.
-         */
-        private static class PatternInfo {
-
-            private final String pattern;
-
-            private int uriVars;
-
-            private int singleWildcards;
-
-            private int doubleWildcards;
-
-            private boolean catchAllPattern;
-
-            private boolean prefixPattern;
-
-
-            private Integer length;
-
-            public PatternInfo( String pattern) {
-                this.pattern = pattern;
-                if (this.pattern != null) {
-                    initCounters();
-                    this.catchAllPattern = this.pattern.equals("/**");
-                    this.prefixPattern = !this.catchAllPattern && this.pattern.endsWith("/**");
-                }
-                if (this.uriVars == 0) {
-                    this.length = (this.pattern != null ? this.pattern.length() : 0);
-                }
-            }
-
-            protected void initCounters() {
-                int pos = 0;
-                if (this.pattern != null) {
-                    while (pos < this.pattern.length()) {
-                        if (this.pattern.charAt(pos) == '{') {
-                            this.uriVars++;
-                            pos++;
-                        }
-                        else if (this.pattern.charAt(pos) == '*') {
-                            if (pos + 1 < this.pattern.length() && this.pattern.charAt(pos + 1) == '*') {
-                                this.doubleWildcards++;
-                                pos += 2;
-                            }
-                            else if (pos > 0 && !this.pattern.substring(pos - 1).equals(".*")) {
-                                this.singleWildcards++;
-                                pos++;
-                            }
-                            else {
-                                pos++;
-                            }
-                        }
-                        else {
-                            pos++;
-                        }
-                    }
-                }
-            }
-
-            public int getUriVars() {
-                return this.uriVars;
-            }
-
-            public int getSingleWildcards() {
-                return this.singleWildcards;
-            }
-
-            public int getDoubleWildcards() {
-                return this.doubleWildcards;
-            }
-
-            public boolean isLeastSpecific() {
-                return (this.pattern == null || this.catchAllPattern);
-            }
-
-            public boolean isPrefixPattern() {
-                return this.prefixPattern;
-            }
-
-            public int getTotalCount() {
-                return this.uriVars + this.singleWildcards + (2 * this.doubleWildcards);
-            }
-
-            public int getLength() {
-                return this.length;
-            }
         }
     }
 }

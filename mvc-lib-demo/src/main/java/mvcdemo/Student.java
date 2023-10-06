@@ -1,5 +1,6 @@
 package mvcdemo;
 
+import com.nf.mvc.configuration.ConfigurationProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

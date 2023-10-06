@@ -33,7 +33,7 @@ public class DefaultRowProcessor implements RowProcessor{
     public DefaultRowProcessor(Map<String, String> propertyOverrides) {
 
         super();
-        if (propertyOverrides == null || propertyOverrides.isEmpty()) {
+        if (propertyOverrides == null ) {
             throw new DaoException("不能传一个空的映射集合过来");
         }
 

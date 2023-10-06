@@ -70,7 +70,7 @@ import java.util.function.Consumer;
  *     <li>{@link MethodArgumentResolver}</li>
  *     <li>{@link HandlerExceptionResolver}</li>
  *     <li>{@link ViewResult}</li>
- *     <li>{@link WebMvcConfigurer}</li>
+ *     <li>{@link MvcConfigurer}</li>
  *     <li>{@link HandlerInterceptor}</li>
  * </ul>
  * </p>
@@ -141,8 +141,10 @@ public class DispatcherServlet extends HttpServlet {
     private final List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
     private final List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
-    // 用这种方式实例化是因为其调用了applyDefaultConfiguration方法，创建出来的对象是有了一些默认设置的
-    // 因为我现在的策略是：不管有没有配置器对跨域进行定制配置，都要全局进行跨域支持的处理
+    /**
+     * 用这种方式实例化是因为其调用了applyDefaultConfiguration方法，创建出来的对象是有了一些默认设置的
+     * 因为我现在的策略是：不管有没有配置器对跨域进行定制配置，都要全局进行跨域支持的处理
+     */
     private final CorsConfiguration corsConfiguration = CorsConfiguration.defaultInstance();
 
     //region 初始化逻辑
@@ -196,11 +198,9 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
-        //System.out.println("DispatcherServlet this.getClass().getClassLoader() = " + this.getClass().getClassLoader());
-
-        //获取要扫描的类所在的基础包的名字
+        // 获取要扫描的类所在的基础包的名字
         String[] basePackages = getBasePackages(config);
-        //去执行类扫描的功能
+        // 去执行类扫描的功能
         ScanResult scanResult = ScanUtils.scan(basePackages);
         /*
             initMvc与configMvc方法设置为private final是为了阻止子类重写，因为mvc组件的处理是有先后顺序要求的，
@@ -212,7 +212,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private final void initMvcContext(ScanResult scanResult) {
-        MvcContext.getMvcContext().config(scanResult);
+        MvcContext.getMvcContext().resolveScannedResult(scanResult);
     }
 
     private final void initMvc() {
@@ -225,7 +225,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final void configMvc() {
         MvcContext mvcContext = MvcContext.getMvcContext();
-        WebMvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
+        MvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
         // 没有配置器，不需要配置，提前结束configMvc方法的执行
         if (mvcConfigurer == null) {
             return;
@@ -240,23 +240,23 @@ public class DispatcherServlet extends HttpServlet {
         configGlobalCors(this.corsConfiguration, mvcConfigurer);
     }
 
-    protected void configArgumentResolvers(List<MethodArgumentResolver> argumentResolvers, WebMvcConfigurer mvcConfigurer) {
+    protected void configArgumentResolvers(List<MethodArgumentResolver> argumentResolvers, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(argumentResolvers, mvcConfigurer::configureArgumentResolver);
     }
 
-    protected void configHandlerMappings(List<HandlerMapping> handlerMappings, WebMvcConfigurer mvcConfigurer) {
+    protected void configHandlerMappings(List<HandlerMapping> handlerMappings, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(handlerMappings, mvcConfigurer::configureHandlerMapping);
     }
 
-    protected void configHandlerAdapters(List<HandlerAdapter> handlerAdapters, WebMvcConfigurer mvcConfigurer) {
+    protected void configHandlerAdapters(List<HandlerAdapter> handlerAdapters, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(handlerAdapters, mvcConfigurer::configureHandlerAdapter);
     }
 
-    protected void configExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers, WebMvcConfigurer mvcConfigurer) {
+    protected void configExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers, MvcConfigurer mvcConfigurer) {
         executeMvcComponentsConfig(exceptionResolvers, mvcConfigurer::configureExceptionResolver);
     }
 
-    protected void configGlobalCors(CorsConfiguration configuration, WebMvcConfigurer mvcConfigurer) {
+    protected void configGlobalCors(CorsConfiguration configuration, MvcConfigurer mvcConfigurer) {
         // 不需要再调用默认设置，全局实例化时已经设置过了，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
         //configuration.applyDefaultConfiguration();
         mvcConfigurer.configureCors(configuration);
@@ -285,7 +285,8 @@ public class DispatcherServlet extends HttpServlet {
         argumentResolvers.add(new ServletApiMethodArgumentResolver());
         argumentResolvers.add(new MultipartFileMethodArgumentResolver());
         //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
-        argumentResolvers.add(new RequestBodyMethodArguementResolver());
+        argumentResolvers.add(new RequestBodyMethodArgumentResolver());
+        argumentResolvers.add(new PathVariableMethodArgumentResolver());
         argumentResolvers.add(new SimpleTypeMethodArguementResolver());
         argumentResolvers.add(new BeanPropertyMethodArgumentResolver());
 
@@ -358,9 +359,9 @@ public class DispatcherServlet extends HttpServlet {
         resolvers.add(new LogHandlerExceptionResolver());
         resolvers.add(new PrintStackTraceHandlerExceptionResolver());
         resolvers.add(new ExceptionHandlerExceptionResolver());
+        //resolvers.add(new ParameterizedMultiExceptionHandlerExceptionResolver());
         return resolvers;
     }
-
 
     private String[] getBasePackages(ServletConfig config) {
         String pkg = config.getInitParameter(BASE_PACKAGE);
@@ -446,7 +447,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, HandlerExecutionChain chain) throws Throwable {
         ViewResult viewResult;
         try {
-            //这里返回false，执行完拦截器的后置逻辑后直接return，结束后续流程
+            // 这里返回false，执行完拦截器的后置逻辑后直接return，结束后续流程
             if (!chain.applyPreHandle(req, resp)) {
                 chain.applyPostHandle(req, resp);
                 return;
@@ -456,9 +457,7 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception ex) {
             // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器的后置逻辑即便出了异常也需要执行
             chain.applyPostHandle(req,resp);
-            /*
-                这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
-             */
+            // 这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
         /**
@@ -524,8 +523,8 @@ public class DispatcherServlet extends HttpServlet {
 
     protected void noHandlerFound(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         //resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        /*利用default servlet来处理当前请求找不到handler的情况，默认servlet也可以处理静态资源，
-        具体见spring mvc的DefaultServletHttpRequestHandler类*/
+        /* 利用default servlet来处理当前请求找不到handler的情况，默认servlet也可以处理静态资源，
+        具体见spring mvc的DefaultServletHttpRequestHandler类 */
         req.getServletContext().getNamedDispatcher("default").forward(req, resp);
     }
 

@@ -19,17 +19,17 @@ public class Main {
      * </ol>
      */
     private static void demo1() {
-        MyStreamImpl<Integer> integerStream = IntergerStreamGenerator.getIntegerStream(5, 6);//[5,6]
+        MyStreamImpl<Integer> integerStream = IntegerStreamGenerator.getIntegerStream(5, 6);//[5,6]
         integerStream.forEach(System.out::println);
     }
 
     private static void demo2() {
-        MyStreamImpl<Integer> integerStream = IntergerStreamGenerator.getIntegerStream(5, 6);//[5,6]
+        MyStreamImpl<Integer> integerStream = IntegerStreamGenerator.getIntegerStream(5, 6);//[5,6]
         MyStreamImpl<Integer> filterStream = integerStream.filter(i -> i > 3);
     }
 
     private static void demo3() {
-        MyStreamImpl<Integer> integerStream = IntergerStreamGenerator.getIntegerStream(5, 10);//[5,10]
+        MyStreamImpl<Integer> integerStream = IntegerStreamGenerator.getIntegerStream(5, 10);//[5,10]
         integerStream
                 .filter(i -> i > 6)
                 .limit(2)

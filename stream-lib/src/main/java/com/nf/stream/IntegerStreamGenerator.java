@@ -1,6 +1,6 @@
 package com.nf.stream;
 
-public class IntergerStreamGenerator {
+public class IntegerStreamGenerator {
 
     public static MyStreamImpl<Integer> getIntegerStream(int low, int high) {
         return getIntegerStreamInner(low,high,true);

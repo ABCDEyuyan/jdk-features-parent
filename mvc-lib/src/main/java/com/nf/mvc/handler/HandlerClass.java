@@ -6,10 +6,10 @@ import com.nf.mvc.util.ReflectionUtils;
 /**
  * 此类是一个封装handler相关信息的类型,现在支持以下几种类型的Handler
  * <ul>
- *     <li>只有handlerClass信息，无方法信息，实例化与具体调用哪个方法由具体的{@codeHandlerAdapter}决定</li>
- *     <li>只有Handler信息，无方法信息，具体调用哪个方法由具体的{@codeHandlerAdapter}决定</li>
- *     <li>有HandlerClass信息，有方法信息，实例化由mvc框架处理</li>
- *     <li>有Handler信息，有方法信息，实例化不需要mvc框架处理</li>
+ *     <li>只有handlerClass信息，无方法信息，handler的实例化与具体调用哪个方法由具体的{@link com.nf.mvc.HandlerAdapter}决定</li>
+ *     <li>只有Handler信息，无方法信息，handler的实例化不归mvc框架处理，具体调用哪个方法由具体的{@link com.nf.mvc.HandlerAdapter}决定</li>
+ *     <li>有HandlerClass信息，有方法信息，handler的实例化由mvc框架处理</li>
+ *     <li>有Handler信息，有方法信息，handler实例化就不需要mvc框架处理</li>
  * </ul>
  *
  * <p>

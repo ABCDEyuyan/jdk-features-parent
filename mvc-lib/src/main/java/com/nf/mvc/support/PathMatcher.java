@@ -14,6 +14,8 @@ import java.util.Comparator;
  */
 public interface PathMatcher {
     /**
+     * 目前的实现中支持把**写在路径中间,比如/a/&#042;&#042;/c 这种写法,
+     * 但spring最新版不建议这样写,会引起歧义,类似可变长度的方法参数一样,最好用在路径的最后一段里
      * @param pattern:模式，比如/*,
      * @param path:具体的请求地址/a
      * @return

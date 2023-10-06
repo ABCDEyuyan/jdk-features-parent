@@ -1,11 +1,11 @@
 package mvcdemo.interceptor;
 
 import com.nf.mvc.HandlerInterceptor;
-import com.nf.mvc.Interceptors;
+import com.nf.mvc.Intercepts;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-@Interceptors({"/product/insert"})
+@Intercepts({"/product/insert"})
 public class FirstInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

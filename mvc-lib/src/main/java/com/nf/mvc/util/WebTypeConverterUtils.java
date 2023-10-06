@@ -4,12 +4,12 @@ import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.support.WebTypeConverter;
 import com.nf.mvc.support.converter.*;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class WebTypeConverterUtils {
@@ -25,42 +25,51 @@ public abstract class WebTypeConverterUtils {
      * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link MethodArgumentResolverComposite}</p>
      */
 
-    private static Map<Class<?>, WebTypeConverter> cachedConverters = new ConcurrentHashMap<>(32);
+    private final static Map<Class<?>, WebTypeConverter> CACHED_CONVERTERS = new ConcurrentHashMap<>(32);
 
     static {
-        cachedConverters.put(BigDecimal.class, new BigDecimalTypeConverter());
-        cachedConverters.put(Boolean.class, new BooleanTypeConverter());
-        cachedConverters.put(Boolean.TYPE, new BooleanTypeConverter());
-        cachedConverters.put(Byte.class, new ByteTypeConverter());
-        cachedConverters.put(Byte.TYPE, new ByteTypeConverter());
-        cachedConverters.put(Character.class, new CharacterTypeConverter());
-        cachedConverters.put(Character.TYPE, new CharacterTypeConverter());
-        cachedConverters.put(Date.class, new DateTypeConverter());
-        cachedConverters.put(Double.class, new DoubleTypeConverter());
-        cachedConverters.put(Double.TYPE, new DoubleTypeConverter());
-        cachedConverters.put(Float.class, new FloatTypeConverter());
-        cachedConverters.put(Float.TYPE, new FloatTypeConverter());
-        cachedConverters.put(Integer.class, new IntegerTypeConverter());
-        cachedConverters.put(Integer.TYPE, new IntegerTypeConverter());
-        cachedConverters.put(LocalDateTime.class, new LocalDateTimeTypeConverter());
-        cachedConverters.put(LocalDate.class, new LocalDateTypeConverter());
-        cachedConverters.put(LocalTime.class, new LocalTimeTypeConverter());
-        cachedConverters.put(Long.class, new LongTypeConverter());
-        cachedConverters.put(Long.TYPE, new LongTypeConverter());
-        cachedConverters.put(Short.class, new ShortTypeConverter());
-        cachedConverters.put(Short.TYPE, new ShortTypeConverter());
-        cachedConverters.put(String.class, new StringTypeConverter());
+        CACHED_CONVERTERS.put(BigDecimal.class, new BigDecimalTypeConverter());
+        CACHED_CONVERTERS.put(Boolean.class, new BooleanTypeConverter());
+        CACHED_CONVERTERS.put(Boolean.TYPE, new BooleanTypeConverter());
+        CACHED_CONVERTERS.put(Byte.class, new ByteTypeConverter());
+        CACHED_CONVERTERS.put(Byte.TYPE, new ByteTypeConverter());
+        CACHED_CONVERTERS.put(Character.class, new CharacterTypeConverter());
+        CACHED_CONVERTERS.put(Character.TYPE, new CharacterTypeConverter());
+        CACHED_CONVERTERS.put(Date.class, new DateTypeConverter());
+        CACHED_CONVERTERS.put(Double.class, new DoubleTypeConverter());
+        CACHED_CONVERTERS.put(Double.TYPE, new DoubleTypeConverter());
+        CACHED_CONVERTERS.put(Float.class, new FloatTypeConverter());
+        CACHED_CONVERTERS.put(Float.TYPE, new FloatTypeConverter());
+        CACHED_CONVERTERS.put(Integer.class, new IntegerTypeConverter());
+        CACHED_CONVERTERS.put(Integer.TYPE, new IntegerTypeConverter());
+        CACHED_CONVERTERS.put(LocalDateTime.class, new LocalDateTimeTypeConverter());
+        CACHED_CONVERTERS.put(LocalDate.class, new LocalDateTypeConverter());
+        CACHED_CONVERTERS.put(LocalTime.class, new LocalTimeTypeConverter());
+        CACHED_CONVERTERS.put(Long.class, new LongTypeConverter());
+        CACHED_CONVERTERS.put(Long.TYPE, new LongTypeConverter());
+        CACHED_CONVERTERS.put(Short.class, new ShortTypeConverter());
+        CACHED_CONVERTERS.put(Short.TYPE, new ShortTypeConverter());
+        CACHED_CONVERTERS.put(String.class, new StringTypeConverter());
     }
 
     /**
-     * @param paramType
+     * @param paramType 参数类型
      * @return 返回null表示没有此类型的类型转换器
      */
     public static WebTypeConverter getTypeConverter(Class<?> paramType) {
-        return cachedConverters.get(paramType);
+        return CACHED_CONVERTERS.get(paramType);
     }
 
-
+    /**
+     * 此方法会把字符串数据转换为指定的简单类型，此方法对于不能转换的数据（没有转换器或转换出错）是采用抛异常的方式，而不是返回null的形式，
+     * 因为要让异常往调用链上抛出以便用户知道数据有问题。
+     * 此方法是可能返回null，比如原始数据本身就是null，经过StringTypeConverter转换后仍然是返回null的
+     * @param paramType 简单类型
+     * @param requestParamValue 原始web请求数据
+     * @param <T> 要转换的目标类型
+     * @return 返回转换成功后的数据
+     * @throws Exception 但指定的类型没有对应的转换器会抛UnsupportedOperationException；有转换器但转换失败会抛IllegalArgumentException
+     */
     public static <T> Object toSimpleTypeValue(Class<T> paramType, String requestParamValue) throws Exception {
         WebTypeConverter typeConverter = getTypeConverter(paramType);
 
@@ -74,37 +83,6 @@ public abstract class WebTypeConverterUtils {
             // 也就是说是有源数据进行类型转换的，如果出现异常，基本就是无法转换的情况，比如字符串转换为整数，所以这里往上抛异常,而不选择return null
             throw new IllegalArgumentException("无法将数据:[" + requestParamValue + "]转换为类型:" + paramType.getName());
         }
-
-    }
-
-    public static Object toSimpleTypeArray(Class<?> componentType, String[] requestParamValues) throws Exception {
-        //不要写这样的代码，因为实例化后可能是一个int[]或者double[],是不能转换为Object[]的
-        //Object[] values = (Object[]) Array.newInstance(componentType, requestParamValues.length);
-
-        Object array = Array.newInstance(componentType, requestParamValues.length);
-        for (int i = 0; i < requestParamValues.length; i++) {
-            Array.set(array, i, toSimpleTypeValue(componentType, requestParamValues[i]));
-        }
-        return array;
-    }
-
-    /**
-     * 只处理了List，其它集合暂不支持
-     * @param paramType        参数类型，比如List<String>,List<Integer>这样的类型
-     * @param paramGenericType :泛型实参类型，这里只处理简单类型，不处理复杂类型
-     * @return
-     * @throws Exception
-     */
-    public static <T> Collection<T> toSimpleTypeList(Class<?> paramType, Class<T> paramGenericType, String[] requestParamValues) throws Exception {
-        if (ReflectionUtils.isSimpleTypeList(paramType, paramGenericType) == false) {
-            throw new UnsupportedOperationException("不支持对此泛型类型为:" + paramType.getName() + " 其实参类型为：" + paramGenericType + "的类型转换");
-        }
-        List<T> list = new ArrayList<>();
-        Object array = toSimpleTypeArray(paramGenericType, requestParamValues);
-        for (int i = 0; i < requestParamValues.length; i++) {
-            list.add((T) Array.get(array, i));
-        }
-        return list;
     }
 
 }

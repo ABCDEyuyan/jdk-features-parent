@@ -24,13 +24,13 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
  */
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
-    private static final MethodArgumentResolverComposite defaultResolvers = MethodArgumentResolverComposite.defaultInstance();
+    private static final MethodArgumentResolverComposite DEFAULT_RESOLVERS = MethodArgumentResolverComposite.defaultInstance();
 
     private final MethodArgumentResolverComposite resolvers;
     private final MethodInvoker methodInvoker;
 
     public RequestMappingHandlerAdapter() {
-        this(defaultResolvers);
+        this(DEFAULT_RESOLVERS);
     }
 
     public RequestMappingHandlerAdapter(MethodArgumentResolverComposite resolvers) {
@@ -44,6 +44,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
                 ((HandlerMethod) handler).getHandlerMethod() != null;
     }
 
+    @Override
     public ViewResult handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Object instance = handlerMethod.getHandlerObject();

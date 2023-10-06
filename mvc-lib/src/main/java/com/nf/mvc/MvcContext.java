@@ -1,14 +1,19 @@
 package com.nf.mvc;
 
+import com.nf.mvc.configuration.ConfigurationProperties;
+import com.nf.mvc.configuration.YmlParser;
 import com.nf.mvc.support.OrderComparator;
 import com.nf.mvc.util.ReflectionUtils;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * mvc框架的上下文类，通过此类主要是获取只读的框架类型信息，此类的内容是在{@link DispatcherServlet}
@@ -37,7 +42,7 @@ import java.util.List;
  */
 public class MvcContext {
 
-    private static final MvcContext instance = new MvcContext();
+    private static final MvcContext INSTANCE = new MvcContext();
 
     private ScanResult scanResult;
 
@@ -52,59 +57,70 @@ public class MvcContext {
     private List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
     private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
-    private List<WebMvcConfigurer> customConfigurers = new ArrayList<>();
+    private List<MvcConfigurer> customConfigurers = new ArrayList<>();
+
+    private Map<Class<?>,Object> configurationProperties = new HashMap<>(16);
 
     private MvcContext() {
     }
 
     public static MvcContext getMvcContext() {
-        return instance;
+        return INSTANCE;
     }
 
     /**
-     * 设置成public修饰符，框架使用者是可以直接修改这个扫描结果,这样不安全，
-     * 所以就改成默认修饰符，这样就只能在本包或子包中访问，基本上就是mvc框架内可以访问
+     * 设置成public修饰符，框架使用者就可以直接修改这个扫描结果,这样不安全，
+     * 所以这里改成默认修饰符，这样就只能在本包或子包中访问，基本上就是mvc框架内可以访问
      * <p>
-     * 在整个mvc框架中，这扩展用的组件总是任何定制组件优先于默认组件，定制组件之间可以通过{@link com.nf.mvc.support.Order}注解调整顺序
+     * 在整个mvc框架中，这些用户扩展的定制组件总是优先于mvc框架提供的同类型组件，定制组件之间可以通过{@link com.nf.mvc.support.Order}注解调整顺序
      * </p>
      * <p>
      * 目前扫描的是各种各样的类，没有规定只扫描Handler，比如有HandlerMapping，也有HandlerAdapter以及Handler等
      * <p>
      * @param scanResult
      */
-    void config(ScanResult scanResult) {
+    void resolveScannedResult(ScanResult scanResult) {
         this.scanResult = scanResult;
         ClassInfoList allClasses = scanResult.getAllClasses();
         for (ClassInfo classInfo : allClasses) {
-            Class<?> scanedClass = classInfo.loadClass();
-            // 下面的代码是测试用：与DispatcherServlet类加载器是同一个,见DispatcherServlet的init方法被注释的那行代码
-            //System.out.println("scanedClass.getClassLoader() = " + scanedClass.getClassLoader());
-            resolveMvcClass(scanedClass);
-            allScannedClasses.add(scanedClass);
+            // 这些扫描到的类使用的类加载器与DispatcherServlet的类加载器是同一个
+            Class<?> scannedClass = classInfo.loadClass();
+            allScannedClasses.add(scannedClass);
+            //配置属性类的解析必须优先于其它类型的解析
+            resolveConfigurationProperties(scannedClass);
+            resolveMvcClasses(scannedClass);
         }
     }
 
     /**
-     * 解析扫描到的类是否是mvc框架扩展用的类，主要有4类接口的实现类+ViewResult子类归属于框架扩展类
+     * 解析扫描到的类是否是mvc框架核心功能类
+     * <p>解析参数解析器要放在解析HandlerAdapter之前,因为一些HandlerAdapter的构造函数用到了参数解析器,
+     * Mvc框架并不是一个容器管理框架,并没有对bean的依赖顺序进行管理</p>
      * @param scannedClass
      */
-    private void resolveMvcClass(Class<?> scannedClass) {
-        resolveClass(scannedClass, MethodArgumentResolver.class, customArgumentResolvers);
-        resolveClass(scannedClass, HandlerMapping.class, customHandlerMappings);
-        resolveClass(scannedClass, HandlerAdapter.class, customHandlerAdapters);
-        resolveClass(scannedClass, HandlerExceptionResolver.class, customExceptionResolvers);
-        resolveClass(scannedClass, HandlerInterceptor.class, customInterceptors);
-        resolveClass(scannedClass, WebMvcConfigurer.class, customConfigurers);
-
+    private void resolveMvcClasses(Class<?> scannedClass) {
+        resolveMvcClass(scannedClass, MethodArgumentResolver.class, customArgumentResolvers);
+        resolveMvcClass(scannedClass, HandlerMapping.class, customHandlerMappings);
+        resolveMvcClass(scannedClass, HandlerAdapter.class, customHandlerAdapters);
+        resolveMvcClass(scannedClass, HandlerExceptionResolver.class, customExceptionResolvers);
+        resolveMvcClass(scannedClass, HandlerInterceptor.class, customInterceptors);
+        resolveMvcClass(scannedClass, MvcConfigurer.class, customConfigurers);
     }
 
-    private <T> void resolveClass(Class<?> scannedClass, Class<? extends T> mvcInf, List<T> list) {
+    private <T> void resolveMvcClass(Class<?> scannedClass, Class<? extends T> mvcInf, List<T> list) {
         if (mvcInf.isAssignableFrom(scannedClass)) {
             T instance = (T) ReflectionUtils.newInstance(scannedClass);
             list.add(instance);
         }
     }
 
+    private void resolveConfigurationProperties(Class<?> scannedClass) {
+        if (scannedClass.isAnnotationPresent(ConfigurationProperties.class)) {
+            String prefix = scannedClass.getDeclaredAnnotation(ConfigurationProperties.class).value();
+            Object instance = YmlParser.getInstance().parse(prefix, scannedClass);
+            configurationProperties.put(scannedClass,instance);
+        }
+    }
     public List<HandlerMapping> getCustomHandlerMappings() {
         Collections.sort(customHandlerMappings, new OrderComparator<>());
         return Collections.unmodifiableList(customHandlerMappings);
@@ -130,11 +146,14 @@ public class MvcContext {
         return Collections.unmodifiableList(customInterceptors);
     }
 
-    public WebMvcConfigurer getCustomWebMvcConfigurer() {
+    public MvcConfigurer getCustomWebMvcConfigurer() {
         if (customConfigurers.size() >1) {
             throw new IllegalStateException("配置器应该只写一个");
         }
         return customConfigurers.size()==0?null:customConfigurers.get(0);
+    }
+    public Map<Class<?>, Object> getConfigurationProperties() {
+        return Collections.unmodifiableMap(configurationProperties);
     }
 
     /**
@@ -163,7 +182,10 @@ public class MvcContext {
         return Collections.unmodifiableList(allScannedClasses);
     }
 
-    // 以下这些方法是默认修饰符，主要是在框架内调用，用户不能调用
+    /**
+     * 以下这些方法是默认修饰符，主要是在框架内调用，用户不能调用
+     * @return
+     */
     ScanResult getScanResult() {
         return this.scanResult;
     }

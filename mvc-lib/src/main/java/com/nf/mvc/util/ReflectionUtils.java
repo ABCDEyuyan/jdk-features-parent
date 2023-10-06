@@ -1,9 +1,15 @@
 package com.nf.mvc.util;
 
+import com.nf.mvc.MvcContext;
+import com.nf.mvc.argument.MethodParameter;
+import com.nf.mvc.handler.HandlerClass;
+import com.nf.mvc.ioc.Injected;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
@@ -26,41 +32,70 @@ public abstract class ReflectionUtils {
      * ==符号表示指向的是同一个对象，equals表示的内容相等，简单来说，==是true就表示两者完全一样，
      * 那么equals也肯定是true，但equals是true不一定==也是true
      */
-    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(9);
-    private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new IdentityHashMap<>(9);
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(9);
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(9);
 
+    private static final String GETTER_METHOD_NAME = "^get[A-Z].*";
+    private static final String GETTER_IS_METHOD_NAME = "^is[A-Z].*";
+    private static final String SETTER_METHOD_NAME = "^set[A-Z].*";
     static {
-        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
-        primitiveWrapperTypeMap.put(Byte.class, byte.class);
-        primitiveWrapperTypeMap.put(Character.class, char.class);
-        primitiveWrapperTypeMap.put(Double.class, double.class);
-        primitiveWrapperTypeMap.put(Float.class, float.class);
-        primitiveWrapperTypeMap.put(Integer.class, int.class);
-        primitiveWrapperTypeMap.put(Long.class, long.class);
-        primitiveWrapperTypeMap.put(Short.class, short.class);
-        primitiveWrapperTypeMap.put(Void.class, void.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Float.class, float.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Void.class, void.class);
 
-        for (Map.Entry<Class<?>, Class<?>> entry : primitiveWrapperTypeMap.entrySet()) {
-            primitiveTypeToWrapperMap.put(entry.getValue(), entry.getKey());
+        for (Map.Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPER_TYPE_MAP.entrySet()) {
+            PRIMITIVE_TYPE_TO_WRAPPER_MAP.put(entry.getValue(), entry.getKey());
         }
     }
 
     /**
      * 现在这种写法是默认调用class的默认构造函数来实例化对象的
      * 暂时没有考虑调用其它构造函数的情况
-     *
+     * <h3>使用地方</h3>
+     * <p>整个mvc框架都用的这个方法来创建被mvc管理的类的对象，主要使用的地方有以下几个
+     * <ul>
+     *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class)},这些类型是单例的</li>
+     *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)},这些实例是原型的</li>
+     *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()},这些实例是原型的</li>
+     * </ul>
+     * </p>
      * @param clz
      * @return
      */
     public static <T> T newInstance(Class<? extends T> clz) {
+        T instance ;
         try {
-            return clz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            instance =  clz.newInstance();
+            injectConfigurationProperties(instance);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("无法实例化对象，类:" + clz.getName() + " 是否没有提供默认构造函数?", e);
         }
-        return null;
+        return instance;
+    }
+
+    /**
+     * 此方法目前只是用来注入配置属性类使用的
+     * <p>此方法本不应该写在这里,因为它与注入有关,但不想增加复杂性,也不想给mvc框架提供ioc的能力,就简单注入配置属性类,所以就写在了这里</p>
+     * @param instance
+     * @param <T>
+     * @throws IllegalAccessException
+     */
+    private static <T> void injectConfigurationProperties(T instance) throws IllegalAccessException {
+        Field[] fields = instance.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Injected.class)) {
+                field.setAccessible(true);
+                Object configProperties = MvcContext.getMvcContext().getConfigurationProperties().get(field.getType());
+                field.set(instance,configProperties );
+                field.setAccessible(false);
+            }
+        }
     }
 
     public static List<Method> getAllSetterMethods(Class<?> clz) {
@@ -165,18 +200,20 @@ public abstract class ReflectionUtils {
         return Modifier.isPublic(method.getModifiers()) &&
                 method.getReturnType().equals(void.class) &&
                 method.getParameterTypes().length == 1 &&
-                method.getName().matches("^set[A-Z].*");
+                method.getName().matches(SETTER_METHOD_NAME);
     }
 
     public static boolean isGetter(Method method) {
         if (Modifier.isPublic(method.getModifiers()) &&
                 method.getParameterTypes().length == 0) {
-            if (method.getName().matches("^get[A-Z].*") &&
-                    !method.getReturnType().equals(void.class))
+            if (method.getName().matches(GETTER_METHOD_NAME) &&
+                    !method.getReturnType().equals(void.class)) {
                 return true;
-            if (method.getName().matches("^is[A-Z].*") &&
-                    method.getReturnType().equals(boolean.class))
+            }
+            if (method.getName().matches(GETTER_IS_METHOD_NAME) &&
+                    method.getReturnType().equals(boolean.class)) {
                 return true;
+            }
         }
         return false;
     }
@@ -281,7 +318,7 @@ public abstract class ReflectionUtils {
      * @return
      */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
-        return primitiveWrapperTypeMap.containsKey(clazz);
+        return PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz);
     }
 
 
@@ -313,10 +350,10 @@ public abstract class ReflectionUtils {
             return true;
         }
         if (lhsType.isPrimitive()) {
-            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+            Class<?> resolvedPrimitive = PRIMITIVE_WRAPPER_TYPE_MAP.get(rhsType);
             return (lhsType == resolvedPrimitive);
         } else {
-            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+            Class<?> resolvedWrapper = PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(rhsType);
             return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
         }
     }
@@ -353,6 +390,15 @@ public abstract class ReflectionUtils {
             actualTypeArguments[i] = (Class) types[i];
         }
         return actualTypeArguments;
+    }
 
+    public static void setFieldValue(Object instance, Field field, Object value)  {
+        try {
+            field.setAccessible(true);
+            field.set(instance, value);
+            field.setAccessible(false);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("字段值设置失败",e);
+        }
     }
 }

@@ -20,7 +20,7 @@ public class CorsConfiguration {
 
     private Boolean allowCredentials = false;
 
-    private Long maxAge = 3600l;
+    private Long maxAge = 3600L;
 
     public CorsConfiguration setAllowedOrigins(String... origins) {
         CollectionUtils.mergeArrayIntoCollection(origins, allowedOrigins);
@@ -125,7 +125,7 @@ public class CorsConfiguration {
     }
 
     public void validateAllowCredentials() {
-        if (this.allowCredentials == Boolean.TRUE &&
+        if (this.allowCredentials.equals( Boolean.TRUE) &&
                 this.allowedOrigins != null && this.allowedOrigins.contains(ALL)) {
 
             throw new IllegalArgumentException(

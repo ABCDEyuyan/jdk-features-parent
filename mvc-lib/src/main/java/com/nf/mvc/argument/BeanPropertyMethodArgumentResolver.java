@@ -11,7 +11,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
- * 这是一个解析参数类型为自定义的bean类型的参数解析器，此解析器只处理bean的属性（setter方法），
+ *这是一个解析参数类型为自定义的bean类型的参数解析器，此解析器只处理bean的属性（setter方法），
  * 如果属性的类型是非bean类型，那么交给其它的参数解析器去解析，如果仍然是bean类型，就进行递归解析处理<br/>
  *
  * <i>这个解析器要求是参数解析器链中的最后一个解析器。</i>
@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
  *     后续直接返回解析器组合的方式避免重复创建的问题，但由于参数解析器是运行在多线程的环境下，所以为了线程安全性，
  *     这里采用双重检查+volatile的形式解决这一问题，具体见{@link #getResolvers()}方法
  * </p>
+ *
  * @see MethodArgumentResolverComposite
  * @see MethodArgumentResolver
  */
@@ -145,7 +146,9 @@ public class BeanPropertyMethodArgumentResolver implements MethodArgumentResolve
      * @return: 返回的是添加了前缀的参数名
      */
     private String handleParameterName(Stack<String> prefixStack, String parameterName) {
-        if (prefixStack.isEmpty()) return parameterName;
+        if (prefixStack.isEmpty()) {
+            return parameterName;
+        }
 
         String prefix ="";
         for (int i = 0; i < prefixStack.size(); i++) {

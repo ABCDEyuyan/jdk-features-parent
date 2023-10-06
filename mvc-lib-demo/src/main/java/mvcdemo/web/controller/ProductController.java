@@ -1,10 +1,13 @@
 package mvcdemo.web.controller;
 
 import com.nf.mvc.HandlerContext;
+import com.nf.mvc.argument.PathVariable;
 import com.nf.mvc.argument.RequestBody;
 import com.nf.mvc.argument.RequestParam;
+import com.nf.mvc.ioc.Injected;
 import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
+import mvcdemo.MyConfigurationProperties1;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -13,11 +16,26 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
 
+    @Injected
+    private MyConfigurationProperties1 config1;
+
+    @RequestMapping("/list/{pageno}/{pagesize}")
+    public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize,int size){
+        System.out.println("=========PathVariable测试============");
+        System.out.println("pageNo = " + pageNo);
+        System.out.println("pageSize = " + pageSize);
+        System.out.println("size = " + size);
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+
+    }
+
     @RequestMapping("/simple")
     public JsonViewResult simple(@RequestParam(defaultValue = "100")int id,@RequestParam(defaultValue = "abc",value = "username") String name){
         System.out.println("=========简单类型测试============");
         System.out.println("id = " + id);
         System.out.println("name = " + name);
+        System.out.println("config1 = " + config1);
+        System.out.println(this.hashCode());
         return new JsonViewResult(new ResponseVO(200,"ok",true));
 
     }
@@ -79,6 +97,10 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
+    @RequestMapping("/ex")
+    public JsonViewResult ex(){
+        throw new ArithmeticException("1/0...");
+    }
     @RequestMapping("/**")
     public void wildcardTest(){
         String method = HandlerContext.getContext().getRequest().getMethod();
