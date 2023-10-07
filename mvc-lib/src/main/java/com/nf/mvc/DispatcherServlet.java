@@ -3,6 +3,7 @@ package com.nf.mvc;
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.*;
+import com.nf.mvc.cors.CorsConfiguration;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.LogHandlerExceptionResolver;
 import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
