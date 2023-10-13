@@ -80,7 +80,7 @@ import static com.nf.mvc.util.ExceptionUtils.getRootCause;
  * @see com.nf.mvc.DispatcherServlet
  * @see HandlerExceptionResolver
  * @see ExceptionHandler
- * @see MultiExceptionHandlerExceptionResolver
+ * @see ExceptionHandlersExceptionResolver
  */
 public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolver {
   /**
