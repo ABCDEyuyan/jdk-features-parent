@@ -1,6 +1,5 @@
 package com.nf.mvc.exception;
 
-import com.nf.mvc.DispatcherServlet;
 import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.argument.MethodParameter;
@@ -36,12 +35,11 @@ public class ParameterizedExceptionHandlersExceptionResolver extends ExceptionHa
     Object instance = exceptionHandlerMethod.getHandlerObject();
     Method method = exceptionHandlerMethod.getHandlerMethod();
 
-    Object handlerResult = methodInvoker.invoke(instance, method, request);
-    return handlerResult;
+    return methodInvoker.invoke(instance, method, request);
   }
 
   private static class ExceptionArgumentResolver implements MethodArgumentResolver{
-    private Exception raisedException;
+    private final Exception raisedException;
 
     public ExceptionArgumentResolver(Exception raisedException) {
       this.raisedException = raisedException;

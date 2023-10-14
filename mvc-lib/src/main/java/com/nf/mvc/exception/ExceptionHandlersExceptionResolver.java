@@ -12,7 +12,7 @@ import java.util.List;
  * <pre class="code">
  *     &#64;ExceptionHandlers({AException.class,BException.class})
  *     public void handleExaAndExb(Exception ex){
- *
+ * <p>
  *     }
  * </pre>
  * <p><b>注意，这种情况异常处理方法的参数仍然只能是一个异常类型的参数，而且此异常参数必须是注解指定的异常或者是其父类型,

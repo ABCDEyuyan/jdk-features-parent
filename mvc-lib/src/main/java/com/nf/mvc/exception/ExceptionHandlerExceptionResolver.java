@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -62,13 +61,13 @@ import static com.nf.mvc.util.ExceptionUtils.getRootCause;
  *          <ol>
  *            <li>找出真正的异常:{@link #getRaisedException(Exception)} </li>
  *            <li>找出最匹配的异常处理方法：{@link #findMostMatchedHandlerMethod(List, Exception)} </li>
- *            <li>执行异常处理方法以处理用户引发的异常:{@link #executeExceptionHandlerMethod(HandlerMethod, Exception)}</li>
+ *            <li>执行异常处理方法以处理用户引发的异常:{@link #executeExceptionHandlerMethod(HandlerMethod, Exception, HttpServletRequest)}</li>
  *          </ol>
  *     </li>
  *   </ul>
  *   <h3>扩展建议</h3>
  *   子类通常只需要重写这5个方法：{@link #scanExceptionHandlerMethods(Predicate)},{@link #postHandleExceptionHandlerMethods(List)},
- *   {@link #getRaisedException(Exception)},{@link #findMostMatchedHandlerMethod(List, Exception)},{@link #executeExceptionHandlerMethod(HandlerMethod, Exception)},
+ *   {@link #getRaisedException(Exception)},{@link #findMostMatchedHandlerMethod(List, Exception)},{@link #executeExceptionHandlerMethod(HandlerMethod, Exception, HttpServletRequest)},
  *   而不建议重写{@link #resolveExceptionHandlerMethods()}与{@link #resolveException(HttpServletRequest, HttpServletResponse, Object, Exception)} ()},
  *   所以这两个方法可以设置为final了,我这里只设置了{@link #resolveException(HttpServletRequest, HttpServletResponse, Object, Exception)}为final
  * </p>
@@ -85,10 +84,10 @@ import static com.nf.mvc.util.ExceptionUtils.getRootCause;
 public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolver {
   /**
    * 子类不要直接访问此字段，通过对应的getter方法来访问此字段，
-   * 这里用HandlerMethod类型而不用Method类型是为了以后可能功能增强，比如支持的参数与Handler一致(RequestMappingHandlerAdapter 处理的handler就是HandlerMethod)，
+   * 这里用HandlerMethod类型而不用Method类型是为了以后可能的功能增强，比如支持的参数与Handler一致(RequestMappingHandlerAdapter 处理的handler就是HandlerMethod)，
    * 而不是像此类实现一样只支持一个Exception类型的参数
    */
-  private List<HandlerMethod> exceptionHandlerMethods = new ArrayList<>();
+  private final List<HandlerMethod> exceptionHandlerMethods = new ArrayList<>();
 
   public ExceptionHandlerExceptionResolver() {
     resolveExceptionHandlerMethods();
@@ -99,13 +98,10 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
    * <p>比如有下面的两个异常处理方法,都能对ArithmeticException异常进行处理,那么更合适的就是m1,进行后置处理之后,m1就排在m2的前面
    * <pre class="code">
    *    &#064;ExceptionHandler(ArithmeticException ex)
-   *   m1(ArithmeticException ex){
+   *    m1(ArithmeticException ex){},
    *
-   *   },
    *    &#064;ExceptionHandler( RuntimeException ex)
-   *    m2(RuntimeException ex){
-   *
-   *    }
+   *    m2(RuntimeException ex){}
    * </pre>
    * </p>
    * <p>
@@ -154,12 +150,16 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
    * 也可以不对这些异常处理方法进行任何额外的处理，子类可以通过重写此方法并留空或者重写{@link ExceptionHandlerExceptionResolver#resolveExceptionHandlerMethods()}
    * 但只调用{@link ExceptionHandlerExceptionResolver#scanExceptionHandlerMethods(Predicate)}的方式来达成不对异常处理方法进行额外处理的效果
    *
-   * @param exHandlerMethods
+   * @param exHandlerMethods 异常处理方法集合
    */
   protected void postHandleExceptionHandlerMethods(List<HandlerMethod> exHandlerMethods) {
-    Collections.sort(exHandlerMethods, (m1, m2) ->
-            m1.getHandlerMethod().getDeclaredAnnotation(ExceptionHandler.class).value()
-                    .isAssignableFrom(m2.getHandlerMethod().getDeclaredAnnotation(ExceptionHandler.class).value()) ? 1 : -1);
+    exHandlerMethods.sort((m1, m2) ->
+            m1.getHandlerMethod()
+                    .getDeclaredAnnotation(ExceptionHandler.class)
+                    .value()
+                    .isAssignableFrom(m2.getHandlerMethod()
+                            .getDeclaredAnnotation(ExceptionHandler.class)
+                            .value()) ? 1 : -1);
   }
 
 
@@ -174,7 +174,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
       Object exceptionHandlerResult = executeExceptionHandlerMethod(exceptionHandlerMethod, raisedException, request);
       return adaptHandlerResult(exceptionHandlerResult);
     } catch (Exception e) {
-      /** 进入到这里就是异常处理方法本身的执行出了错，catch里如果什么都不干，相当于吞掉异常处理方法本身的异常;
+      /* 进入到这里就是异常处理方法本身的执行出了错，catch里如果什么都不干，相当于吞掉异常处理方法本身的异常;
        异常处理方法本身执行出问题其含义就是说本异常解析器无法处理异常.因此，通过在catch这里返回null的形式，
        就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递进来的第四个参数的值 */
       return null;
@@ -183,8 +183,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
   }
 
   protected Exception getRaisedException(Exception ex) {
-    Exception exposedException = (Exception) getRootCause(ex);
-    return exposedException;
+    return (Exception) getRootCause(ex);
   }
 
   /**
@@ -211,11 +210,10 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
     return matchedHandlerMethod;
   }
 
-  protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception raisedException,HttpServletRequest request) throws Exception {
+  protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception raisedException, HttpServletRequest request) throws Exception {
     Method method = exceptionHandlerMethod.getHandlerMethod();
     Object instance = exceptionHandlerMethod.getHandlerObject();
-    Object exHandlerResult = method.invoke(instance, raisedException);
-    return exHandlerResult;
+    return method.invoke(instance, raisedException);
   }
 
   protected List<HandlerMethod> getExceptionHandlerMethods() {
