@@ -1,7 +1,6 @@
 package mvcdemo.web.controller;
 
-import com.nf.mvc.exception.ExceptionHandler;
-import com.nf.mvc.exception.MultiExceptionHandler;
+import com.nf.mvc.exception.ExceptionHandlers;
 import com.nf.mvc.view.JsonViewResult;
 
 public class GlobalExceptionHandler {
@@ -17,7 +16,7 @@ public class GlobalExceptionHandler {
         return new JsonViewResult(new ResponseVO(10002,"算术异常:" + re.getMessage(),"算数--"));
     }
 */
-   @MultiExceptionHandler(ArithmeticException.class)
+   @ExceptionHandlers(ArithmeticException.class)
    public JsonViewResult handleArithmeticException(String a,ArithmeticException re){
        // System.out.println("suan shu re = " + re);
        System.out.println("异常处理方法参数a = " + a);

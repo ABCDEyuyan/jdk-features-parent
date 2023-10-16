@@ -1,4 +1,4 @@
-package com.nf.mvc;
+package com.nf.mvc.cors;
 
 import com.nf.mvc.support.HttpMethod;
 import com.nf.mvc.util.CollectionUtils;

@@ -3,8 +3,10 @@ package com.nf.mvc;
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
 import com.nf.mvc.argument.*;
+import com.nf.mvc.cors.CorsConfiguration;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.LogHandlerExceptionResolver;
+import com.nf.mvc.exception.ParameterizedExceptionHandlersExceptionResolver;
 import com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver;
 import com.nf.mvc.mapping.NameConventionHandlerMapping;
 import com.nf.mvc.mapping.RequestMappingHandlerMapping;
@@ -359,14 +361,14 @@ public class DispatcherServlet extends HttpServlet {
         resolvers.add(new LogHandlerExceptionResolver());
         resolvers.add(new PrintStackTraceHandlerExceptionResolver());
         resolvers.add(new ExceptionHandlerExceptionResolver());
-        //resolvers.add(new ParameterizedMultiExceptionHandlerExceptionResolver());
+        resolvers.add(new ParameterizedExceptionHandlersExceptionResolver());
         return resolvers;
     }
 
     private String[] getBasePackages(ServletConfig config) {
         String pkg = config.getInitParameter(BASE_PACKAGE);
         if (pkg == null || pkg.isEmpty()) {
-            throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它扩展组件所在的包---");
+            throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它Mvc框架扩展组件所在的包");
         }
         return StringUtils.split(pkg, Delimiters.Common.getPattern()).toArray(new String[]{});
     }

@@ -9,7 +9,8 @@ import java.util.Map;
 
 import static com.nf.mvc.util.StringUtils.skipBlanks;
 
-/** 此类参考spring 的AntPathMatcher实现.
+/**
+ * 此类参考spring 的AntPathMatcher实现.
  * <p>ant地址主要用在web的url路径匹配上,其中三个核心通配符含义如下</p>
  * <ul>
  *   <li>'?' - 匹配一个字符</li>
@@ -31,10 +32,8 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  *         AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();
  *         String pattern = "a/&#042;/c/d";
  *         String path = "a/b0/c";
- *
  *         boolean match = pathMatcher.isMatch(pattern, path);//false
  *         System.out.println("match = " + match);
- *
  *         AntPathMatcher pathMatcher2 = new AntPathMatcher.Builder().withMatchStart().build();
  *         boolean matchStart = pathMatcher2.isMatch(pattern, path); //true
  *         System.out.println("matchStart = " + matchStart);
@@ -44,152 +43,156 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  * <a href="https://github.com/azagniotov/ant-style-path-matcher">AntPathMatcher简单实现</a>
  * <a href="https://my.oschina.net/iqoFil/blog/221623">spring AntPathMatcher匹配算法解析</a>
  * <a href="https://www.nationalfinder.com/html/char-asc.htm">html ascii码字母,文档注释中*的转译</a>
+ *
  * @author cj
  */
-public class AntPathMatcher implements PathMatcher{
-    private static final char ASTERISK = '*';
-    private static final char QUESTION = '?';
-    /**
-     * 路径变量写法的正则表达式,比如{pageSize}这种写法就匹配这个正则表达式
-     */
-    private static final String PATH_VARIABLE_PATTERN = "\\{.*?\\}";
-    private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
-    private static final int LENGTH_OF_TWO_PATTERN_CHAR = 2;
+public class AntPathMatcher implements PathMatcher {
+  private static final char ASTERISK = '*';
+  private static final char QUESTION = '?';
+  /**
+   * 路径变量写法的正则表达式,比如{pageSize}这种写法就匹配这个正则表达式
+   */
+  private static final String PATH_VARIABLE_PATTERN = "\\{.*?\\}";
+  private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
+  private static final int LENGTH_OF_TWO_PATTERN_CHAR = 2;
 
-    private final char pathSeparator;
-    private final boolean ignoreCase;
-    private final boolean matchStart;
-    private final boolean trimTokens;
+  private final char pathSeparator;
+  private final boolean ignoreCase;
+  private final boolean matchStart;
+  private final boolean trimTokens;
 
-    private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart, boolean trimTokens) {
-        this.pathSeparator = pathSeparator;
-        this.ignoreCase = ignoreCase;
-        this.matchStart = matchStart;
-        this.trimTokens = trimTokens;
+  private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart, boolean trimTokens) {
+    this.pathSeparator = pathSeparator;
+    this.ignoreCase = ignoreCase;
+    this.matchStart = matchStart;
+    this.trimTokens = trimTokens;
+  }
+
+  @Override
+  public boolean isMatch(String pattern, String path) {
+    //这个if块就是用来把路径变量(PathVariable)替换为一个*来处理匹配问题的
+    if (StringUtils.hasText(pattern)) {
+      pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
     }
-    @Override
-    public boolean isMatch( String pattern, String path) {
-        //这个if块就是用来把路径变量替换为一个*来处理匹配问题的
-        if (StringUtils.hasText(pattern)) {
-            pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
-        }
-        if (pattern.isEmpty()) {
-            return path.isEmpty();
-        } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
-            if (matchStart) {
-                return true;
-            } else if (pattern.length() == LENGTH_OF_TWO_PATTERN_CHAR && pattern.charAt(1) == ASTERISK) {
-                return false;
-            }
-            return isMatch(pattern.substring(1), path);
-        }
-
-        final char patternStart = pattern.charAt(0);
-        if (patternStart == ASTERISK) {
-            if (pattern.length() == 1) {
-                return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
-            } else if (doubleAsteriskMatch(pattern, path)) {
-                return true;
-            }
-
-            int start = 0;
-            while (start < path.length()) {
-                if (isMatch(pattern.substring(1), path.substring(start))) {
-                    return true;
-                }
-                start++;
-            }
-            return isMatch(pattern.substring(1), path.substring(start));
-        }
-
-        int pointer = trimTokens==true?skipBlanks(path):0;
-
-        return !path.isEmpty() && (equal(path.charAt(pointer), patternStart) || patternStart == QUESTION)
-                && isMatch(pattern.substring(1), path.substring(pointer + 1));
-    }
-
-    /**
-     * 获取路径变量及其值的方法,这是个简化的实现,没有使用spring的实现.
-     * 使用此方法时不要把matchStart设置为true,否则是有bug的.
-     * <p>比如路径模式是/list/{pageNo}/{pageSize},路径是/list/2/5,
-     * 那么返回的map大致是这样的:[{pageNo:2},{pageSize:5}]</p>
-     * @param pattern 路径模式
-     * @param path 路径
-     * @return 包含各个路径变量及其值的Map
-     */
-    public Map<String, String> extractPathVariables(String pattern, String path) {
-        Map<String,String> pathVariables = new LinkedHashMap<>();
-        if (isMatch(pattern, path)) {
-            String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, ""+this.pathSeparator,this.trimTokens,true);
-            String[] pathSegments = StringUtils.tokenizeToStringArray(path, ""+this.pathSeparator,this.trimTokens,true);
-            for (int i=0; i< pathSegments.length;i++) {
-                String patternSegment = patternSegments[i];
-                if (patternSegment.startsWith("{") && patternSegment.endsWith("}")) {
-                    String variableName = patternSegment.substring(1,patternSegment.length()-1);
-                    String variableValue = pathSegments[i];
-                    pathVariables.put(variableName, variableValue);
-                }
-            }
-        }
-        return pathVariables;
-    }
-    private boolean doubleAsteriskMatch(final String pattern, final String path) {
-        if (pattern.charAt(1) != ASTERISK) {
-            return false;
-        } else if (pattern.length() > LENGTH_OF_TWO_PATTERN_CHAR) {
-            return isMatch(pattern.substring(3), path);
-        }
+    if (pattern.isEmpty()) {
+      return path.isEmpty();
+    } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
+      if (matchStart) {
+        return true;
+      } else if (pattern.length() == LENGTH_OF_TWO_PATTERN_CHAR && pattern.charAt(1) == ASTERISK) {
         return false;
+      }
+      return isMatch(pattern.substring(1), path);
     }
 
-    @Override
-    public Comparator<String> getPatternComparator(String path) {
-        return new AntPatternComparator(path);
+    final char patternStart = pattern.charAt(0);
+    if (patternStart == ASTERISK) {
+      if (pattern.length() == 1) {
+        return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
+      } else if (doubleAsteriskMatch(pattern, path)) {
+        return true;
+      }
+
+      int start = 0;
+      while (start < path.length()) {
+        if (isMatch(pattern.substring(1), path.substring(start))) {
+          return true;
+        }
+        start++;
+      }
+      return isMatch(pattern.substring(1), path.substring(start));
     }
 
-    private boolean equal(final char pathChar, final char patternChar) {
-        if (ignoreCase) {
-            return pathChar == patternChar ||
-                    ((pathChar > patternChar) ?
-                            pathChar == patternChar + ASCII_CASE_DIFFERENCE_VALUE :
-                            pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
+    int pointer = trimTokens ? skipBlanks(path) : 0;
+
+    return !path.isEmpty() && (equal(path.charAt(pointer), patternStart) || patternStart == QUESTION)
+            && isMatch(pattern.substring(1), path.substring(pointer + 1));
+  }
+
+  /**
+   * 获取路径变量及其值的方法,这是个简化的实现,没有使用spring的实现.
+   * 使用此方法时不要把matchStart设置为true,否则是有bug的.
+   * <p>比如路径模式是/list/{pageNo}/{pageSize},路径是/list/2/5,
+   * 那么返回的map大致是这样的:[{pageNo:2},{pageSize:5}]</p>
+   *
+   * @param pattern 路径模式
+   * @param path    路径
+   * @return 包含各个路径变量及其值的Map
+   */
+  public Map<String, String> extractPathVariables(String pattern, String path) {
+    Map<String, String> pathVariables = new LinkedHashMap<>();
+    if (isMatch(pattern, path)) {
+      String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, "" + this.pathSeparator, this.trimTokens, true);
+      String[] pathSegments = StringUtils.tokenizeToStringArray(path, "" + this.pathSeparator, this.trimTokens, true);
+      for (int i = 0; i < pathSegments.length; i++) {
+        String patternSegment = patternSegments[i];
+        if (patternSegment.startsWith("{") && patternSegment.endsWith("}")) {
+          String variableName = patternSegment.substring(1, patternSegment.length() - 1);
+          String variableValue = pathSegments[i];
+          pathVariables.put(variableName, variableValue);
         }
-        return pathChar == patternChar;
+      }
+    }
+    return pathVariables;
+  }
+
+  private boolean doubleAsteriskMatch(final String pattern, final String path) {
+    if (pattern.charAt(1) != ASTERISK) {
+      return false;
+    } else if (pattern.length() > LENGTH_OF_TWO_PATTERN_CHAR) {
+      return isMatch(pattern.substring(3), path);
+    }
+    return false;
+  }
+
+  @Override
+  public Comparator<String> getPatternComparator(String path) {
+    return new AntPatternComparator(path);
+  }
+
+  private boolean equal(final char pathChar, final char patternChar) {
+    if (ignoreCase) {
+      return pathChar == patternChar ||
+              ((pathChar > patternChar) ?
+                      pathChar == patternChar + ASCII_CASE_DIFFERENCE_VALUE :
+                      pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
+    }
+    return pathChar == patternChar;
+  }
+
+  public static final class Builder {
+
+    private char pathSeparator = '/';
+    private boolean ignoreCase = false;
+    private boolean matchStart = false;
+    private boolean trimTokens = false;
+
+    public Builder() {
+
     }
 
-    public static final class Builder {
-
-        private char pathSeparator = '/';
-        private boolean ignoreCase = false;
-        private boolean matchStart = false;
-        private boolean trimTokens = false;
-
-        public Builder() {
-
-        }
-
-        public Builder withPathSeparator(final char pathSeparator) {
-            this.pathSeparator = pathSeparator;
-            return this;
-        }
-
-        public Builder withIgnoreCase() {
-            this.ignoreCase = true;
-            return this;
-        }
-
-        public Builder withMatchStart() {
-            this.matchStart = true;
-            return this;
-        }
-
-        public Builder withTrimTokens() {
-            this.trimTokens = true;
-            return this;
-        }
-
-        public AntPathMatcher build() {
-            return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);
-        }
+    public Builder withPathSeparator(final char pathSeparator) {
+      this.pathSeparator = pathSeparator;
+      return this;
     }
+
+    public Builder withIgnoreCase() {
+      this.ignoreCase = true;
+      return this;
+    }
+
+    public Builder withMatchStart() {
+      this.matchStart = true;
+      return this;
+    }
+
+    public Builder withTrimTokens() {
+      this.trimTokens = true;
+      return this;
+    }
+
+    public AntPathMatcher build() {
+      return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);
+    }
+  }
 }
