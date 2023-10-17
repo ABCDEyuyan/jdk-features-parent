@@ -30,9 +30,11 @@
 - 修饰在类和方法上的RequestMapping
 - 只修饰在类上的Intercepts
 - 只修饰在方法上的ExceptionHandler
+- 修饰在方法参数上的RequestParam
 
 ## 抽象类
 - ViewResult
+- AbstractCommonTypeMethodArgumentResolver ：实现了部分功能，主要是子类去实现
 - 各种工具类，比如CollectionUtils
 - HttpHeaders，主要用来定义常量，也可以用接口来定义常量
 
@@ -84,11 +86,11 @@ public interface MethodArgumentResolver {
 
 ## null
 
-- 异常解析器返回null表示自己不能处理异常，见LogHandlerExceptionResolver
+- 异常解析器返回null表示自己不能处理异常，要交给下一个异常解析器去处理，见LogHandlerExceptionResolver
 
 ## 多层继承
 
-- ParameterizedExceptionHandlersExceptionResolver
+- ParameterizedExceptionHandlersExceptionResolver：每一个类都是具体类，都是能实际使用的功能类
 
 ## 上下文类
 
@@ -156,12 +158,11 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - ValueConstants的DEFAULT_NONE
 
-## 减少if
+## if else优化
 
 - AbstractCommonTypeMethodArgumentResolver的resolveArgument（三目运算符)
-- BeanPropertyMethodArgumentResolver#getResolvers
 
-## IOC
+## Ioc
 
 - @Inject
 
@@ -238,3 +239,26 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - DispatcherServlet#executeMvcComponentsConfig
 - ExceptionHandlersExceptionResolver#scanExceptionHandlerMethods
+
+## 可变长度的参数
+
+- MethodArgumentResolverComposite#addResolvers
+
+## 断言（防御性代码）
+
+- Assert
+
+## 反射的应用
+
+- ReflectionUtils
+
+## 跨域处理
+
+- CorsUtils
+- com.nf.mvc.DispatcherServlet#service
+- com.nf.mvc.DispatcherServlet#processCors
+
+## 默认servlet
+
+- com.nf.mvc.DispatcherServlet#noHandlerFound
+- com.nf.mvc.MvcApplication#start

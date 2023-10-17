@@ -32,8 +32,8 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
      *
      * @param parameter 方法参数
      * @param request   servlet请求对象
-     * @return
-     * @throws Exception
+     * @return 返回解析之后的参数结果值
+     * @throws Exception 解析过程中可能抛出的异常
      */
     @Override
     public final Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
@@ -108,11 +108,11 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
      * 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
      * 那么在处理int[]这种简单类型数组作为控制器参数时，会导致报无法把简单类型数组转换为Object[]数组的异常的问题，所以没有把本类或这3个解析方法设计为泛型
      *
-     * @param scalarType
-     * @param values
-     * @param parameter
-     * @return
-     * @throws Exception
+     * @param scalarType 标量（单个）类型，数组的成员类型或者泛型集合实参类型，比如List<String>的String
+     * @param values 参数值
+     * @param parameter 控制器方法参数
+     * @return 返回解析后的单个参数的值
+     * @throws Exception 解析过程中抛出的异常
      */
     private Object resolveScalarTypeArray(Class<?> scalarType, Object[] values, MethodParameter parameter) throws Exception {
         /* 如果数据源为null，那么length就=0，那么array就是一个长度为0的数组，并不会进入到循环里面执行真正的参数处理
