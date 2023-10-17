@@ -29,8 +29,9 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     /**
      * 这里加final修饰方法，是不想让子类重写，因为支持的情况就这三种，逻辑是固定的
+     *
      * @param parameter 方法参数
-     * @param request servlet请求对象
+     * @param request   servlet请求对象
      * @return
      * @throws Exception
      */
@@ -106,6 +107,7 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
     /**
      * 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
      * 那么在处理int[]这种简单类型数组作为控制器参数时，会导致报无法把简单类型数组转换为Object[]数组的异常的问题，所以没有把本类或这3个解析方法设计为泛型
+     *
      * @param scalarType
      * @param values
      * @param parameter

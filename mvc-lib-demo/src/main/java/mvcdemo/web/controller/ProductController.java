@@ -18,7 +18,7 @@ public class ProductController {
 
     @Injected
     private MyConfigurationProperties1 config1;
-
+//list/2/5
     @RequestMapping("/list/{pageno}/{pagesize}")
     public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize,int size){
         System.out.println("=========PathVariable测试============");

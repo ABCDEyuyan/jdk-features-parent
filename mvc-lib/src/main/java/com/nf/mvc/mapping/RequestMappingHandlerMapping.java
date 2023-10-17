@@ -10,7 +10,6 @@ import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -132,7 +131,6 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 result.add(interceptor);
             }
         }
-
         return result;
     }
 
@@ -150,7 +148,10 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return shouldApply;
     }
 
-
+    /**
+     * 可以通过实现自定义的{@link MvcConfigurer}来配置此HandlerMapping的PathMatcher
+     * @param pathMatcher 路径匹配器
+     */
     public void setPathMatcher(PathMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
     }
