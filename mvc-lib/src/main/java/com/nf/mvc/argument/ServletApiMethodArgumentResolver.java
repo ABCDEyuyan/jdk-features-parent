@@ -10,6 +10,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import static com.nf.mvc.HandlerContext.getContext;
+
 /**
  * 此解析器主要是用来解析常见的Servlet相关的类型，比如HttpServletRequest，HttpSession等
  * @see HandlerContext
@@ -33,18 +35,21 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         Class<?> paramType = parameter.getParameterType();
-        return ServletApiEnum.valueOf(paramType.getSimpleName()).getValue();
+        return ServletApiEnum.of(paramType).getValue();
     }
 
     /**
      * 枚举项的名字必须是支持类型的简单名字，这样才能使用ServletApiEnum.valueOf(paramType.getSimpleName())
      * 来获取枚举实例，否则你就只能用{@link #of(Class)}来获取枚举，这样就不要求枚举项是支持类型的简单名
+     *
+     * <p>枚举作为内部类加static关键字是多余的</p>
+     * <p><b>注意：这个类设计出来主要是为了演示通过enum来优化if过多的技巧</b></p>
      */
     private enum ServletApiEnum{
-        HttpServletRequest(HttpServletRequest.class,()->HandlerContext.getContext().getRequest()),
-        HttpServletResponse(HttpServletResponse.class,()->HandlerContext.getContext().getResponse()),
-        HttpSession(HttpSession.class,()->HandlerContext.getContext().getSession()),
-        ServletContext(ServletContext.class,()->HandlerContext.getContext().getApplication());
+        HttpServletRequest(HttpServletRequest.class,()->getContext().getRequest()),
+        HttpServletResponse(HttpServletResponse.class,()-> getContext().getResponse()),
+        HttpSession(HttpSession.class,()-> getContext().getSession()),
+        ServletContext(ServletContext.class,()-> getContext().getApplication());
 
         private Class<?> supportedClass;
         private Supplier<Object> valueSupplier;

@@ -1,7 +1,6 @@
 package com.nf.mvc.argument;
 
 import com.nf.mvc.MethodArgumentResolver;
-import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.util.RequestUtils;
 import com.nf.mvc.util.WebTypeConverterUtils;
@@ -13,7 +12,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
 
 /**
  * 路径变量参数解析器,基本只对简单类型数据做解析,因为数据来源是路径上的某一个片段的值
- * <p>此参数解析器最好放置在{@link SimpleTypeMethodArguementResolver}之前使用</p>
+ * <p>此参数解析器最好放置在{@link SimpleTypeMethodArgumentResolver}之前使用</p>
  */
 public class PathVariableMethodArgumentResolver implements MethodArgumentResolver {
   AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();

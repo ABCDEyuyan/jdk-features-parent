@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @see ReflectionUtils
  * @see WebTypeConverterUtils
  */
-public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodArgumentResolver {
+public class SimpleTypeMethodArgumentResolver extends AbstractCommonTypeMethodArgumentResolver {
     @Override
     protected boolean supportsInternal(Class<?> scalarType) {
         return ReflectionUtils.isSimpleType(scalarType);

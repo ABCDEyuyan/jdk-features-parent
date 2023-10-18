@@ -16,7 +16,7 @@ import java.util.List;
  * @author cj
  * @see RequestBodyMethodArgumentResolver
  * @see MultipartFileMethodArgumentResolver
- * @see SimpleTypeMethodArguementResolver
+ * @see SimpleTypeMethodArgumentResolver
  * @see ServletApiMethodArgumentResolver
  */
 public abstract class AbstractCommonTypeMethodArgumentResolver implements MethodArgumentResolver {

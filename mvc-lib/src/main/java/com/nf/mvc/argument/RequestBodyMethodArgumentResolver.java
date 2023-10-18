@@ -9,8 +9,7 @@ import static com.nf.mvc.util.JacksonUtils.fromJson;
 
 /**
  * 此解析器只解析参数上有注解@RequestBody修饰的参数，
- * 普通的POJO类，Map,List集合类型是可以支持的，其它类型没有严格的测试过<br/>
- * 集合的反序列化参考了文章:<a href="https://stackoverflow.com/questions/9829403/deserialize-json-to-arraylistpojo-using-jackson">jackson反序列化为ArrayList</a>
+ * 目前的实现只支持普通的POJO类以及List<POJO>这样的类型的解析
  * @see RequestBody
  */
 public class RequestBodyMethodArgumentResolver implements MethodArgumentResolver {
