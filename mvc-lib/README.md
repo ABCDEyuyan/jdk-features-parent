@@ -190,34 +190,35 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 在maven的pom文件中配置下面的内容
 
 ```xml
- <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>mvcdemo.MvcLibDemoApplication</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
+<plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>single</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+        <archive>
+            <manifest>
+                <mainClass>mvcdemo.MvcLibDemoApplication</mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+</plugin>
 ```
 
 
 
-## 泛型实参
+## 泛型
 
 - ReflectionUtils.getActualArgument
+- com.nf.mvc.argument.MethodParameter#isParameterizedType
 
 ## equals与hashcode重写
 

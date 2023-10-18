@@ -112,18 +112,18 @@ public abstract class JacksonUtils {
      *      //反序列化为一个泛型类
      *     Response<User> res = JacksonUtils.fromJson(str,Response.class,User.class);
      *     //也可以反序列化为一个集合
-     *     List<User> users = JacksontUtils.fromJson(str,List.class,User.class);
+     *     List<User> users = JacksonUtils.fromJson(str,List.class,User.class);
      * </pre>
      * @param json json文本
-     * @param containerClass 普通的泛型类或者泛型集合类
-     * @param elementClass 普通泛型类的实参类型或者集合泛型类的实参类型
+     * @param genericClass 普通的泛型类或者泛型集合类
+     * @param actualType 普通泛型类的实参类型或者集合泛型类的实参类型
      * @param <T>
      * @return
      */
-    public static <T> T fromJson(String json,Class<?> containerClass,Class<?>... elementClass){
-        JavaType javaType=objectMapper.getTypeFactory().constructParametricType(containerClass,elementClass);
+    public static <T> T fromJson(String json,Class<?> genericClass,Class<?>... actualType){
+        JavaType javaType= getObjectMapper().getTypeFactory().constructParametricType(genericClass,actualType);
         try{
-            return objectMapper.readValue(json,javaType);
+            return getObjectMapper().readValue(json,javaType);
         }catch (Exception e){
             throw new IllegalArgumentException("反序列化失败，是否数据格式不对?", e);
         }
@@ -139,10 +139,10 @@ public abstract class JacksonUtils {
         return data;
     }
 
-    public static <T> T fromJson(final InputStream inputStream,Class<?> containerClass,Class<?>... elementClass){
-        JavaType javaType=objectMapper.getTypeFactory().constructParametricType(containerClass,elementClass);
+    public static <T> T fromJson(final InputStream inputStream,Class<?> genericClass,Class<?>... actualType){
+        JavaType javaType= getObjectMapper().getTypeFactory().constructParametricType(genericClass,actualType);
         try{
-            return objectMapper.readValue(inputStream,javaType);
+            return getObjectMapper().readValue(inputStream,javaType);
         }catch (Exception e){
             throw new IllegalArgumentException("反序列化失败，是否数据格式不对?", e);
         }

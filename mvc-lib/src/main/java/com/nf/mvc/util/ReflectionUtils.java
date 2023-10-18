@@ -4,16 +4,13 @@ import com.nf.mvc.MvcContext;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.ioc.Injected;
+import javassist.Modifier;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -60,7 +57,7 @@ public abstract class ReflectionUtils {
      * <h3>使用地方</h3>
      * <p>整个mvc框架都用的这个方法来创建被mvc管理的类的对象，主要使用的地方有以下几个
      * <ul>
-     *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class)},这些类型是单例的</li>
+     *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class, Class, List)},这些类型是单例的</li>
      *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)},这些实例是原型的</li>
      *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()},这些实例是原型的</li>
      * </ul>
@@ -173,7 +170,7 @@ public abstract class ReflectionUtils {
 
         for (Parameter parameter : parameters) {
             if (!parameter.isNamePresent()) {
-                throw new IllegalArgumentException("编译的时候需要指定-parameters选项");
+                throw new IllegalStateException("编译的时候需要指定-parameters选项");
             }
 
             String parameterName = parameter.getName();
@@ -287,6 +284,7 @@ public abstract class ReflectionUtils {
         return Collection.class.isAssignableFrom(type) ||
                 Map.class.isAssignableFrom(type);
     }
+
 
     /**
      * 如果是基本类型、包装类型或者date，number等等就认为是简单类型
