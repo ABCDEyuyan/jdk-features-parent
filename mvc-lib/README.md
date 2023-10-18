@@ -19,6 +19,13 @@
 - VoidViewResult:0行代码
 - ExceptionHandlersExceptionResolver的resolveExceptionHandlerMethods方法：1行代码
 - 多行代码 
+
+### 静态方法
+
+- ServletApiEnum#of
+- com.nf.mvc.ViewResult#adaptHandlerResult
+- com.nf.mvc.argument.MethodArgumentResolverComposite#defaultInstance
+
 ## 接口
 - 典型接口:HandlerAdapter
 - 都是默认方法的接口:HandlerInterceptor
@@ -214,7 +221,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 ## equals与hashcode重写
 
-- MethodParameter
+- MethodParameter:这里对equals的重写有注释说明
 - AntPathMatcher
 
 ## 递归
