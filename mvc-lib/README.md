@@ -219,6 +219,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - ReflectionUtils.getActualArgument
 - com.nf.mvc.argument.MethodParameter#isParameterizedType
+- JacksonUtils
 
 ## equals与hashcode重写
 
