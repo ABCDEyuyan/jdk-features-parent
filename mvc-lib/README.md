@@ -42,6 +42,7 @@
 - HttpMethod：典型枚举写法
 - CommonResultCode ：这里枚举实现了接口
 - Delimiters：这里在枚举里写了方法
+- com.nf.mvc.argument.ServletApiMethodArgumentResolver.ServletApiEnum
 
 ## 正则表达式
 - AntPathMatcher
@@ -148,7 +149,8 @@ MethodArgumentResolverComposite
 
 ## 流
 
-MethodArgumentResolverComposite类的insertResolvers方法
+- MethodArgumentResolverComposite类的insertResolvers方法
+- com.nf.mvc.argument.ServletApiMethodArgumentResolver#supports
 
 ## 链式方法实现
 
@@ -161,6 +163,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 ## if else优化
 
 - AbstractCommonTypeMethodArgumentResolver的resolveArgument（三目运算符)
+- ServletApiMethodArgumentResolver
 
 ## Ioc
 

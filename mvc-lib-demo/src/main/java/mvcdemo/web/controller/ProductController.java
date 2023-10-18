@@ -9,7 +9,10 @@ import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
 import mvcdemo.MyConfigurationProperties1;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,12 +64,7 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",emp));
     }
 
-    @RequestMapping("/api")
-    public void m1(HttpServletRequest req){
-        System.out.println("================servlet API 参数解析器测试==================");
-        System.out.println("HandlerContext.getContext().getRequest().hashCode() = " + HandlerContext.getContext().getRequest().hashCode());
 
-    }
 
     @RequestMapping("/body")
     public JsonViewResult json(@RequestBody Emp emp){
@@ -106,5 +104,11 @@ public class ProductController {
         String method = HandlerContext.getContext().getRequest().getMethod();
         System.out.println("method = " + method);
         System.out.println("/** 的优先级测试------");
+    }
+
+
+    @RequestMapping("/api")
+    public JsonViewResult api(HttpServletRequest req, HttpServletResponse resp, HttpSession session, ServletContext context){
+        return new JsonViewResult(new ResponseVO(200,"api 解析器ok",true));
     }
 }

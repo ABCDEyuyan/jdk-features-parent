@@ -7,6 +7,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.function.Supplier;
 
 /**
  * 此解析器主要是用来解析常见的Servlet相关的类型，比如HttpServletRequest，HttpSession等
@@ -16,10 +18,7 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
     @Override
     public boolean supports(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
-        return HttpServletRequest.class.isAssignableFrom(paramType)||
-                HttpServletResponse.class.isAssignableFrom(paramType)||
-                HttpSession.class.isAssignableFrom(paramType)||
-                ServletContext.class.isAssignableFrom(paramType);
+        return Arrays.stream(ServletApiEnum.values()).anyMatch(api->api.getSupportedClass().isAssignableFrom(paramType));
     }
 
     /**
@@ -34,21 +33,49 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         Class<?> paramType = parameter.getParameterType();
-        HandlerContext context = HandlerContext.getContext();
-        if (HttpServletRequest.class.isAssignableFrom(paramType)) {
-            return request;
+        return ServletApiEnum.valueOf(paramType.getSimpleName()).getValue();
+    }
+
+    /**
+     * 枚举项的名字必须是支持类型的简单名字，这样才能使用ServletApiEnum.valueOf(paramType.getSimpleName())
+     * 来获取枚举实例，否则你就只能用{@link #of(Class)}来获取枚举，这样就不要求枚举项是支持类型的简单名
+     */
+    private enum ServletApiEnum{
+        HttpServletRequest(HttpServletRequest.class,()->HandlerContext.getContext().getRequest()),
+        HttpServletResponse(HttpServletResponse.class,()->HandlerContext.getContext().getResponse()),
+        HttpSession(HttpSession.class,()->HandlerContext.getContext().getSession()),
+        ServletContext(ServletContext.class,()->HandlerContext.getContext().getApplication());
+
+        private Class<?> supportedClass;
+        private Supplier<Object> valueSupplier;
+
+        ServletApiEnum(Class<?> supportedClass, Supplier<Object> valueSupplier) {
+            this.supportedClass = supportedClass;
+            this.valueSupplier = valueSupplier;
         }
-        if (HttpServletResponse.class.isAssignableFrom(paramType)) {
-            return context.getResponse();
+
+        public Class<?> getSupportedClass() {
+            return supportedClass;
         }
-        if (HttpSession.class.isAssignableFrom(paramType)) {
-           // return request.getSession();//这样也可以
-            return context.getSession();
+
+        public Object getValue(){
+            return this.valueSupplier.get();
         }
-        if (ServletContext.class.isAssignableFrom(paramType)) {
-            return request.getServletContext();
+
+        /**
+         * 此方法依据类型来返回对应的枚举实例的，枚举类自带的valueOf方法是一种严格相等的形式
+         * 来返回对应的枚举实例，这里是看apiClass是不是可以赋值给对应枚举实例支持的类型
+         * @param apiClass api类型
+         * @return 返回对应的枚举实例
+         */
+        public static ServletApiEnum of(Class<?> apiClass) {
+            ServletApiEnum[] values = ServletApiEnum.values();
+            for (ServletApiEnum value : values) {
+                if (value.getSupportedClass().isAssignableFrom(apiClass)) {
+                    return value;
+                }
+            }
+            return null;
         }
-        // 一般不会走到这里，因为supports方法返回true才会调用resolveArgument方法
-        return null;
     }
 }
