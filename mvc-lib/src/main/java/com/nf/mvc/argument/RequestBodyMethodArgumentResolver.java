@@ -27,7 +27,7 @@ public class RequestBodyMethodArgumentResolver implements MethodArgumentResolver
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         return parameter.isParameterizedType() ?
-                fromJson(request.getInputStream(), parameter.getParameterType(), parameter.getFirstActualTypeArgument())
+                fromJson(request.getInputStream(), parameter.getParameterType(), parameter.getActualArguments())
                 : fromJson(request.getInputStream(), parameter.getParameterType());
     }
 }

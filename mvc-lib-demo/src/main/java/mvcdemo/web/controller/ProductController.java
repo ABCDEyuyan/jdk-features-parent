@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/product")
 public class ProductController {
@@ -67,7 +68,7 @@ public class ProductController {
 
 
     @RequestMapping("/body")
-    public JsonViewResult json(@RequestBody Emp emp){
+    public JsonViewResult body(@RequestBody Emp emp){
         System.out.println("====================RequestBody的参数解析器测试 pojo类==================");
         System.out.println("emp = " + emp);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
@@ -75,7 +76,7 @@ public class ProductController {
 
 
     @RequestMapping("/body2")
-    public JsonViewResult json2(@RequestBody List<Emp> emps){
+    public JsonViewResult body2(@RequestBody List<Emp> emps){
         System.out.println("====================RequestBody的参数解析器测试 List pojo类==================");
 
         //language=JSON
@@ -86,9 +87,19 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
-    /**是不能像下面这样写的，第二个参数反序列化会爆请求流已关闭的错误，因为反序列化是从请求流中读取数据的 */
     @RequestMapping("/body3")
-    public JsonViewResult json3(@RequestBody Emp emp,@RequestBody List<Emp> emps){
+    public JsonViewResult body3(@RequestBody Map<Integer,String> map){
+        System.out.println("====================RequestBody的参数解析器测试map类==================");
+
+     map.forEach((k,v)->{
+         System.out.println(k);
+         System.out.println(v);
+     });
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
+    /**是不能像下面这样写的，第二个参数反序列化会爆请求流已关闭的错误，因为反序列化是从请求流中读取数据的 */
+    @RequestMapping("/body4")
+    public JsonViewResult body4(@RequestBody Emp emp,@RequestBody List<Emp> emps){
         System.out.println("emp = " + emp);
         System.out.println("emps.size() = " + emps.size());
         emps.forEach(System.out::println);

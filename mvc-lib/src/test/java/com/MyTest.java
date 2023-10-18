@@ -1,9 +1,11 @@
 package com;
 
 import com.nf.mvc.support.AntPathMatcher;
+import com.nf.mvc.util.JacksonUtils;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,5 +72,11 @@ public class MyTest {
         System.out.println("matchStart = " + matchStart);
 
     }
-
+    @Test
+    public void s5() {
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "a");
+        map.put(2, "b");
+        System.out.println(JacksonUtils.toJson(map));
+    }
 }
