@@ -10,15 +10,25 @@
 
 列在这里是在看懂框架源码之后进行知识点的梳理使用，以便更好的掌握知识的运用
 
-## 4种修饰符
+## 修饰符
 - MvcContext的默认修饰符
 - DispatcherServlet的protected修饰符
-- HandlerContext的set相关方法
+- HandlerContext的set相关方法采用的是默认修饰符
+- DispatcherServlet#initMvcContext与initMvc等方法加了final修饰符
 
 ## 方法
 - VoidViewResult:0行代码
 - ExceptionHandlersExceptionResolver的resolveExceptionHandlerMethods方法：1行代码
 - 多行代码 
+
+### 重载
+
+- HandlerHelper类里
+- MethodArgumentResolverComposite#addResolver与insertResolver方法
+
+### 重写
+
+- ExceptionHandlersExceptionResolver类型体系中有重写
 
 ### 静态方法
 
@@ -26,7 +36,13 @@
 - com.nf.mvc.ViewResult#adaptHandlerResult
 - com.nf.mvc.argument.MethodArgumentResolverComposite#defaultInstance
 
+## 构造函数
+
+- RequestMappingHandlerAdapter类的构造函数写法
+- HandlerMethod#HandlerMethod(java.lang.Class<?>, java.lang.reflect.Method)构造函数的额外的初始化逻辑处理
+
 ## 接口
+
 - 典型接口:HandlerAdapter
 - 都是默认方法的接口:HandlerInterceptor
 - 部分默认方法：HandlerMapping
@@ -54,6 +70,7 @@
 ## 正则表达式
 - AntPathMatcher
 - Delimiters
+- com.nf.mvc.util.ReflectionUtils#isSetter
 
 ## 静态方法导入的运用
 - HandlerHelper
@@ -91,6 +108,10 @@ public interface MethodArgumentResolver {
 
 - 见DispatcherServlet的doService方法，用来清理ThreadLocal
 - FileCopyUtils的copy相关方法，这些方法没有catch
+
+### catch的or写法
+
+- com.nf.mvc.util.ReflectionUtils#newInstance
 
 ## null
 
@@ -158,6 +179,7 @@ MethodArgumentResolverComposite
 
 - MethodArgumentResolverComposite类的insertResolvers方法
 - com.nf.mvc.argument.ServletApiMethodArgumentResolver#supports
+- com.nf.mvc.util.StringUtils#split
 
 ## 链式方法实现
 
@@ -171,6 +193,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - AbstractCommonTypeMethodArgumentResolver的resolveArgument（三目运算符)
 - ServletApiMethodArgumentResolver
+- com.nf.mvc.util.ObjectUtils#arrayEquals 这里的if虽然多，但没什么优化的必要
 
 ## Ioc
 

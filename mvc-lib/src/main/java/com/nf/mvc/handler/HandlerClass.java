@@ -33,9 +33,9 @@ import com.nf.mvc.util.ReflectionUtils;
  *     所以，如果用c#实现mvc框架，那么handler就可以认为是一个方法，但java就不能这么说，
  *     因为java中的方法不能脱离于类。所以导致Handler到底是类还是一个方法的理解困难。<br/>
  *
- *    而我这个mvc框架，为了更灵活，handler可以是一个类，也可以是一个方法，当是一个类中用HandlerClass代表，
+ *    而我这个mvc框架，为了更灵活，handler可以是一个类，也可以是一个方法，当是一个类时用HandlerClass代表，
  *    那到底由哪个方法处理请求呢？HandlerMapping是不管的，由HandlerAdapter去决定，
- *    可以见{@link com.nf.mvc.mapping.NameConventionHandlerMapping},  如果Handler指向是一个方法，
+ *    可以见{@link com.nf.mvc.mapping.NameConventionHandlerMapping},  如果Handler是一个方法，
  *    那么就由HandlerMethod代表，由于方法不能脱离于类，所以HandlerMethod继承于HandlerClass类型，
  * </p>
  * @see com.nf.mvc.HandlerAdapter
