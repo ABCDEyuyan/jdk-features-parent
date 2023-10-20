@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletResponse;
  * 此类用来封装Handler执行的结果，通常用户的控制器方法会返回此类型，不同的实现通常代表不同的响应情况，
  * 比如用户返回一个{@link com.nf.mvc.view.JsonViewResult},那么就会响应一个json数据给用户。
  * 用户代码中不需要直接实例化某一个具体的ViewResult子类实例，可以借助于{@link com.nf.mvc.handler.HandlerHelper}
- * 类中的静态方法，常见代码如下
+ * 类中的静态方法，常见写法如下
  * <pre class="code">
+ *  import static com.nf.mvc.handler.HandlerHelper.json;
  *   &#064;RequestMapping("/json")
  *   public ViewResult json(...){
  *       //省略逻辑代码

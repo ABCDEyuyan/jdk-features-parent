@@ -11,15 +11,12 @@ import java.util.List;
 
 public class HandlerExecutionChain {
     private final Object handler;
-
     private final List<HandlerInterceptor> interceptorList = new ArrayList<>();
-
     private int interceptorIndex = -1;
 
     public HandlerExecutionChain(Object handler) {
         this(handler, (HandlerInterceptor[]) null);
     }
-
 
     public HandlerExecutionChain(Object handler,  HandlerInterceptor... interceptors) {
         this(handler, (interceptors != null ? Arrays.asList(interceptors) : Collections.emptyList()));
@@ -30,7 +27,6 @@ public class HandlerExecutionChain {
         this.interceptorList.addAll(interceptorList);
     }
 
-
     public Object getHandler() {
         return this.handler;
     }
@@ -39,21 +35,17 @@ public class HandlerExecutionChain {
         this.interceptorList.add(interceptor);
     }
 
-
     public void addInterceptor(int index, HandlerInterceptor interceptor) {
         this.interceptorList.add(index, interceptor);
     }
-
 
     public void addInterceptors(HandlerInterceptor... interceptors) {
         CollectionUtils.mergeArrayIntoCollection(interceptors,interceptorList);
     }
 
-
     public HandlerInterceptor[] getInterceptors() {
         return (!this.interceptorList.isEmpty() ? this.interceptorList.toArray(new HandlerInterceptor[0]) : null);
     }
-
 
     public List<HandlerInterceptor> getInterceptorList() {
         return (!this.interceptorList.isEmpty() ? Collections.unmodifiableList(this.interceptorList) :
@@ -74,7 +66,6 @@ public class HandlerExecutionChain {
         return true;
     }
 
-
     public void applyPostHandle(HttpServletRequest request, HttpServletResponse response)
             throws Exception{
         for (int i = interceptorIndex; i >= 0; i--) {
@@ -82,6 +73,4 @@ public class HandlerExecutionChain {
             interceptor.postHandle(request,response,handler);
         }
     }
-
-
 }

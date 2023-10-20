@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.nf.mvc.handler.HandlerHelper.json;
+
 @RequestMapping("/product")
 public class ProductController {
 
@@ -29,7 +31,7 @@ public class ProductController {
         System.out.println("pageNo = " + pageNo);
         System.out.println("pageSize = " + pageSize);
         System.out.println("size = " + size);
-        return new JsonViewResult(new ResponseVO(200,"ok",true));
+        return json(new ResponseVO(200,"ok",true));
 
     }
 

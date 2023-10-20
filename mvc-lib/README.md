@@ -25,6 +25,8 @@
 
 - HandlerHelper类里
 - MethodArgumentResolverComposite#addResolver与insertResolver方法
+- HandlerMethod的构造函数重载
+- HandlerExecutionChain类中添加拦截器的重载
 
 ### 重写
 
@@ -159,6 +161,7 @@ MethodArgumentResolverComposite
 
 - DispatcherServlet类
 - ExceptionHandlerExceptionResolver，特别留意resolveExceptionHandlerMethods方法
+- AbstractCommonTypeMethodArgumentResolver
 
 ## 适配器
 
@@ -178,8 +181,9 @@ MethodArgumentResolverComposite
 ## 流
 
 - MethodArgumentResolverComposite类的insertResolvers方法
-- com.nf.mvc.argument.ServletApiMethodArgumentResolver#supports
+- ServletApiMethodArgumentResolver#supports
 - com.nf.mvc.util.StringUtils#split
+- BeanPropertyMethodArgumentResolver#getResolvers
 
 ## 链式方法实现
 
@@ -198,6 +202,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 ## Ioc
 
 - @Inject
+- ReflectionUtils#injectConfigurationProperties
 
 ## yml解析与配置属性类
 
@@ -258,7 +263,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 - HandlerContext的ThreadLocal
 - BeanPropertyMethodArgumentResolver的getResolvers方法的synchronized语句块
 
-## 自定义ascii的log
+## ascii文本log
 
 - MvcApplication#printBanner
 

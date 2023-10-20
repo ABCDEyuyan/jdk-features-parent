@@ -74,7 +74,7 @@ public abstract class WebTypeConverterUtils {
         WebTypeConverter typeConverter = getTypeConverter(paramType);
 
         if (typeConverter == null) {
-            throw new UnsupportedOperationException("不支持对此类型" + paramType.getName() + "的类型转换");
+            throw new UnsupportedOperationException("不支持对此类型:" + paramType.getName() + "的类型转换");
         }
         try {
             return typeConverter.convert(requestParamValue);
