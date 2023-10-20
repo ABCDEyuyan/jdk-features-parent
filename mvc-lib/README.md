@@ -30,7 +30,7 @@
 
 ### 重写
 
-- ExceptionHandlersExceptionResolver类型体系中有重写
+- ExceptionHandlersExceptionResolver类的resolveExceptionHandlerMethods方法
 
 ### 静态方法
 
@@ -302,3 +302,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - com.nf.mvc.DispatcherServlet#noHandlerFound
 - com.nf.mvc.MvcApplication#start
+
+## stack的运用
+
+- BeanPropertyMethodArgumentResolver#resolveArgument

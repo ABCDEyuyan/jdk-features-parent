@@ -41,14 +41,14 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerMethod &&
-                ((HandlerMethod) handler).getHandlerMethod() != null;
+                ((HandlerMethod) handler).getMethod() != null;
     }
 
     @Override
     public ViewResult handle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Object instance = handlerMethod.getHandlerObject();
-        Method method = handlerMethod.getHandlerMethod();
+        Method method = handlerMethod.getMethod();
 
         Object handlerResult = methodInvoker.invoke(instance, method, req);
         return adaptHandlerResult(handlerResult);

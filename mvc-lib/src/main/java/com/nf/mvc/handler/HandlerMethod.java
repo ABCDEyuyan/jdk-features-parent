@@ -20,45 +20,45 @@ import java.util.List;
  */
 public class HandlerMethod extends HandlerClass {
 
-    private Method handlerMethod;
+    private final  Method method;
 
     private MethodParameter[] methodParameters;
 
-    public HandlerMethod(Method handlerMethod) {
-        this(handlerMethod.getDeclaringClass(), handlerMethod);
+    public HandlerMethod(Method method) {
+        this(method.getDeclaringClass(), method);
     }
 
     /**
      * 这个构造函数几乎不会被用到，直接用第一个构造函数更方便
-     * @param handlerClass
-     * @param handlerMethod
+     * @param handlerClass handler方法所在的类
+     * @param method handler方法
      */
-    public HandlerMethod(Class<?> handlerClass, Method handlerMethod) {
+    public HandlerMethod(Class<?> handlerClass, Method method) {
         super(handlerClass);
-        this.handlerMethod = handlerMethod;
+        this.method = method;
         initMethodParameters();
     }
 
-    public HandlerMethod(Object handlerObject, Method handlerMethod) {
-        this(handlerObject.getClass(), handlerMethod);
+    public HandlerMethod(Object handlerObject, Method method) {
+        this(handlerObject.getClass(), method);
     }
 
     private void initMethodParameters() {
-        List<String> paramNames = ReflectionUtils.getParameterNames(handlerMethod);
-        int parameterCount = handlerMethod.getParameterCount();
+        List<String> paramNames = ReflectionUtils.getParameterNames(method);
+        int parameterCount = method.getParameterCount();
         methodParameters = new MethodParameter[parameterCount];
         for (int i = 0; i < parameterCount; i++) {
-            MethodParameter methodParameter = new MethodParameter(handlerMethod, i,paramNames.get(i));
+            MethodParameter methodParameter = new MethodParameter(method, i,paramNames.get(i));
             methodParameters[i] = methodParameter;
         }
     }
 
     public String getMethodName() {
-        return handlerMethod.getName();
+        return method.getName();
     }
 
-    public Method getHandlerMethod() {
-        return handlerMethod;
+    public Method getMethod() {
+        return method;
     }
 
     public MethodParameter[] getMethodParameters() {
@@ -66,7 +66,7 @@ public class HandlerMethod extends HandlerClass {
     }
 
     public int getParameterCount() {
-        return handlerMethod.getParameterCount();
+        return method.getParameterCount();
     }
 }
 

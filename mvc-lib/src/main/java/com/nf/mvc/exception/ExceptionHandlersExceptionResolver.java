@@ -44,7 +44,7 @@ public class ExceptionHandlersExceptionResolver extends ExceptionHandlerExceptio
         HandlerMethod mostMatchedHandlerMethod = null;
         Class<?> mostMatchedExceptionClass = null;
         for (HandlerMethod exHandleMethod : handlerMethods) {
-            Method method = exHandleMethod.getHandlerMethod();
+            Method method = exHandleMethod.getMethod();
             Class<? extends Exception>[] exceptionClasses = method.getDeclaredAnnotation(ExceptionHandlers.class).value();
             Class<?> matchedExceptionClass;
             for (Class<? extends Exception> exceptionClass : exceptionClasses) {

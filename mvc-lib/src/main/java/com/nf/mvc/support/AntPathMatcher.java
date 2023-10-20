@@ -54,7 +54,7 @@ public class AntPathMatcher implements PathMatcher {
    */
   private static final String PATH_VARIABLE_PATTERN = "\\{.*?\\}";
   private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
-  private static final int LENGTH_OF_TWO_PATTERN_CHAR = 2;
+  private static final int LENGTH_OF_SLASH_ASTERISK = 2;
 
   private final char pathSeparator;
   private final boolean ignoreCase;
@@ -79,7 +79,7 @@ public class AntPathMatcher implements PathMatcher {
     } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
       if (matchStart) {
         return true;
-      } else if (pattern.length() == LENGTH_OF_TWO_PATTERN_CHAR && pattern.charAt(1) == ASTERISK) {
+      } else if (pattern.length() == LENGTH_OF_SLASH_ASTERISK && pattern.charAt(1) == ASTERISK) {
         return false;
       }
       return isMatch(pattern.substring(1), path);
@@ -139,7 +139,7 @@ public class AntPathMatcher implements PathMatcher {
   private boolean doubleAsteriskMatch(final String pattern, final String path) {
     if (pattern.charAt(1) != ASTERISK) {
       return false;
-    } else if (pattern.length() > LENGTH_OF_TWO_PATTERN_CHAR) {
+    } else if (pattern.length() > LENGTH_OF_SLASH_ASTERISK) {
       return isMatch(pattern.substring(3), path);
     }
     return false;

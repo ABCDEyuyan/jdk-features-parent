@@ -33,7 +33,7 @@ public class ParameterizedExceptionHandlersExceptionResolver extends ExceptionHa
 
     MethodInvoker methodInvoker = new MethodInvoker(argumentResolver);
     Object instance = exceptionHandlerMethod.getHandlerObject();
-    Method method = exceptionHandlerMethod.getHandlerMethod();
+    Method method = exceptionHandlerMethod.getMethod();
 
     return methodInvoker.invoke(instance, method, request);
   }
