@@ -95,7 +95,7 @@ public interface MethodArgumentResolver {
 ### catch后又抛出
 
 - 见DispatcherServlet类的rejectRequest
-- WebTypeConverterUtils的toSimpleTypeValue方法
+- WebTypeConverters的toSimpleTypeValue方法
 
 ### catch里什么都没写
 
@@ -145,7 +145,7 @@ HandlerExecutionChain
 
 三个地方使用了缓存
 
-- WebTypeConverterUtils
+- WebTypeConverters
 - RequestMappingHandlerMapping
 - MethodArgumentResolverComposite
 
@@ -252,7 +252,6 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 ## equals与hashcode重写
 
 - MethodParameter:这里对equals的重写有注释说明
-- AntPathMatcher
 
 ## 递归
 
@@ -262,6 +261,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - HandlerContext的ThreadLocal
 - BeanPropertyMethodArgumentResolver的getResolvers方法的synchronized语句块
+- WebTypeConverters里的ConcurrentHashMap的使用
 
 ## ascii文本log
 
@@ -306,3 +306,12 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 ## stack的运用
 
 - BeanPropertyMethodArgumentResolver#resolveArgument
+
+## 内部类
+
+- AntPathMatcher
+- ServletApiMethodArgumentResolver
+
+## 代码块
+
+- WebTypeConverters

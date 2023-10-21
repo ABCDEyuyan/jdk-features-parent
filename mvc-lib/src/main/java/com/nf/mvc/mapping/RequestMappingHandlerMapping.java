@@ -42,13 +42,8 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * @see RequestMapping
  */
 public class RequestMappingHandlerMapping implements HandlerMapping {
-
-    private static final PathMatcher DEFAULT_PATH_MATCHER = new AntPathMatcher.Builder().build();
-
     private Map<String, HandlerMethod> handlers = new HashMap<>();
-
-    private PathMatcher pathMatcher = new AntPathMatcher.Builder().build();
-
+    private PathMatcher pathMatcher = AntPathMatcher.DEFAULT_PATH_MATCHER;
     Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
