@@ -2,6 +2,7 @@ package com.nf.mvc.argument;
 
 import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.support.AntPathMatcher;
+import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.support.WebTypeConverters;
 import com.nf.mvc.util.RequestUtils;
 
@@ -15,7 +16,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * <p>此参数解析器最好放置在{@link SimpleTypeMethodArgumentResolver}之前使用</p>
  */
 public class PathVariableMethodArgumentResolver implements MethodArgumentResolver {
-  private AntPathMatcher pathMatcher = AntPathMatcher.DEFAULT_PATH_MATCHER;
+  private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
   @Override
   public boolean supports(MethodParameter parameter) {
     return parameter.isPresent(PathVariable.class) && parameter.isSimpleType();

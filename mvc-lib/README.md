@@ -73,6 +73,7 @@
 - AntPathMatcher
 - Delimiters
 - com.nf.mvc.util.ReflectionUtils#isSetter
+- com.nf.mvc.support.AntPathMatcher#validateDoubleAsterisk
 
 ## 静态方法导入的运用
 - HandlerHelper
@@ -315,3 +316,8 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 ## 代码块
 
 - WebTypeConverters
+
+## 文档化注释
+
+- AntPathMatcher：这里有*的转译、@的转译、代码块、无序列表、see 、方法引用、类引用等
+- 

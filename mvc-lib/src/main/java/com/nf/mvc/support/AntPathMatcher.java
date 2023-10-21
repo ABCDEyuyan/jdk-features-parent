@@ -37,9 +37,15 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  *   <li>trimTokens:删除前后空白,默认是false</li>
  *   <li>matchStart:模式前面部分匹配路径就算匹配,默认值是false</li>
  * </ul>
- * 关于matchStart的含义,下面一个示例代码解释了其具体含义,其中pathMatcher2设置matchStart为true,
+ * <h3>基本使用</h3>
+ * <ul>
+ *   <li>调用{@link AntPathMatcher#isMatch(String, String)}判断字符串是否符合模式</li>
+ *   <li>调用{@link AntPathMatcher#extractPathVariables(String, String)}提取路径变量数据</li>
+ * </ul>
+ * <h3>matchStart</h3>
+ * <p>关于matchStart的含义,下面一个示例代码解释了其具体含义,其中pathMatcher2设置matchStart为true,
  * 可以看到当设置matchStart位true之后,整个路径只要与pattern对应的前面部分匹配,模式即使多了一些内容,
- * 比如这里的d这一部分,也算是匹配
+ * 比如这里的d这一部分,也算是匹配</p>
  * <pre class="code">
  *         AntPathMatcher pathMatcher = new AntPathMatcher.Builder().build();
  *         String pattern = "a/&#042;/c/d";
@@ -57,11 +63,14 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  * <a href="https://www.nationalfinder.com/html/char-asc.htm">html ascii码字母,文档注释中*的转译</a>
  * <a href="https://wangwl.net/static/projects/visualRegex#">正则表达式可视化与语义解释</a>
  *
+ * @see com.nf.mvc.support.PathMatcher
+ * @see EqualIgnoreCasePathMatcher
+ * @see EqualPathMatcher
+ * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
+ * @see com.nf.mvc.argument.PathVariableMethodArgumentResolver
  * @author cj
  */
 public class AntPathMatcher implements PathMatcher {
-  public static final AntPathMatcher DEFAULT_PATH_MATCHER = new AntPathMatcher.Builder().build();
-
   private static final char ASTERISK = '*';
   private static final char SLASH = '/';
   private static final char QUESTION = '?';
@@ -138,6 +147,7 @@ public class AntPathMatcher implements PathMatcher {
    * @param path    路径
    * @return 包含各个路径变量及其值的Map
    */
+  @Override
   public Map<String, String> extractPathVariables(String pattern, String path) {
     validateDoubleAsterisk(pattern);
 
