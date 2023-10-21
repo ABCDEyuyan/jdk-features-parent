@@ -26,11 +26,11 @@ public class ProductController {
     private MyConfigurationProperties1 config1;
 //list/2/5
     @RequestMapping("/list/{pageno}/{pagesize}")
-    public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize,int size){
+    public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize){
         System.out.println("=========PathVariable测试============");
         System.out.println("pageNo = " + pageNo);
         System.out.println("pageSize = " + pageSize);
-        System.out.println("size = " + size);
+
         return json(new ResponseVO(200,"ok",true));
 
     }
