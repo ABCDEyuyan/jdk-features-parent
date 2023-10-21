@@ -3,7 +3,7 @@ package com.nf.mvc.argument;
 import com.nf.mvc.MethodArgumentResolver;
 import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.util.RequestUtils;
-import com.nf.mvc.util.WebTypeConverterUtils;
+import com.nf.mvc.support.WebTypeConverters;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -33,6 +33,6 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
     String varName = parameter.getParameter().getDeclaredAnnotation(PathVariable.class).value();
 
     String value = variables.get(varName);
-    return WebTypeConverterUtils.getTypeConverter(parameter.getParameterType()).convert(value);
+    return WebTypeConverters.getTypeConverter(parameter.getParameterType()).convert(value);
   }
 }

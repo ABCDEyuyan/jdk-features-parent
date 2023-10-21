@@ -95,7 +95,7 @@ public interface MethodArgumentResolver {
 ### catch后又抛出
 
 - 见DispatcherServlet类的rejectRequest
-- WebTypeConverterUtils的toSimpleTypeValue方法
+- WebTypeConverters的toSimpleTypeValue方法
 
 ### catch里什么都没写
 
@@ -145,7 +145,7 @@ HandlerExecutionChain
 
 三个地方使用了缓存
 
-- WebTypeConverterUtils
+- WebTypeConverters
 - RequestMappingHandlerMapping
 - MethodArgumentResolverComposite
 

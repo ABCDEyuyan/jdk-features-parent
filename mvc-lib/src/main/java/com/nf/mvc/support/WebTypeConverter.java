@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  *     建议:实现类不需要处理null值，转换过程中发生的异常转换为RuntimeException直接抛出即可
  * </p>
  *
- * @see com.nf.mvc.util.WebTypeConverterUtils
+ * @see WebTypeConverters
  * @see SimpleTypeMethodArgumentResolver
  */
 public interface WebTypeConverter {
