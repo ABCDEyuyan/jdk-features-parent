@@ -6,6 +6,7 @@ import com.nf.mvc.util.ReflectionUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
 
 /**
  * 此类是某个方法的某一个参数的封装类，里面主要封装了
@@ -119,6 +120,15 @@ public class MethodParameter {
 
     public boolean isSimpleType() {
         return ReflectionUtils.isSimpleType( getParameterType());
+    }
+
+    /**
+     * 判断方法的参数是不是一个参数化的类型，比如List<String>这种写法就是一个参数化类型，
+     * 也就是一个泛型实参化的类型
+     * @return
+     */
+    public boolean isParameterizedType(){
+        return getParameter().getParameterizedType() instanceof ParameterizedType;
     }
 
     public Class<?> getComponentType() {

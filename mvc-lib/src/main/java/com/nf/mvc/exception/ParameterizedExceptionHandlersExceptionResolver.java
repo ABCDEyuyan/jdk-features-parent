@@ -14,10 +14,10 @@ import java.lang.reflect.Method;
  * 此异常解析器需要与{@link  ExceptionHandlers}注解配合使用
  * <h3>典型用法</h3>
  * <pre class="code">
- *    &#064;ExceptionHandlers(ArithmeticException.class)
- *    public JsonViewResult handleArithmeticException(String a,ArithmeticException re){
+ *    &#064;ExceptionHandlers({AException.class,BException.class})
+ *    public JsonViewResult handleArithmeticException(String a,AException re){
  *        System.out.println("异常处理方法参数a = " + a);
- *        return new JsonViewResult(new ResponseVO(10002,"算术异常:" + re.getMessage(),"算数--"));
+ *        return new JsonViewResult(new ResponseVO(10002,"异常消息:" + re.getMessage(),"a异常--"));
  *    }
  * </pre>
  * <h3>功能限制</h3>
@@ -33,7 +33,7 @@ public class ParameterizedExceptionHandlersExceptionResolver extends ExceptionHa
 
     MethodInvoker methodInvoker = new MethodInvoker(argumentResolver);
     Object instance = exceptionHandlerMethod.getHandlerObject();
-    Method method = exceptionHandlerMethod.getHandlerMethod();
+    Method method = exceptionHandlerMethod.getMethod();
 
     return methodInvoker.invoke(instance, method, request);
   }

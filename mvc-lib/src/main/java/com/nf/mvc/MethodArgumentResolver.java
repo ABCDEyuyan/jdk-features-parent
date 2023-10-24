@@ -1,9 +1,6 @@
 package com.nf.mvc;
 
-import com.nf.mvc.argument.BeanPropertyMethodArgumentResolver;
-import com.nf.mvc.argument.MethodArgumentResolverComposite;
-import com.nf.mvc.argument.MethodParameter;
-import com.nf.mvc.argument.RequestBodyMethodArgumentResolver;
+import com.nf.mvc.argument.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  * @see com.nf.mvc.argument.RequestParam
  * @see RequestBodyMethodArgumentResolver
  * @see com.nf.mvc.argument.MultipartFileMethodArgumentResolver
- * @see com.nf.mvc.argument.SimpleTypeMethodArguementResolver
+ * @see SimpleTypeMethodArgumentResolver
  * @see BeanPropertyMethodArgumentResolver
  */
 public interface MethodArgumentResolver {

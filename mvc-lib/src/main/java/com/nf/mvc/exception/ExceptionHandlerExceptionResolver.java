@@ -154,10 +154,10 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
    */
   protected void postHandleExceptionHandlerMethods(List<HandlerMethod> exHandlerMethods) {
     exHandlerMethods.sort((m1, m2) ->
-            m1.getHandlerMethod()
+            m1.getMethod()
                     .getDeclaredAnnotation(ExceptionHandler.class)
                     .value()
-                    .isAssignableFrom(m2.getHandlerMethod()
+                    .isAssignableFrom(m2.getMethod()
                             .getDeclaredAnnotation(ExceptionHandler.class)
                             .value()) ? 1 : -1);
   }
@@ -199,7 +199,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
   protected HandlerMethod findMostMatchedHandlerMethod(List<HandlerMethod> handlerMethods, Exception exception) {
     HandlerMethod matchedHandlerMethod = null;
     for (HandlerMethod handlerMethod : handlerMethods) {
-      Method method = handlerMethod.getHandlerMethod();
+      Method method = handlerMethod.getMethod();
       Class<?> exceptionClass = method.getDeclaredAnnotation(ExceptionHandler.class)
               .value();
       if (exceptionClass.isAssignableFrom(exception.getClass())) {
@@ -211,7 +211,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
   }
 
   protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception raisedException, HttpServletRequest request) throws Exception {
-    Method method = exceptionHandlerMethod.getHandlerMethod();
+    Method method = exceptionHandlerMethod.getMethod();
     Object instance = exceptionHandlerMethod.getHandlerObject();
     return method.invoke(instance, raisedException);
   }

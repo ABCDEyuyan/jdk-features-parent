@@ -10,7 +10,6 @@ import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -43,13 +42,8 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * @see RequestMapping
  */
 public class RequestMappingHandlerMapping implements HandlerMapping {
-
-    private static final PathMatcher DEFAULT_PATH_MATCHER = new AntPathMatcher.Builder().build();
-
     private Map<String, HandlerMethod> handlers = new HashMap<>();
-
-    private PathMatcher pathMatcher = new AntPathMatcher.Builder().build();
-
+    private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
     Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
@@ -84,17 +78,16 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = RequestUtils.getRequestUrl(request);
-        /* get方法的第二个参数是在缓存中没有对应的key值执行的函数，其返回值会自动放置到缓存中
+        /* get方法的第二个参数是在缓存中没有对应的key时执行的函数，其返回值会自动放置到缓存中
         * 如果返回值是null，那么不会放置到缓存中。
         * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
-        HandlerExecutionChain chain = cache.get(requestUrl,k->{
+        return cache.get(requestUrl, k->{
             HandlerMethod handler = getHandlerInternal(requestUrl);
             if (handler != null) {
                return new HandlerExecutionChain(handler, getInterceptors(request));
             }
             return null;
         });
-        return chain;
     }
 
     protected HandlerMethod getHandlerInternal(String requestUrl) {
@@ -102,7 +95,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
         Set<String> keys = handlers.keySet();
         List<String> patternKeys = new ArrayList<>(keys);
-        Collections.sort(patternKeys,getPathMatcher().getPatternComparator(requestUrl));
+        patternKeys.sort(getPathMatcher().getPatternComparator(requestUrl));
 
         for (String key : patternKeys) {
             if (getPathMatcher().isMatch(key, requestUrl)) {
@@ -124,7 +117,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 Intercepts annotation = interceptorClass.getDeclaredAnnotation(Intercepts.class);
                 String[] includesPattern = annotation.value();
                 String[] excludesPattern = annotation.excludePattern();
-                if (shouldApply(requestUrl,includesPattern ) == true && shouldApply(requestUrl,excludesPattern) == false) {
+                if (shouldApply(requestUrl, includesPattern) && !shouldApply(requestUrl, excludesPattern)) {
                     result.add(interceptor);
                 }
             }else{
@@ -132,7 +125,6 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 result.add(interceptor);
             }
         }
-
         return result;
     }
 
@@ -150,7 +142,10 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return shouldApply;
     }
 
-
+    /**
+     * 可以通过实现自定义的{@link MvcConfigurer}来配置此HandlerMapping的PathMatcher
+     * @param pathMatcher 路径匹配器
+     */
     public void setPathMatcher(PathMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
     }

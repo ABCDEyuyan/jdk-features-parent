@@ -26,14 +26,14 @@ public interface HandlerMapping {
      * 交给下一个HandlerMapping去处理
      * @param request：当前请求
      * @return 请求处理的执行链
-     * @throws Exception
+     * @throws Exception 获取Handler过程中抛出的异常
      */
     HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception;
 
     /**
      * 默认的拦截器实现，这种实现是把所有的拦截器都应用到当前请求中去，并不考虑请求地址与注解Interceptors的情况
-     * @param request
-     * @return
+     * @param request servlet请求对象
+     * @return 所有当前请求的拦截器
      */
     default List<HandlerInterceptor> getInterceptors(HttpServletRequest request){
         return MvcContext.getMvcContext().getCustomHandlerInterceptors();

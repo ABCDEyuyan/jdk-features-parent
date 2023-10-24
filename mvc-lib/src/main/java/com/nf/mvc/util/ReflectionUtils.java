@@ -4,16 +4,13 @@ import com.nf.mvc.MvcContext;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.ioc.Injected;
+import javassist.Modifier;
 import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -32,24 +29,24 @@ public abstract class ReflectionUtils {
      * ==符号表示指向的是同一个对象，equals表示的内容相等，简单来说，==是true就表示两者完全一样，
      * 那么equals也肯定是true，但equals是true不一定==也是true
      */
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(9);
+    private static final Map<Class<?>, Class<?>> WRAPPER_TYPE_TO_PRIMITIVE_MAP = new IdentityHashMap<>(9);
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(9);
 
-    private static final String GETTER_METHOD_NAME = "^get[A-Z].*";
-    private static final String GETTER_IS_METHOD_NAME = "^is[A-Z].*";
-    private static final String SETTER_METHOD_NAME = "^set[A-Z].*";
+    private static final String GETTER_METHOD_Pattern = "^get[A-Z].*";
+    private static final String GETTER_IS_METHOD_Pattern = "^is[A-Z].*";
+    private static final String SETTER_METHOD_Pattern = "^set[A-Z].*";
     static {
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Float.class, float.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(Void.class, void.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Boolean.class, boolean.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Byte.class, byte.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Character.class, char.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Double.class, double.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Float.class, float.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Integer.class, int.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Long.class, long.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Short.class, short.class);
+        WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Void.class, void.class);
 
-        for (Map.Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPER_TYPE_MAP.entrySet()) {
+        for (Map.Entry<Class<?>, Class<?>> entry : WRAPPER_TYPE_TO_PRIMITIVE_MAP.entrySet()) {
             PRIMITIVE_TYPE_TO_WRAPPER_MAP.put(entry.getValue(), entry.getKey());
         }
     }
@@ -60,13 +57,13 @@ public abstract class ReflectionUtils {
      * <h3>使用地方</h3>
      * <p>整个mvc框架都用的这个方法来创建被mvc管理的类的对象，主要使用的地方有以下几个
      * <ul>
-     *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class)},这些类型是单例的</li>
+     *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class, Class, List)},这些类型是单例的</li>
      *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)},这些实例是原型的</li>
      *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()},这些实例是原型的</li>
      * </ul>
      * </p>
-     * @param clz
-     * @return
+     * @param clz 用来实例化的class
+     * @return 此class的实例
      */
     public static <T> T newInstance(Class<? extends T> clz) {
         T instance ;
@@ -82,8 +79,8 @@ public abstract class ReflectionUtils {
     /**
      * 此方法目前只是用来注入配置属性类使用的
      * <p>此方法本不应该写在这里,因为它与注入有关,但不想增加复杂性,也不想给mvc框架提供ioc的能力,就简单注入配置属性类,所以就写在了这里</p>
-     * @param instance
-     * @param <T>
+     * @param instance 某个需要注入配置属性的实例
+     * @param <T> 实例的类型
      * @throws IllegalAccessException
      */
     private static <T> void injectConfigurationProperties(T instance) throws IllegalAccessException {
@@ -173,13 +170,11 @@ public abstract class ReflectionUtils {
 
         for (Parameter parameter : parameters) {
             if (!parameter.isNamePresent()) {
-                throw new IllegalArgumentException("编译的时候需要指定-parameters选项");
+                throw new IllegalStateException("编译的时候需要指定-parameters选项");
             }
-
             String parameterName = parameter.getName();
             parameterNames.add(parameterName);
         }
-
         return parameterNames;
     }
 
@@ -200,17 +195,17 @@ public abstract class ReflectionUtils {
         return Modifier.isPublic(method.getModifiers()) &&
                 method.getReturnType().equals(void.class) &&
                 method.getParameterTypes().length == 1 &&
-                method.getName().matches(SETTER_METHOD_NAME);
+                method.getName().matches(SETTER_METHOD_Pattern);
     }
 
     public static boolean isGetter(Method method) {
         if (Modifier.isPublic(method.getModifiers()) &&
                 method.getParameterTypes().length == 0) {
-            if (method.getName().matches(GETTER_METHOD_NAME) &&
+            if (method.getName().matches(GETTER_METHOD_Pattern) &&
                     !method.getReturnType().equals(void.class)) {
                 return true;
             }
-            if (method.getName().matches(GETTER_IS_METHOD_NAME) &&
+            if (method.getName().matches(GETTER_IS_METHOD_Pattern) &&
                     method.getReturnType().equals(boolean.class)) {
                 return true;
             }
@@ -233,7 +228,7 @@ public abstract class ReflectionUtils {
 
     /**
      * 通常指的就是我们自己写的pojo类，比如Emp
-     * 判断是”不严谨“的，比如我们自己写的一个Servlet的类，它也是返回true
+     * 判断是<b><i>不严谨</i></b>的，比如我们自己写的一个Servlet的类，它也是返回true
      * <p>
      * 这个方法的初衷是想让我们自己写的pojo类才返回true
      * 我们的pojo类通常不继承任何父类，就是普通的属性的封装
@@ -247,13 +242,12 @@ public abstract class ReflectionUtils {
 
     /**
      * 判断是否是简单类型的数组，比如int[],Integer[],Date[]
-     * @param type
-     * @return
+     * @param type 数据类型
+     * @return 简单类型就返回true，否则返回false
      */
     public static boolean isSimpleTypeArray(Class<?> type) {
         return type.isArray() && isSimpleType(type.getComponentType());
     }
-
 
     public static boolean isSimpleCollection(Class<?> type) {
         return isAssignable(List.class, type) ||
@@ -269,8 +263,8 @@ public abstract class ReflectionUtils {
         return isAssignable(Set.class, type);
     }
 
-    public static boolean isSimpleTypeCollection(Class<?> collectionType, Class<?> actualTypeParam) {
-        return isSimpleCollection(collectionType) && isSimpleType(actualTypeParam);
+    public static boolean isSimpleTypeCollection(Class<?> collectionType, Class<?> actualParamType) {
+        return isSimpleCollection(collectionType) && isSimpleType(actualParamType);
     }
 
     public static boolean isSimpleTypeList(Class<?> listType, Class<?> actualTypeParam) {
@@ -287,6 +281,7 @@ public abstract class ReflectionUtils {
         return Collection.class.isAssignableFrom(type) ||
                 Map.class.isAssignableFrom(type);
     }
+
 
     /**
      * 如果是基本类型、包装类型或者date，number等等就认为是简单类型
@@ -318,7 +313,7 @@ public abstract class ReflectionUtils {
      * @return
      */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
-        return PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz);
+        return WRAPPER_TYPE_TO_PRIMITIVE_MAP.containsKey(clazz);
     }
 
 
@@ -350,7 +345,7 @@ public abstract class ReflectionUtils {
             return true;
         }
         if (lhsType.isPrimitive()) {
-            Class<?> resolvedPrimitive = PRIMITIVE_WRAPPER_TYPE_MAP.get(rhsType);
+            Class<?> resolvedPrimitive = WRAPPER_TYPE_TO_PRIMITIVE_MAP.get(rhsType);
             return (lhsType == resolvedPrimitive);
         } else {
             Class<?> resolvedWrapper = PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(rhsType);

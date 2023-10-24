@@ -39,7 +39,7 @@ public class HandlerHelper {
     }
 
     public static ForwardViewResult forward(String url) {
-        return new ForwardViewResult(url);
+        return forward(url, new HashMap<>());
     }
 
     public static ForwardViewResult forward(String url,Map<String, Object> model) {
@@ -47,7 +47,7 @@ public class HandlerHelper {
     }
 
     public static RedirectViewResult redirect(String url) {
-        return new RedirectViewResult(url);
+        return redirect(url, new HashMap<>());
     }
 
     public static RedirectViewResult redirect(String url,Map<String,String> model) {
@@ -71,7 +71,7 @@ public class HandlerHelper {
     }
 
     public static StreamViewResult stream(InputStream inputStream) {
-        return new StreamViewResult(inputStream);
+        return stream(inputStream, new HashMap<>());
     }
 
     public static StreamViewResult stream(InputStream inputStream, Map<String,String> headers) {

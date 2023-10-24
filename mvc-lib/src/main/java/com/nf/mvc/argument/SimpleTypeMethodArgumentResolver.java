@@ -1,7 +1,7 @@
 package com.nf.mvc.argument;
 
 import com.nf.mvc.util.ReflectionUtils;
-import com.nf.mvc.util.WebTypeConverterUtils;
+import com.nf.mvc.support.WebTypeConverters;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
  *     如果从请求端获取不到数据，就采用注解@RequestParam指定的默认值
  * </p>
  * @see ReflectionUtils
- * @see WebTypeConverterUtils
+ * @see WebTypeConverters
  */
-public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodArgumentResolver {
+public class SimpleTypeMethodArgumentResolver extends AbstractCommonTypeMethodArgumentResolver {
     @Override
     protected boolean supportsInternal(Class<?> scalarType) {
         return ReflectionUtils.isSimpleType(scalarType);
@@ -34,7 +34,7 @@ public class SimpleTypeMethodArguementResolver extends AbstractCommonTypeMethodA
         // 值不为null才进行类型转换，这个不为null的值可能是从请求端获取的，也可能是默认值提供的。注解提供的默认值也是需要进行类型转换的
         // 转换是可能失败的，比如把字符串abc值转换为整数，所以这里是可能抛异常的
         if (value != null) {
-            value =  WebTypeConverterUtils.toSimpleTypeValue(scalarType, value.toString());
+            value =  WebTypeConverters.toSimpleTypeValue(scalarType, value.toString());
         }
         // 这里返回的可能是null或者类型转换成功后的数据,value是null赋值给非基本类型是没有问题的
         return value;

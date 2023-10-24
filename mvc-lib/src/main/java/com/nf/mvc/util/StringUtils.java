@@ -1,13 +1,6 @@
 package com.nf.mvc.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,8 +39,8 @@ public abstract class StringUtils {
   }
 
   /**
-   * 把一个字符串转换成驼峰命名规范的字符串，比如get_by_id转换成getById
-   *
+   * 把一个字符串转换成驼峰命名的字符串，在指定的分隔符处进行处理。
+   * 比如text="get_by_id",delimiter="_",那么转换结果就是"getById"
    * @param text      要进行转换的字符串
    * @param delimiter 分隔符，通常是下划线，空格之类的字符
    * @return 驼峰规范的字符串
@@ -74,6 +67,12 @@ public abstract class StringUtils {
     return (str != null && str.length() > 0);
   }
 
+  /**
+   * 判断字符串是否有数据，其中空白字符是不算有数据的，
+   * 空白字符由方法{@link Character#isWhitespace(char)}决定
+   * @param str 字符串数据
+   * @return 有内容就是true否则就是false
+   */
   public static boolean hasText(String str) {
     return (str != null && !str.isEmpty() && containsText(str));
   }
@@ -88,6 +87,12 @@ public abstract class StringUtils {
     return false;
   }
 
+  /**
+   * 此方法返回第一个非空白字符的索引位置，字符串中间有空格是不处理的，
+   * 比如"   abc"这个字符串前面有3个空格，那么调用此方法后返回值是3，
+   * @param str 字符串数据
+   * @return 返回第一个非空白字符的索引位置
+   */
   public static int skipBlanks(String str) {
     int pointer = 0;
     while (!str.isEmpty() && pointer < str.length() && str.charAt(pointer) == BLANK) {
@@ -96,6 +101,11 @@ public abstract class StringUtils {
     return pointer;
   }
 
+  /**
+   * 字符串中任何位置有空白字符就返回true
+   * @param str 字符串数据
+   * @return 有空白字符就返回true，否则返回false
+   */
   public static boolean containsWhitespace(CharSequence str) {
     if (!hasLength(str)) {
       return false;
@@ -115,8 +125,7 @@ public abstract class StringUtils {
   }
 
   /**
-   * Trim leading whitespace from the given {@code String}.
-   *
+   * 删除字符串前面的空白
    * @param str the {@code String} to check
    * @return the trimmed {@code String}
    * @see java.lang.Character#isWhitespace
@@ -134,8 +143,7 @@ public abstract class StringUtils {
   }
 
   /**
-   * Trim trailing whitespace from the given {@code String}.
-   *
+   * 删除字符串尾部的空白
    * @param str the {@code String} to check
    * @return the trimmed {@code String}
    * @see java.lang.Character#isWhitespace
@@ -153,8 +161,7 @@ public abstract class StringUtils {
   }
 
   /**
-   * Trim all occurrences of the supplied leading character from the given {@code String}.
-   *
+   * 删除字符串前面所有指定的字符
    * @param str              the {@code String} to check
    * @param leadingCharacter the leading character to be trimmed
    * @return the trimmed {@code String}
@@ -172,8 +179,7 @@ public abstract class StringUtils {
   }
 
   /**
-   * Trim all occurrences of the supplied trailing character from the given {@code String}.
-   *
+   * 删除字符串后面所有指定的字符
    * @param str               the {@code String} to check
    * @param trailingCharacter the trailing character to be trimmed
    * @return the trimmed {@code String}
@@ -192,7 +198,6 @@ public abstract class StringUtils {
 
   /**
    * 裁剪掉所有的空白字符，包含前部，中间，尾部的所有空白
-   *
    * @param str
    * @return
    */
@@ -302,7 +307,7 @@ public abstract class StringUtils {
     return path.substring(extIndex + 1);
   }
 
-  public static boolean isNumeric(final CharSequence str) {
+  public static boolean isNumeric(CharSequence str) {
     if (str == null || str.length() == 0) {
       return false;
     }
@@ -341,9 +346,9 @@ public abstract class StringUtils {
    * </p>
    * <p>此方法的代码来自于spring框架中的同名方法源代码</p>
    *
-   * @param str
-   * @param delimiter
-   * @param charsToDelete
+   * @param str 要处理的字符串
+   * @param delimiter 分隔符字符串
+   * @param charsToDelete 要删除掉的字符串
    * @return
    */
   public static String[] delimitedListToStringArray(

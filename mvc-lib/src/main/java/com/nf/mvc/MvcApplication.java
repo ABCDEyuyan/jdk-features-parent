@@ -43,7 +43,10 @@ public class MvcApplication {
     public static final String BASE_PACKAGE = "basePackage";
     public static final String URL_PATTERN = "urlPattern";
 
-    private static final String CONTEXT_PATH_DEFAULT = "/mvc";
+    /**
+     * 上下文路径必须是空字符串或者以字符"/"开头但不以字符"/"结尾
+     */
+    private static final String CONTEXT_PATH_DEFAULT = "";
     private static final int PORT_DEFAULT = 8080;
     private static final String BASE_PACKAGE_DEFAULT = "mvcdemo";
     private static final String URL_PATTERN_DEFAULT = "/";

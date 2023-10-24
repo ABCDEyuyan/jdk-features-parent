@@ -16,6 +16,5 @@ public interface ScanUtils {
         classGraph.acceptPackages(packageNames);
         ScanResult scanResult = classGraph.scan();
         return scanResult;
-
     }
 }

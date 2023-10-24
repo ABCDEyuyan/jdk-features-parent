@@ -3,15 +3,20 @@ package com.nf.mvc.argument;
 import com.nf.mvc.MethodArgumentResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 import static com.nf.mvc.util.JacksonUtils.fromJson;
 
 /**
- * 此解析器只解析参数上有注解@RequestBody修饰的参数，
- * 普通的POJO类，Map,List集合类型是可以支持的，其它类型没有严格的测试过<br/>
- * 集合的反序列化参考了文章:<a href="https://stackoverflow.com/questions/9829403/deserialize-json-to-arraylistpojo-using-jackson">jackson反序列化为ArrayList</a>
+ * 此解析器只解析参数上有注解{@link RequestBody}修饰的参数
+ * <p>注意：此解析器是利用请求的输入流进行反序列化解析的，反序列化之后流就关闭了，
+ * 所以，不支持在方法有多个注解{@link RequestBody}修饰的参数,比如下面的写法：
+ * <pre class="code">
+ *   &#064;RequestMapping("/json")
+ *   public JsonViewResult json(@RequestBody Emp emp,@RequestBody List<Emp> empList){}
+ * </pre>
+ * </p>
  * @see RequestBody
+ * @see MethodParameter#isParameterizedType()
  */
 public class RequestBodyMethodArgumentResolver implements MethodArgumentResolver {
     @Override
@@ -21,13 +26,8 @@ public class RequestBodyMethodArgumentResolver implements MethodArgumentResolver
 
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-        if (parameter.isList()) {
-            //假定方法参数是List<Emp>的话，那么下面的actualTypeArgument变量指的就是Emp
-            Class<?> actualTypeArgument = parameter.getFirstActualTypeArgument();
-            //可以理解为实例化一个集合，比如new ArrayList<Emp>();
-            return fromJson(request.getInputStream(), List.class,actualTypeArgument);
-        } else {
-            return fromJson(request.getInputStream(), parameter.getParameterType());
-        }
+        return parameter.isParameterizedType() ?
+                fromJson(request.getInputStream(), parameter.getParameterType(), parameter.getActualArguments())
+                : fromJson(request.getInputStream(), parameter.getParameterType());
     }
 }

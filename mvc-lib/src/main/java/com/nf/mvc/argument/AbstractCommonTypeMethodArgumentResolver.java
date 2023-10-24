@@ -16,7 +16,7 @@ import java.util.List;
  * @author cj
  * @see RequestBodyMethodArgumentResolver
  * @see MultipartFileMethodArgumentResolver
- * @see SimpleTypeMethodArguementResolver
+ * @see SimpleTypeMethodArgumentResolver
  * @see ServletApiMethodArgumentResolver
  */
 public abstract class AbstractCommonTypeMethodArgumentResolver implements MethodArgumentResolver {
@@ -29,10 +29,11 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     /**
      * 这里加final修饰方法，是不想让子类重写，因为支持的情况就这三种，逻辑是固定的
+     *
      * @param parameter 方法参数
-     * @param request servlet请求对象
-     * @return
-     * @throws Exception
+     * @param request   servlet请求对象
+     * @return 返回解析之后的参数结果值
+     * @throws Exception 解析过程中可能抛出的异常
      */
     @Override
     public final Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
@@ -43,19 +44,7 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         Object[] source = getSource(parameter, request);
         /* 如果source为null，会返回一个长度为0的空数组，toObjectArray方法并不是一定要调用的，调用可以避免空引用与数组索引越界的异常 */
         Object[] objectArray = ObjectUtils.toObjectArray(source);
-
-     /*   // 关于if else的常见优化方案见https://www.cnblogs.com/jay-huaxiao/p/12586598.html
-          // 这里分支不多，保留if else写法显得更清晰，可以不用优化，比较有效的优化方式是利用三目运算符
-        if (isScalarType(parameter)) {
-            return resolveScalarType(parameter.getParameterType(), Array.getLength(objectArray) == 0 ? null : objectArray[0], parameter);
-        } else if (isScalarTypeArray(parameter)) {
-            return resolveScalarTypeArray(parameter.getComponentType(), objectArray, parameter);
-        } else if (isScalarTypeList(parameter)) {
-            return resolveScalarTypeList(parameter.getFirstActualTypeArgument(), objectArray, parameter);
-        }
-        // 代码基本不会走到这里，因为supports方法只会对通常的类型进行处理，在上面的几个if else分支都分别进行了处理
-        return null;*/
-
+        //用三目运算符取代if else
         return isScalarType(parameter) ? resolveScalarType(parameter.getParameterType(), Array.getLength(objectArray) == 0 ? null : objectArray[0], parameter)
                 : isScalarTypeArray(parameter) ? resolveScalarTypeArray(parameter.getComponentType(), objectArray, parameter)
                 : resolveScalarTypeList(parameter.getFirstActualTypeArgument(), objectArray, parameter);
@@ -63,7 +52,6 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     /**
      * 判断参数解析器是否支持指定的类型
-     *
      * @param scalarType 实际要处理的类型，比如方法参数是Integer类型，那么传递给此方法的type就是Integer.class,如果参数是Integer[]，那么type仍然是Integer.class
      *                   如果参数是List<Integer>,那么type仍然是Integer.class
      * @return true表示支持对此类型的解析
@@ -106,11 +94,12 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
     /**
      * 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
      * 那么在处理int[]这种简单类型数组作为控制器参数时，会导致报无法把简单类型数组转换为Object[]数组的异常的问题，所以没有把本类或这3个解析方法设计为泛型
-     * @param scalarType
-     * @param values
-     * @param parameter
-     * @return
-     * @throws Exception
+     *
+     * @param scalarType 标量（单个）类型，数组的成员类型或者泛型集合实参类型，比如List<String>的String
+     * @param values     参数值
+     * @param parameter  控制器方法参数
+     * @return 返回解析后的单个参数的值
+     * @throws Exception 解析过程中抛出的异常
      */
     private Object resolveScalarTypeArray(Class<?> scalarType, Object[] values, MethodParameter parameter) throws Exception {
         /* 如果数据源为null，那么length就=0，那么array就是一个长度为0的数组，并不会进入到循环里面执行真正的参数处理

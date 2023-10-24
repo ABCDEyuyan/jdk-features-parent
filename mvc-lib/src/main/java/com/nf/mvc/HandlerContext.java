@@ -44,13 +44,11 @@ public class HandlerContext {
 
     public static HandlerContext getContext(){
         //等于null表示当前线程没有一个本地的HandlerContext对象
-
         if (local.get() == null) {
             HandlerContext context = new HandlerContext();
             local.set(context);
         }
         return local.get();
-
     }
 
     HandlerContext setRequest(HttpServletRequest request) {

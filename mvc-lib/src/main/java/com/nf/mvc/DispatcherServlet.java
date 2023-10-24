@@ -289,7 +289,7 @@ public class DispatcherServlet extends HttpServlet {
         //RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArgumentResolver());
         argumentResolvers.add(new PathVariableMethodArgumentResolver());
-        argumentResolvers.add(new SimpleTypeMethodArguementResolver());
+        argumentResolvers.add(new SimpleTypeMethodArgumentResolver());
         argumentResolvers.add(new BeanPropertyMethodArgumentResolver());
 
         return argumentResolvers;
@@ -512,7 +512,7 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 设置编码的方法是在service方法里面第一个调用，如果已经从req
-     * 对象中获取数据了，再设置这个编码是无效
+     * 对象中获取数据了，再设置这个编码是无效的
      *
      * @param req
      * @param resp

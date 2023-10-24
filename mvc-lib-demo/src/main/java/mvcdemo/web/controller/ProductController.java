@@ -9,23 +9,29 @@ import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.view.JsonViewResult;
 import mvcdemo.MyConfigurationProperties1;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static com.nf.mvc.handler.HandlerHelper.json;
 
 @RequestMapping("/product")
 public class ProductController {
 
     @Injected
     private MyConfigurationProperties1 config1;
-
+//list/2/5
     @RequestMapping("/list/{pageno}/{pagesize}")
-    public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize,int size){
+    public JsonViewResult simple(@PathVariable("pageno") int pageNo,@PathVariable("pagesize") int pageSize){
         System.out.println("=========PathVariable测试============");
         System.out.println("pageNo = " + pageNo);
         System.out.println("pageSize = " + pageSize);
-        System.out.println("size = " + size);
-        return new JsonViewResult(new ResponseVO(200,"ok",true));
+
+        return json(new ResponseVO(200,"ok",true));
 
     }
 
@@ -61,15 +67,10 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",emp));
     }
 
-    @RequestMapping("/api")
-    public void m1(HttpServletRequest req){
-        System.out.println("================servlet API 参数解析器测试==================");
-        System.out.println("HandlerContext.getContext().getRequest().hashCode() = " + HandlerContext.getContext().getRequest().hashCode());
 
-    }
 
     @RequestMapping("/body")
-    public JsonViewResult json(@RequestBody Emp emp){
+    public JsonViewResult body(@RequestBody Emp emp){
         System.out.println("====================RequestBody的参数解析器测试 pojo类==================");
         System.out.println("emp = " + emp);
         return new JsonViewResult(new ResponseVO(200,"ok",true));
@@ -77,7 +78,7 @@ public class ProductController {
 
 
     @RequestMapping("/body2")
-    public JsonViewResult json2(@RequestBody List<Emp> emps){
+    public JsonViewResult body2(@RequestBody List<Emp> emps){
         System.out.println("====================RequestBody的参数解析器测试 List pojo类==================");
 
         //language=JSON
@@ -88,9 +89,19 @@ public class ProductController {
         return new JsonViewResult(new ResponseVO(200,"ok",true));
     }
 
-    /**是不能像下面这样写的，第二个参数反序列化会爆请求流已关闭的错误，因为反序列化是从请求流中读取数据的 */
     @RequestMapping("/body3")
-    public JsonViewResult json3(@RequestBody Emp emp,@RequestBody List<Emp> emps){
+    public JsonViewResult body3(@RequestBody Map<Integer,String> map){
+        System.out.println("====================RequestBody的参数解析器测试map类==================");
+
+     map.forEach((k,v)->{
+         System.out.println(k);
+         System.out.println(v);
+     });
+        return new JsonViewResult(new ResponseVO(200,"ok",true));
+    }
+    /**是不能像下面这样写的，第二个参数反序列化会爆请求流已关闭的错误，因为反序列化是从请求流中读取数据的 */
+    @RequestMapping("/body4")
+    public JsonViewResult body4(@RequestBody Emp emp,@RequestBody List<Emp> emps){
         System.out.println("emp = " + emp);
         System.out.println("emps.size() = " + emps.size());
         emps.forEach(System.out::println);
@@ -106,5 +117,11 @@ public class ProductController {
         String method = HandlerContext.getContext().getRequest().getMethod();
         System.out.println("method = " + method);
         System.out.println("/** 的优先级测试------");
+    }
+
+
+    @RequestMapping("/api")
+    public JsonViewResult api(HttpServletRequest req, HttpServletResponse resp, HttpSession session, ServletContext context){
+        return new JsonViewResult(new ResponseVO(200,"api 解析器ok",true));
     }
 }

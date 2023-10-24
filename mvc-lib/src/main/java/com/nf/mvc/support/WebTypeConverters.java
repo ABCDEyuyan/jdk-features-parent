@@ -1,8 +1,20 @@
-package com.nf.mvc.util;
+package com.nf.mvc.support;
 
 import com.nf.mvc.argument.MethodArgumentResolverComposite;
-import com.nf.mvc.support.WebTypeConverter;
-import com.nf.mvc.support.converter.*;
+import com.nf.mvc.support.converter.BigDecimalTypeConverter;
+import com.nf.mvc.support.converter.BooleanTypeConverter;
+import com.nf.mvc.support.converter.ByteTypeConverter;
+import com.nf.mvc.support.converter.CharacterTypeConverter;
+import com.nf.mvc.support.converter.DateTypeConverter;
+import com.nf.mvc.support.converter.DoubleTypeConverter;
+import com.nf.mvc.support.converter.FloatTypeConverter;
+import com.nf.mvc.support.converter.IntegerTypeConverter;
+import com.nf.mvc.support.converter.LocalDateTimeTypeConverter;
+import com.nf.mvc.support.converter.LocalDateTypeConverter;
+import com.nf.mvc.support.converter.LocalTimeTypeConverter;
+import com.nf.mvc.support.converter.LongTypeConverter;
+import com.nf.mvc.support.converter.ShortTypeConverter;
+import com.nf.mvc.support.converter.StringTypeConverter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,7 +24,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class WebTypeConverterUtils {
+public abstract class WebTypeConverters {
     /**
      * 这是一个最简单的缓存实现，因为静态变量在类加载时处理，一般只加载一次，静态代码块执行之后，这个map内容就不变了
      * 这块内容一直放置在内存中，所以从map中取值时，一直直接在内存中，可以“理解”为从缓存中取
@@ -74,7 +86,7 @@ public abstract class WebTypeConverterUtils {
         WebTypeConverter typeConverter = getTypeConverter(paramType);
 
         if (typeConverter == null) {
-            throw new UnsupportedOperationException("不支持对此类型" + paramType.getName() + "的类型转换");
+            throw new UnsupportedOperationException("不支持对此类型:" + paramType.getName() + "的类型转换");
         }
         try {
             return typeConverter.convert(requestParamValue);
