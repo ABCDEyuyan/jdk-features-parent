@@ -32,8 +32,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigurationProperties {
     /**
-     * 指定配置文件前缀用的
-     * @return
+     * 指定在yml配置文件前缀用的
+     * @return 前缀
      */
     String value();
 }

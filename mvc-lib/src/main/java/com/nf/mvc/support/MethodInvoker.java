@@ -25,8 +25,8 @@ public class MethodInvoker {
      * 这是处理静态方法调用的
      * @param method 代表一个静态方法
      * @param request 数据来源
-     * @return
-     * @throws Exception
+     * @return 方法执行之后的结果，void签名的方法反射调用后返回值为null
+     * @throws Exception 反射调用方法时可能抛出的异常
      */
     public Object invoke(Method method, HttpServletRequest request) throws Exception {
         return invoke(null, method, request);
@@ -37,8 +37,8 @@ public class MethodInvoker {
      * @param instance:实例方法所属的对象
      * @param method:代表一个实例方法
      * @param request:数据源
-     * @return
-     * @throws Exception
+     * @return 方法执行之后的结果，void签名的方法反射调用后返回值为null
+     * @throws Exception 反射调用方法时可能抛出的异常
      */
     public Object invoke(Object instance, Method method, HttpServletRequest request) throws Exception {
         List<String> paramNames = ReflectionUtils.getParameterNames(method);

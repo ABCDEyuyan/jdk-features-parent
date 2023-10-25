@@ -50,8 +50,8 @@ public class MethodParameter {
      */
     private Parameter parameter;
     private String parameterName;
-    private int parameterIndex;
-    private Class<?> containingClass;
+    private final int parameterIndex;
+    private final Class<?> containingClass;
 
     public MethodParameter(Method method, int parameterIndex, String parameterName) {
         this(method, parameterIndex, parameterName, method.getDeclaringClass());
@@ -83,7 +83,7 @@ public class MethodParameter {
     /**
      * 获取参数的名字，如果方法参数有注解RequestParam修饰，并指定了名字就以注解指定的为准，
      * 否则，靠反射解析方法参数名，这就需要在编译的时候添加-parameters选项
-     * @return
+     * @return 返回参数名
      */
     public String getParameterName() {
         // 参数上有注解，可能只是用来设置默认值，没有设置value
@@ -91,7 +91,7 @@ public class MethodParameter {
             String value = getParameter().getDeclaredAnnotation(RequestParam.class).value();
             // 没有设置value，value就会保留默认值，这个值我们不采用，仍然用方法的参数名（通过反射解析出来的）
             // 如果你有注解，并且设置了value，我们才采用value属性的值作为参数名
-            if (value.equals(ValueConstants.DEFAULT_NONE) == false) {
+            if (!value.equals(ValueConstants.DEFAULT_NONE)) {
                 this.parameterName = value;
             }
         }
@@ -125,7 +125,7 @@ public class MethodParameter {
     /**
      * 判断方法的参数是不是一个参数化的类型，比如List<String>这种写法就是一个参数化类型，
      * 也就是一个泛型实参化的类型
-     * @return
+     * @return true表示是一个泛型实参化的类型，否则是false
      */
     public boolean isParameterizedType(){
         return getParameter().getParameterizedType() instanceof ParameterizedType;
@@ -140,7 +140,7 @@ public class MethodParameter {
 
     /**
      * 这个方法主要是为了获取List<String>这样的方法参数的实参String这样的类型
-     * @return
+     * @return 返回第一个泛型实参类型
      */
     public Class<?> getFirstActualTypeArgument() {
         return getActualArguments()[0];
@@ -148,9 +148,9 @@ public class MethodParameter {
 
     /**
      * 此方法是用来获取方法泛型参数的类型实参的。
-     * @return
+     * @return 返回所有的泛型实参类型数组
      */
-    public  Class[] getActualArguments() {
+    public  Class<?>[] getActualArguments() {
         return ReflectionUtils.getActualArgument(getParameter());
     }
 

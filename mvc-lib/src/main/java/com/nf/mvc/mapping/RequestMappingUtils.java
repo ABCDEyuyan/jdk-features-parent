@@ -1,7 +1,6 @@
 package com.nf.mvc.mapping;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
 
 public abstract class RequestMappingUtils {
   /**

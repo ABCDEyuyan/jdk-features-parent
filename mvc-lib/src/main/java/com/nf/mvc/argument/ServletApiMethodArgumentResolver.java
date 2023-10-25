@@ -27,14 +27,15 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
      * 参数解析，是从请求中获取数据的，所以方法设计没有response对象是合理的
      * 但这样给我们带来一个解析的问题，无法获取到response对象
      * request与response对象必须来自于DispatcherServlet的service
-     * @param parameter
-     * @param request
-     * @return
-     * @throws Exception
+     * @param parameter MethodParameter
+     * @param request 请求对象
+     * @return 解析之后的值
+     * @throws Exception 解析过程中可能抛出的异常
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         Class<?> paramType = parameter.getParameterType();
+        // supports方法返回true才会调用resolveArgument方法，所以ServletApiEnum.of(paramType)不会返回null
         return ServletApiEnum.of(paramType).getValue();
     }
 
@@ -51,8 +52,8 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
         HttpSession(HttpSession.class,()-> getContext().getSession()),
         ServletContext(ServletContext.class,()-> getContext().getApplication());
 
-        private Class<?> supportedClass;
-        private Supplier<Object> valueSupplier;
+        private final Class<?> supportedClass;
+        private final Supplier<Object> valueSupplier;
 
         ServletApiEnum(Class<?> supportedClass, Supplier<Object> valueSupplier) {
             this.supportedClass = supportedClass;

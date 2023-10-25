@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class HtmlViewResult extends ViewResult {
-    private String html;
+    private final String html;
 
     public HtmlViewResult(String html) {
         this.html = html;

@@ -117,6 +117,10 @@ public interface MethodArgumentResolver {
 
 - com.nf.mvc.util.ReflectionUtils#newInstance
 
+### throws
+
+- NameConventionHandlerMapping#getHandler:此方法由于没有抛出异常，可以删掉方法签名上的throws语句，虽然与其实现的接口上的方法签名不一致，但是符合java语法规则的。但不建议这么做，此类不用，所以删掉了，演示知识使用
+
 ## null
 
 - 异常解析器返回null表示自己不能处理异常，要交给下一个异常解析器去处理，见LogHandlerExceptionResolver

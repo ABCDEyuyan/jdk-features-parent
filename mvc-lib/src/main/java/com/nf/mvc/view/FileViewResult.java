@@ -42,7 +42,7 @@ import static com.nf.mvc.util.StreamUtils.getMediaType;
  */
 public class FileViewResult extends StreamViewResult {
 
-    private String filename;
+    private final String filename;
 
     public FileViewResult(String realPath) {
         this(realPath, new HashMap<>());

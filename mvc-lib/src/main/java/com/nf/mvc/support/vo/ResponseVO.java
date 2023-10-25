@@ -1,4 +1,4 @@
-package com.nf.mvc.support;
+package com.nf.mvc.support.vo;
 
 
 /**

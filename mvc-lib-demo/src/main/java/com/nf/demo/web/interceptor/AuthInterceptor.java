@@ -3,8 +3,8 @@ package com.nf.demo.web.interceptor;
 
 import com.nf.mvc.HandlerInterceptor;
 import com.nf.mvc.Intercepts;
-import com.nf.mvc.support.CommonResultCode;
-import com.nf.mvc.support.ResponseVO;
+import com.nf.mvc.support.vo.CommonResultCode;
+import com.nf.mvc.support.vo.ResponseVO;
 import com.nf.mvc.util.JacksonUtils;
 import com.nf.mvc.util.StringUtils;
 

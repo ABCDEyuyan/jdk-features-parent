@@ -6,7 +6,6 @@ import com.nf.mvc.MvcContext;
 import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.util.RequestUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     /** 类名的后缀 */
     private static final String SUFFIX = "Controller";
     /** 此map中放置的是当前HandlerMapping所能处理的所有请求 */
-    private Map<String, HandlerClass> handlers = new HashMap<>();
+    private final Map<String, HandlerClass> handlers = new HashMap<>();
 
 
     public NameConventionHandlerMapping() {
@@ -46,7 +45,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecutionChain getHandler(HttpServletRequest request) throws ServletException {
+    public HandlerExecutionChain getHandler(HttpServletRequest request) {
         String requestUrl = RequestUtils.getRequestUrl(request);
         Object handler = handlers.get(requestUrl);
         return handler==null?null:new HandlerExecutionChain(handler, getInterceptors(request));

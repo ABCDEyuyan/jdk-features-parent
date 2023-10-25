@@ -96,13 +96,12 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * @param instance：要填充的bean实例
      * @param request:数据来源
      * @param prefixStack:用来存放属性名前缀的
-     * @throws Exception
+     * @throws Exception 填充bean时可能抛出的异常
      */
     private void populateBean(Object instance, HttpServletRequest request, Stack<String> prefixStack) throws Exception {
         List<Method> allSetterMethods = ReflectionUtils.getAllSetterMethods(instance.getClass());
 
-        for (int i = 0; i < allSetterMethods.size(); i++) {
-            Method setterMethod = allSetterMethods.get(i);
+        for (Method setterMethod : allSetterMethods) {
             String parameterName = ReflectionUtils.getParameterNames(setterMethod).get(0);
             MethodParameter setterMethodParameter = new MethodParameter(setterMethod, 0, parameterName);
 
@@ -110,10 +109,10 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
                 // 前缀就是setter方法的名字，比如setDept方法，那么前缀就是dept
                 String prefix = setterMethod.getName().substring(3, 4).toLowerCase() + setterMethod.getName().substring(4);
                 prefixStack.push(prefix);
-                invokeSetterMethod(instance, setterMethod,parameterName, request, prefixStack);
+                invokeSetterMethod(instance, setterMethod, parameterName, request, prefixStack);
                 prefixStack.pop();
             } else {
-                invokeSetterMethod(instance, setterMethod,parameterName, request, prefixStack);
+                invokeSetterMethod(instance, setterMethod, parameterName, request, prefixStack);
             }
         }
     }
@@ -125,7 +124,7 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * @param request:数据来源
      * @param parameterName:当前setter方法的唯一的一个参数的名字
      * @param prefixStack:属性名前缀栈
-     * @throws Exception
+     * @throws Exception 反射调用bean的setter方法时可能抛出的异常
      */
     private void invokeSetterMethod(Object instance, Method method, String
             parameterName,HttpServletRequest request, Stack<String> prefixStack) throws Exception {
@@ -150,9 +149,9 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
             return parameterName;
         }
 
-        String prefix ="";
-        for (int i = 0; i < prefixStack.size(); i++) {
-            prefix += prefixStack.get(i) + ".";
+        StringBuilder prefix = new StringBuilder();
+        for (String s : prefixStack) {
+            prefix.append(s).append(".");
         }
 
         parameterName  = prefix + parameterName;
@@ -173,7 +172,7 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * 此复杂类型的解析器利用其它的解析器来进行数据解析，所以要排除掉自己
      * <p>参数解析器是单例的，但其运行在多线程环境下，
      * 下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性</p>
-     * @return
+     * @return 返回框架中除了自己以外的其它所有参数解析器
      */
     private MethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {

@@ -24,7 +24,7 @@ import java.time.LocalTime;
  * <ul>
  *     <li>contextPath=/mvc</li>
  *     <li>port=8080</li>
- *     <li>basePackage=mvcdemo</li>
+ *     <li>basePackage=mvc</li>
  *     <li>urlPattern=/</li>
  *     <li>文件上传时使用的临时目录=System.getProperty("java.io.tmpdir")</li>
  * </ul>
@@ -48,7 +48,7 @@ public class MvcApplication {
      */
     private static final String CONTEXT_PATH_DEFAULT = "";
     private static final int PORT_DEFAULT = 8080;
-    private static final String BASE_PACKAGE_DEFAULT = "mvcdemo";
+    private static final String BASE_PACKAGE_DEFAULT = "mvc";
     private static final String URL_PATTERN_DEFAULT = "/";
     private static final String TEMP_DIR_DEFAULT = System.getProperty("java.io.tmpdir");
 

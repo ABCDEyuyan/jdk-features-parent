@@ -12,17 +12,17 @@ public class CorsConfiguration {
 
     public static final String ALL = "*";
 
-    private List<String> allowedOrigins = new ArrayList<>();
+    private final List<String> allowedOrigins = new ArrayList<>();
 
-    private List<String> allowedMethods = new ArrayList<>();
+    private final List<String> allowedMethods = new ArrayList<>();
 
-    private List<String> allowedHeaders = new ArrayList<>();
+    private final List<String> allowedHeaders = new ArrayList<>();
 
     private Boolean allowCredentials = false;
 
     private Long maxAge = 3600L;
 
-    public CorsConfiguration setAllowedOrigins(String... origins) {
+    public CorsConfiguration allowedOrigins(String... origins) {
         CollectionUtils.mergeArrayIntoCollection(origins, allowedOrigins);
         return this;
     }
@@ -31,7 +31,7 @@ public class CorsConfiguration {
         return this.allowedOrigins;
     }
 
-    public CorsConfiguration setAllowCredentials(Boolean allowCredentials) {
+    public CorsConfiguration allowCredentials(Boolean allowCredentials) {
         this.allowCredentials = allowCredentials;
         return this;
     }
@@ -40,7 +40,7 @@ public class CorsConfiguration {
         return allowCredentials;
     }
 
-    public CorsConfiguration setAllowedHeaders(String... allowedHeaders) {
+    public CorsConfiguration allowedHeaders(String... allowedHeaders) {
         CollectionUtils.mergeArrayIntoCollection(allowedHeaders, this.allowedHeaders);
         return this;
     }
@@ -49,7 +49,7 @@ public class CorsConfiguration {
         return this.allowedHeaders;
     }
 
-    public CorsConfiguration setAllowedMethods(HttpMethod... allowedMethods) {
+    public CorsConfiguration allowedMethods(HttpMethod... allowedMethods) {
         for (HttpMethod allowedMethod : allowedMethods) {
             this.allowedMethods.add(allowedMethod.name());
         }
@@ -64,7 +64,7 @@ public class CorsConfiguration {
         return this.maxAge;
     }
 
-    public CorsConfiguration setMaxAge(Long maxAge) {
+    public CorsConfiguration maxAge(Long maxAge) {
         this.maxAge = maxAge;
         return this;
     }
@@ -79,10 +79,10 @@ public class CorsConfiguration {
      * </ul>
      */
     public void applyDefaultConfiguration(){
-        setAllowedOrigins(ALL);
-        setAllowCredentials(false);
-        setAllowedMethods(HttpMethod.OPTIONS,HttpMethod.GET,HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PUT);
-        setAllowedHeaders(ALL);
+        allowedOrigins(ALL).
+        allowCredentials(false).
+        allowedMethods(HttpMethod.OPTIONS,HttpMethod.GET,HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PUT).
+        allowedHeaders(ALL);
     }
 
     public static CorsConfiguration defaultInstance(){
@@ -92,11 +92,11 @@ public class CorsConfiguration {
     }
 
     /**
-     * 清理默认的跨域设置，orgin是空，允许的方法也不设置，允许的头也没有任何设置
+     * 清理默认的跨域设置，origin是空，允许的方法也不设置，允许的头也没有任何设置
      */
     public void clearDefaultConfiguration(){
         this.allowedOrigins.clear();
-        setAllowCredentials(false);
+        allowCredentials(false);
         this.allowedMethods.clear();
         this.allowedHeaders.clear();
     }
@@ -125,8 +125,7 @@ public class CorsConfiguration {
     }
 
     public void validateAllowCredentials() {
-        if (this.allowCredentials.equals( Boolean.TRUE) &&
-                this.allowedOrigins != null && this.allowedOrigins.contains(ALL)) {
+        if (this.allowCredentials.equals( Boolean.TRUE) && this.allowedOrigins.contains(ALL)) {
 
             throw new IllegalArgumentException(
                     "When allowCredentials is true, allowedOrigins cannot contain the special value \"*\" " +

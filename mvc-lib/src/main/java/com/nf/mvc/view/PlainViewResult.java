@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class PlainViewResult extends ViewResult {
-    private String text;
+    private final String text;
 
     public PlainViewResult(String text) {
         this.text = text;
