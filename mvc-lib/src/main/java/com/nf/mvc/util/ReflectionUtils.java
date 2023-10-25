@@ -1,6 +1,7 @@
 package com.nf.mvc.util;
 
 import com.nf.mvc.MvcContext;
+import com.nf.mvc.argument.BeanMethodArgumentResolver;
 import com.nf.mvc.argument.MethodParameter;
 import com.nf.mvc.handler.HandlerClass;
 import com.nf.mvc.ioc.Injected;
@@ -58,7 +59,7 @@ public abstract class ReflectionUtils {
      * <p>整个mvc框架都用的这个方法来创建被mvc管理的类的对象，主要使用的地方有以下几个
      * <ul>
      *     <li>实例化扫描到的Mvc核心类，详见{@link com.nf.mvc.MvcContext#resolveMvcClass(Class, Class, List)},这些类型是单例的</li>
-     *     <li>实例化控制器bean类型的方法参数，详见{@link com.nf.mvc.argument.BeanPropertyMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)},这些实例是原型的</li>
+     *     <li>实例化控制器bean类型的方法参数，详见{@link BeanMethodArgumentResolver#resolveSetterArgument(MethodParameter, HttpServletRequest, Stack)},这些实例是原型的</li>
      *     <li>实例化用户编写的后端控制器，详见{@link HandlerClass#getHandlerObject()},这些实例是原型的</li>
      * </ul>
      * </p>

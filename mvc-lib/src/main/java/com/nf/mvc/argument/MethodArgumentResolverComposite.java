@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  *
  * @see com.nf.mvc.adapter.RequestMappingHandlerAdapter
  * @see com.nf.mvc.support.MethodInvoker
- * @see BeanPropertyMethodArgumentResolver
+ * @see BeanMethodArgumentResolver
  * @see com.nf.mvc.HandlerExceptionResolver
  */
 public class MethodArgumentResolverComposite implements MethodArgumentResolver {

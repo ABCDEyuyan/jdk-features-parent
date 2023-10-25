@@ -185,7 +185,7 @@ MethodArgumentResolverComposite
 - MethodArgumentResolverComposite类的insertResolvers方法
 - ServletApiMethodArgumentResolver#supports
 - com.nf.mvc.util.StringUtils#split
-- BeanPropertyMethodArgumentResolver#getResolvers
+- BeanMethodArgumentResolver#getResolvers
 
 ## 链式方法实现
 
@@ -257,12 +257,12 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 ## 递归
 
-- BeanPropertyMethodArgumentResolver
+- BeanMethodArgumentResolver
 
 ## 线程安全
 
 - HandlerContext的ThreadLocal
-- BeanPropertyMethodArgumentResolver的getResolvers方法的synchronized语句块
+- BeanMethodArgumentResolver的getResolvers方法的synchronized语句块
 - WebTypeConverters里的ConcurrentHashMap的使用
 
 ## ascii文本log
@@ -307,7 +307,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 ## stack的运用
 
-- BeanPropertyMethodArgumentResolver#resolveArgument
+- BeanMethodArgumentResolver#resolveArgument
 
 ## 内部类
 

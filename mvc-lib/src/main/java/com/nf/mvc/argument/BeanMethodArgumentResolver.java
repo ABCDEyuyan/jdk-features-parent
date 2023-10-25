@@ -72,7 +72,7 @@ import java.util.stream.Collectors;
  * @see MethodArgumentResolverComposite
  * @see MethodArgumentResolver
  */
-public class BeanPropertyMethodArgumentResolver implements MethodArgumentResolver {
+public class BeanMethodArgumentResolver implements MethodArgumentResolver {
 
     private volatile MethodArgumentResolverComposite resolvers = null;
 
@@ -177,11 +177,11 @@ public class BeanPropertyMethodArgumentResolver implements MethodArgumentResolve
      */
     private MethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {
-            synchronized (BeanPropertyMethodArgumentResolver.class) {
+            synchronized (BeanMethodArgumentResolver.class) {
                 if(resolvers == null) {
                     resolvers = new MethodArgumentResolverComposite().addResolvers(
                             MvcContext.getMvcContext().getArgumentResolvers().stream()
-                                    .filter(r -> !(r instanceof BeanPropertyMethodArgumentResolver))
+                                    .filter(r -> !(r instanceof BeanMethodArgumentResolver))
                                     .collect(Collectors.toList()));
                 }
             }

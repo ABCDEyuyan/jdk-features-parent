@@ -34,11 +34,11 @@ import java.util.function.Consumer;
  *
  * <h3>基本使用</h3>
  * <p>
- * 用户通常应该只配置一个这样的Servlet，虽然理论上你可以配置多个这样的servlet，并且为其url-pattern设置值为：/
+ * 用户通常应该只配置一个这样的Servlet，并且为其url-pattern设置值为"/",虽然理论上你可以配置多个这样的servlet，但很少见。
  * 而为了让其支持文件上传，通常也要配置multipart-config，如果想让servlet容器启动时就执行DispatcherServlet的初始化逻辑，
  * 通常也会配置load-on-startup选项,典型的配置如下:
- * <pre>
- * {@code
+ * <pre class="xml">
+ *
  *   < servlet>
  *      < servlet-name>mvcDemo< /servlet-name>
  *      < servlet-class>com.nf.mvc.DispatcherServlet< /servlet-class>
@@ -76,7 +76,7 @@ import java.util.function.Consumer;
  *     <li>{@link HandlerInterceptor}</li>
  * </ul>
  * </p>
- * h3>组件的获取</h3>
+ * <h3>组件的获取</h3>
  * <p>
  * 用户自定义组件是通过类扫描的方式获取的，用户在配置DispatcherServlet的时候通过参数<i>{@code base-package }</i>指定扫描的基础包，
  * 框架会扫描指定包及其子包下的所有类型，并加载到jvm，所以，强烈建议指定的包，只包含web层面的一些组件，不要指定dao，service相关的类所在的包，
@@ -93,28 +93,36 @@ import java.util.function.Consumer;
  *   比如{@link #initHandlerMappings()},7大被Mvc框架处理的组件都要求必须有默认构造函数
  * </p>
  * <h3>初始化处理</h3>
- * <p>
- *
- * </p>
+ * <ul>
+ *     <li>扫描指定包及其子包下的所有类型</li>
+ *     <li>创建MvcContext实例</li>
+ *     <li>初始化Mvc框架
+ *          <ol>
+ *              <li>初始化所有的参数解析器</li>
+ *              <li>初始化所有的HandlerMapping</li>
+ *              <li>初始化所有的HandlerAdapters</li>
+ *              <li>初始化所有的异常解析器</li>
+ *          </ol>
+ *     </li>
+ *     <li>配置Mvc框架：利用{@link MvcConfigurer}的实现类对Mvc框架内部组件进行配置</li>
+ * </ul>
  * <h3>核心请求处理流程</h3>
- * <p>
- *     <ol>
- *         <li>用户发起请求</li>
- *         <li>遍历所有的HandlerMapping，直到找到一个Handler处理请求，找不到就交给默认Servlet处理请求</li>
- *         <li>遍历所有的HandlerAdapter，直到找到一个支持此Handler的HandlerAdapter，找不到就抛异常</li>
- *         <li>HandlerAdapter开始负责Handler方法的调用执行
- *              <ol>
- *                  <li>获取Handler类型的实例化</li>
- *                  <li>遍历方法的每一个参数，解析出此参数的值，解析的时候是遍历每一个参数解析器，找到能支持的解析器就结束遍历，并利用解析器解析出值，
- *                  如果找不到能解析的解析就抛出异常，具体见{@link MethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)} </li>
- *                  <li>执行Handler的方法</li>
- *                  <li>适配Handler执行结果为ViewResult类型</li>
- *              </ol>
- *         </li>
- *         <li>对Handler的执行结果ViewResult进行渲染（render）</li>
- *         <li>如果Handler执行链出了异常交给异常解析器去处理</li>
- *     </ol>
- * </p>
+ * <ol>
+ *     <li>用户发起请求</li>
+ *     <li>遍历所有的HandlerMapping，直到找到一个Handler处理请求，找不到就交给默认Servlet处理请求</li>
+ *     <li>遍历所有的HandlerAdapter，直到找到一个支持此Handler的HandlerAdapter，找不到就抛异常</li>
+ *     <li>HandlerAdapter开始负责Handler方法的调用执行
+ *          <ol>
+ *              <li>获取Handler类型的实例化</li>
+ *              <li>遍历方法的每一个参数，解析出此参数的值，解析的时候是遍历每一个参数解析器，找到能支持的解析器就结束遍历，并利用解析器解析出值，
+ *              如果找不到能解析的解析就抛出异常，具体见{@link MethodArgumentResolverComposite#resolveArgument(MethodParameter, HttpServletRequest)} </li>
+ *              <li>执行Handler的方法</li>
+ *              <li>适配Handler执行结果为ViewResult类型</li>
+ *          </ol>
+ *     </li>
+ *     <li>对Handler的执行结果ViewResult进行渲染（render）</li>
+ *     <li>如果Handler执行链出了异常交给异常解析器去处理</li>
+ * </ol>
  * <h3>静态资源处理</h3>
  * <p>
  *     静态资源的地址如果没有对应HandlerMapping能处理，就进入到了默认Servlet的处理逻辑，
@@ -127,11 +135,15 @@ import java.util.function.Consumer;
  *  如果你不通过实现WebMvcConfigurer接口的方式配置跨域，那么它会采用默认值，具体的跨域配置情况见{@link CorsConfiguration#applyDefaultConfiguration()}
  *  方法里面的设置
  *  </p>
+ *
  * @see MvcContext
+ * @see MethodArgumentResolver
  * @see HandlerMapping
  * @see HandlerAdapter
  * @see HandlerExecutionChain
  * @see HandlerExceptionResolver
+ * @see MvcConfigurer
+ * @see CorsConfiguration
  */
 public class DispatcherServlet extends HttpServlet {
     /**
@@ -195,8 +207,8 @@ public class DispatcherServlet extends HttpServlet {
      *     </ol>
      * </p>
      *
-     * @param config
-     * @throws ServletException
+     * @param config ServletConfig对象
+     * @throws ServletException ServletException对象
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -213,11 +225,11 @@ public class DispatcherServlet extends HttpServlet {
         configMvc();
     }
 
-    private final void initMvcContext(ScanResult scanResult) {
+    private void initMvcContext(ScanResult scanResult) {
         MvcContext.getMvcContext().resolveScannedResult(scanResult);
     }
 
-    private final void initMvc() {
+    private void initMvc() {
         /* 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行 */
         initArgumentResolvers();
         initHandlerMappings();
@@ -225,7 +237,7 @@ public class DispatcherServlet extends HttpServlet {
         initExceptionResolvers();
     }
 
-    private final void configMvc() {
+    private void configMvc() {
         MvcContext mvcContext = MvcContext.getMvcContext();
         MvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
         // 没有配置器，不需要配置，提前结束configMvc方法的执行
@@ -290,7 +302,7 @@ public class DispatcherServlet extends HttpServlet {
         argumentResolvers.add(new RequestBodyMethodArgumentResolver());
         argumentResolvers.add(new PathVariableMethodArgumentResolver());
         argumentResolvers.add(new SimpleTypeMethodArgumentResolver());
-        argumentResolvers.add(new BeanPropertyMethodArgumentResolver());
+        argumentResolvers.add(new BeanMethodArgumentResolver());
 
         return argumentResolvers;
     }
@@ -386,10 +398,10 @@ public class DispatcherServlet extends HttpServlet {
      * <p>
      * 所以就增加了一个doService的方法，以便有机会改doService的签名
      *
-     * @param req
-     * @param resp
-     * @throws ServletException
-     * @throws IOException
+     * @param req  请求对象
+     * @param resp 响应对象
+     * @throws ServletException Servlet异常
+     * @throws IOException      IO异常
      */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -416,8 +428,8 @@ public class DispatcherServlet extends HttpServlet {
      *     注意：HandlerMapping查找Handler的过程中出现的异常不会被HandlerExceptionResolver去处理
      * </p>
      *
-     * @param req
-     * @param resp
+     * @param req  请求对象
+     * @param resp 响应对象
      */
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
         HandlerExecutionChain chain;
@@ -441,10 +453,11 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 此方法完成了链的执行和视图结果的渲染
-     * @param req
-     * @param resp
-     * @param chain
-     * @throws Throwable
+     *
+     * @param req   请求对象
+     * @param resp  响应对象
+     * @param chain 执行链
+     * @throws Throwable 整个请求处理过程中可能出现的异常
      */
     protected void doDispatch(HttpServletRequest req, HttpServletResponse resp, HandlerExecutionChain chain) throws Throwable {
         ViewResult viewResult;
@@ -458,7 +471,7 @@ public class DispatcherServlet extends HttpServlet {
             chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
             // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器的后置逻辑即便出了异常也需要执行
-            chain.applyPostHandle(req,resp);
+            chain.applyPostHandle(req, resp);
             // 这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
@@ -479,7 +492,7 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerExceptionResolver exceptionResolver : exceptionResolvers) {
             ViewResult result = exceptionResolver.resolveException(req, resp, handler, ex);
             if (result != null) {
-                return  result;
+                return result;
             }
         }
         /* 表示没有一个异常解析器可以处理异常，那么就应该把异常继续抛出,会交给doService方法去处理，因而也不会进行渲染处理 */
@@ -489,12 +502,13 @@ public class DispatcherServlet extends HttpServlet {
     /**
      * 这里是对视图结果进行渲染处理，主要是通过调用ViewResult的render方法实现的，具体逻辑见各个ViewResult的子类
      * <p>
-     *     这里不需要对viewResult进行null的判断，具体原因见{@link #doDispatch(HttpServletRequest, HttpServletResponse, HandlerExecutionChain)}方法内的注释
+     * 这里不需要对viewResult进行null的判断，具体原因见{@link #doDispatch(HttpServletRequest, HttpServletResponse, HandlerExecutionChain)}方法内的注释
      * </p>
-     * @param req
-     * @param resp
-     * @param viewResult
-     * @throws Exception
+     *
+     * @param req        请求对象
+     * @param resp       响应对象
+     * @param viewResult 视图结果
+     * @throws Exception 渲染时可能抛出的异常
      */
     protected void render(HttpServletRequest req, HttpServletResponse resp, ViewResult viewResult) throws Exception {
         viewResult.render(req, resp);
@@ -514,9 +528,9 @@ public class DispatcherServlet extends HttpServlet {
      * 设置编码的方法是在service方法里面第一个调用，如果已经从req
      * 对象中获取数据了，再设置这个编码是无效的
      *
-     * @param req
-     * @param resp
-     * @throws Exception
+     * @param req  请求对象
+     * @param resp 响应对象
+     * @throws Exception 设置编码时可能抛出的IOException
      */
     protected void setEncoding(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
@@ -556,9 +570,10 @@ public class DispatcherServlet extends HttpServlet {
      *         <li>setAccessControlAllowCredentials</li>
      *     </ul>
      * </p>
-     * @param req
-     * @param resp
-     * @param configuration
+     *
+     * @param req           请求对象
+     * @param resp          响应对象
+     * @param configuration 跨域配置
      */
     protected void processCors(HttpServletRequest req, HttpServletResponse resp, CorsConfiguration configuration) {
         String requestOrigin = req.getHeader(HttpHeaders.ORIGIN);
