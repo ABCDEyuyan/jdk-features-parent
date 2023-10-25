@@ -1,9 +1,9 @@
 package com.nf.mvc.argument;
 
 import com.nf.mvc.MethodArgumentResolver;
-import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.support.WebTypeConverters;
+import com.nf.mvc.support.path.AntPathMatcher;
 import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;

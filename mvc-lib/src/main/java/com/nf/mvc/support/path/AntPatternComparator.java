@@ -1,4 +1,4 @@
-package com.nf.mvc.support;
+package com.nf.mvc.support.path;
 
 import java.util.Comparator;
 

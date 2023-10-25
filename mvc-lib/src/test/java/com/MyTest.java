@@ -1,6 +1,6 @@
 package com;
 
-import com.nf.mvc.support.AntPathMatcher;
+import com.nf.mvc.support.path.AntPathMatcher;
 import com.nf.mvc.util.JacksonUtils;
 import org.junit.Test;
 
