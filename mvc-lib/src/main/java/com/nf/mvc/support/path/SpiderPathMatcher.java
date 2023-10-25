@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 /**
  * 此类功能与{@link AntPathMatcher}类似，只提供了*与?这两个常见的通配符支持，
  * 不支持**这种通配符，并且比较默认是不区分大小写的。
- * 此类不提供任何的设置选项，比如matchStart,设计此类时也不考虑对此类功能扩展方面的内容
+ * 此类不提供任何的设置选项，比如matchStart,trimTokens等，
+ * 设计此类时也不考虑对此类功能扩展方面的内容，所以加了一个final修饰符
  *
  * <h3>典型示例</h3>
  * 比如这样的路径模式"/a/&#042;/c/&#042;.js?",路径/a/bb/c/abc.jsp是匹配的
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
  * @see com.nf.mvc.argument.PathVariableMethodArgumentResolver
  * @author cj
  */
-public class SpiderPathMatcher implements PathMatcher {
+public final class  SpiderPathMatcher implements PathMatcher {
     /**
      * 把下面的正则表达式放到类上面的参考网址，可以知道其含义如下
      * 匹配问号（?）、星号（*）或者花括号（{}）中的任意字符（除了斜杠/）。
