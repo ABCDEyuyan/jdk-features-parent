@@ -115,6 +115,7 @@ public class MvcContext {
             configurationProperties.put(scannedClass,instance);
         }
     }
+
     public List<HandlerMapping> getCustomHandlerMappings() {
         customHandlerMappings.sort(new OrderComparator<>());
         return Collections.unmodifiableList(customHandlerMappings);
@@ -146,6 +147,7 @@ public class MvcContext {
         }
         return customConfigurers.size()==0?null:customConfigurers.get(0);
     }
+
     public Map<Class<?>, Object> getConfigurationProperties() {
         return Collections.unmodifiableMap(configurationProperties);
     }
