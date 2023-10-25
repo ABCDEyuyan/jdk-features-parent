@@ -74,6 +74,7 @@
 - Delimiters
 - com.nf.mvc.util.ReflectionUtils#isSetter
 - com.nf.mvc.support.AntPathMatcher#validateDoubleAsterisk
+- SpiderPathMatcher
 
 ## 静态方法导入的运用
 - HandlerHelper
