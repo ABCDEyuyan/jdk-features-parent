@@ -125,19 +125,19 @@ public class MvcApplication {
     private Context registerContext(Tomcat tomcat, String docBase) {
         // 在这篇文章里有说明addContext与addWebApp的区别https://stackoverflow.com/questions/67253024/tomcat-catalina-context-add-existing-servlet-to-context
         // 如果仅仅只是把addContext方法换成addWebApp方法会导致DispatcherServlet注册url-pattern为/失效
-        Context ctx = tomcat.addContext(contextPath, docBase);
-        return ctx;
+        return tomcat.addContext(contextPath, docBase);
     }
 
     /**
      * 使用这个方法而不使用Tomcat.initWebappDefaults(ctx)可以剔除掉pom中一些关于jsp的相关依赖,
      * Tomcat.initWebappDefaults(ctx)这行代码除了注册默认servlet,还有欢迎页等其他常见的默认初始化设置
-     * @param ctx
+     * @param ctx Tomcat的Context
      */
     private void registerDefaultServlet(Context ctx) {
         Tomcat.addServlet(ctx,"default", DefaultServlet.class.getTypeName());
         ctx.addServletMappingDecoded("/", "default");
     }
+
     private void registerDispatcherServlet(Context ctx) {
         Wrapper wrapper = Tomcat.addServlet(ctx, "dispatcherServlet", new DispatcherServlet());
         ctx.addServletMappingDecoded(urlPattern, "dispatcherServlet");

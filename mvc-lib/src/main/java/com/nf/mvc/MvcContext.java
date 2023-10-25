@@ -8,12 +8,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * mvc框架的上下文类，通过此类主要是获取只读的框架类型信息，此类的内容是在{@link DispatcherServlet}
@@ -50,16 +45,15 @@ public class MvcContext {
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
-    private List<Class<?>> allScannedClasses = new ArrayList<>();
 
-    private List<HandlerMapping> customHandlerMappings = new ArrayList<>();
-    private List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
-    private List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
-    private List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
-    private List<HandlerInterceptor> customInterceptors = new ArrayList<>();
-    private List<MvcConfigurer> customConfigurers = new ArrayList<>();
-
-    private Map<Class<?>,Object> configurationProperties = new HashMap<>(16);
+    private final List<Class<?>> allScannedClasses = new ArrayList<>();
+    private final List<HandlerMapping> customHandlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
+    private final List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
+    private final List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
+    private final List<HandlerInterceptor> customInterceptors = new ArrayList<>();
+    private final List<MvcConfigurer> customConfigurers = new ArrayList<>();
+    private final Map<Class<?>,Object> configurationProperties = new HashMap<>(16);
 
     private MvcContext() {
     }
@@ -77,7 +71,7 @@ public class MvcContext {
      * <p>
      * 目前扫描的是各种各样的类，没有规定只扫描Handler，比如有HandlerMapping，也有HandlerAdapter以及Handler等
      * <p>
-     * @param scanResult
+     * @param scanResult ClassGraph的扫描结果
      */
     void resolveScannedResult(ScanResult scanResult) {
         this.scanResult = scanResult;
@@ -96,7 +90,7 @@ public class MvcContext {
      * 解析扫描到的类是否是mvc框架核心功能类
      * <p>解析参数解析器要放在解析HandlerAdapter之前,因为一些HandlerAdapter的构造函数用到了参数解析器,
      * Mvc框架并不是一个容器管理框架,并没有对bean的依赖顺序进行管理</p>
-     * @param scannedClass
+     * @param scannedClass 所有扫描到的类
      */
     private void resolveMvcClasses(Class<?> scannedClass) {
         resolveMvcClass(scannedClass, MethodArgumentResolver.class, customArgumentResolvers);
@@ -122,27 +116,27 @@ public class MvcContext {
         }
     }
     public List<HandlerMapping> getCustomHandlerMappings() {
-        Collections.sort(customHandlerMappings, new OrderComparator<>());
+        customHandlerMappings.sort(new OrderComparator<>());
         return Collections.unmodifiableList(customHandlerMappings);
     }
 
     public List<HandlerAdapter> getCustomHandlerAdapters() {
-        Collections.sort(customHandlerAdapters, new OrderComparator<>());
+        customHandlerAdapters.sort(new OrderComparator<>());
         return Collections.unmodifiableList(customHandlerAdapters);
     }
 
     public List<MethodArgumentResolver> getCustomArgumentResolvers() {
-        Collections.sort(customArgumentResolvers, new OrderComparator<>());
+        customArgumentResolvers.sort(new OrderComparator<>());
         return Collections.unmodifiableList(customArgumentResolvers);
     }
 
     public List<HandlerExceptionResolver> getCustomExceptionResolvers() {
-        Collections.sort(customExceptionResolvers, new OrderComparator<>());
+        customExceptionResolvers.sort(new OrderComparator<>());
         return Collections.unmodifiableList(customExceptionResolvers);
     }
 
     public List<HandlerInterceptor> getCustomHandlerInterceptors() {
-        Collections.sort(customInterceptors, new OrderComparator<>());
+        customInterceptors.sort(new OrderComparator<>());
         return Collections.unmodifiableList(customInterceptors);
     }
 
@@ -160,7 +154,7 @@ public class MvcContext {
      * 因为我们解析之后，结果就是固定的，如果直接返回List
      * 用户是可以更改集合里面的内容的，所以需要返回一个只读集合
      *
-     * @return
+     * @return 所有的HandlerMapping
      */
     public List<HandlerMapping> getHandlerMappings() {
         return Collections.unmodifiableList(handlerMappings);
@@ -184,7 +178,7 @@ public class MvcContext {
 
     /**
      * 以下这些方法是默认修饰符，主要是在框架内调用，用户不能调用
-     * @return
+     * @return ClassGraph的扫描结果
      */
     ScanResult getScanResult() {
         return this.scanResult;

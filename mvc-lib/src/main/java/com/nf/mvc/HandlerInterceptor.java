@@ -49,11 +49,11 @@ import javax.servlet.http.HttpServletResponse;
 public interface HandlerInterceptor {
     /**
      * 在Handler执行之前执行，返回true才继续后续的拦截器或Handler的执行
-     * @param request
-     * @param response
-     * @param handler
-     * @return
-     * @throws Exception
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 处理者
+     * @return 返回true表示继续执行链的执行，反之停止链的执行
+     * @throws Exception 前置拦截器执行过程中抛出的异常
      */
     default boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -63,10 +63,10 @@ public interface HandlerInterceptor {
     /**
      * 在Handler执行完毕之后执行，与前置逻辑（preHandle）是反序执行的，
      * 即便是拦截器的前置逻辑或者handler出了异常，也要求后置逻辑能得到执行，具体实现见{@link DispatcherServlet#doDispatch(HttpServletRequest, HttpServletResponse, HandlerExecutionChain)}
-     * @param request
-     * @param response
-     * @param handler
-     * @throws Exception
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 处理者
+     * @throws Exception 后置拦截器执行过程中抛出的异常
      */
     default void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     }

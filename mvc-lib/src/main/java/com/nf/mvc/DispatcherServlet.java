@@ -40,11 +40,11 @@ import java.util.function.Consumer;
  * <pre>
  * {@code
  *   < servlet>
- *      < servlet-name>mvcdemo< /servlet-name>
+ *      < servlet-name>mvcDemo< /servlet-name>
  *      < servlet-class>com.nf.mvc.DispatcherServlet< /servlet-class>
  *      < init-param>
  *          < param-name>base-package< /param-name>
- *          <param-value>mvcdemo.web< /param-value>
+ *          <param-value>mvcDemo.web< /param-value>
  *      </init-param>
  *      < load-on-startup>200< /load-on-startup>
  *      < multipart-config>
@@ -52,7 +52,7 @@ import java.util.function.Consumer;
  *  < /servlet>
  *
  *  < servlet-mapping>
- *      < servlet-name>mvcdemo</servlet-name>
+ *      < servlet-name>mvcDemo</servlet-name>
  *      < url-pattern>/</url-pattern>
  *  < /servlet-mapping>
  * }
@@ -462,7 +462,7 @@ public class DispatcherServlet extends HttpServlet {
             // 这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
         }
-        /**
+        /*
          * 如果执行链能正常执行，那么viewResult一定不为null，
          * 如果执行链执行异常，但异常解析器能正确的解析，那么viewResult也不会为null
          * 如果执行链异常，异常解析器也 不能 处理异常，那么resolveException方法会抛出此异常，render不会得到执行
