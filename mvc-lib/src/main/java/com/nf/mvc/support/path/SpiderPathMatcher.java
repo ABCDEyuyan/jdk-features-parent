@@ -1,11 +1,8 @@
 package com.nf.mvc.support.path;
 
 import com.nf.mvc.support.PathMatcher;
-import com.nf.mvc.util.StringUtils;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,26 +57,6 @@ public class SpiderPathMatcher implements PathMatcher {
         return pathPattern.matcher(path).matches();
     }
 
-    @Override
-    public Map<String, String> extractPathVariables(String pattern, String path) {
-        if (!isMatch(pattern, path)) {
-            throw new IllegalArgumentException("路径:" + path + "不匹配路径模式:" + pattern + " ,提取路径变量没有意义");
-        }
-        Map<String, String> pathVariables = new HashMap<>();
-
-        String[] patternDirs = StringUtils.tokenizeToStringArray(pattern, "/");
-        String[] pathDirs = StringUtils.tokenizeToStringArray(path, "/");
-        for (int i = 0; i < patternDirs.length; i++) {
-            String patternDir = patternDirs[i];
-            String pathDir = pathDirs[i];
-            if (isPathVariable(patternDir)) {
-                String varName = patternDir.substring(1, patternDir.length() - 1);
-                pathVariables.put(varName, pathDir);
-            }
-        }
-        return pathVariables;
-    }
-
     /**
      * 用来获取不同路径模式的比较器，基本比较规则就是路径模式中有通配符就靠后，
      * 目前的实现没有用到参数 path
@@ -130,10 +107,6 @@ public class SpiderPathMatcher implements PathMatcher {
             return "";
         }
         return Pattern.quote(s.substring(start, end));
-    }
-
-    private boolean isPathVariable(String varPattern) {
-        return varPattern.startsWith("{") && varPattern.endsWith("}") && varPattern.length() > 2;
     }
 
     private boolean haveWildcard(String path) {
