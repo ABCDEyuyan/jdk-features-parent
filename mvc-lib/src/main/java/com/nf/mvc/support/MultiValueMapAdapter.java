@@ -20,11 +20,7 @@ import com.nf.mvc.util.Assert;
 import com.nf.mvc.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 
@@ -39,7 +35,6 @@ import java.util.Set;
  * @see CollectionUtils#toMultiValueMap
  * @see LinkedMultiValueMap
  */
-@SuppressWarnings("serial")
 public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializable {
 
 	private final Map<K, List<V>> targetMap;
@@ -144,6 +139,7 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
 		return this.targetMap.remove(key);
 	}
 
+	@SuppressWarnings("NullableProblems")
 	@Override
 	public void putAll(Map<? extends K, ? extends List<V>> map) {
 		this.targetMap.putAll(map);
@@ -169,6 +165,7 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
 		return this.targetMap.entrySet();
 	}
 
+	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
 	@Override
 	public boolean equals( Object other) {
 		return (this == other || this.targetMap.equals(other));

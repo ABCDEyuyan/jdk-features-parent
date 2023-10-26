@@ -74,6 +74,7 @@ public class FileViewResult extends StreamViewResult {
         this.filename = filename;
     }
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     protected void writeContentType(HttpServletResponse resp) throws Exception {
         resp.setContentType(getMediaType(this.filename));

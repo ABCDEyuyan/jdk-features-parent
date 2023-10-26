@@ -20,7 +20,6 @@ public abstract class CollectionUtils {
      * @param collection 集合对象
      * @param <E> 集合元素类型
      */
-    @SuppressWarnings("unchecked")
     public static <E> void mergeArrayIntoCollection(Object array, Collection<E> collection) {
         Object[] arr = ObjectUtils.toObjectArray(array);
         for (Object elem : arr) {

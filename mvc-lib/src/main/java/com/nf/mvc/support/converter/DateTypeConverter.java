@@ -2,7 +2,6 @@ package com.nf.mvc.support.converter;
 
 import com.nf.mvc.support.WebTypeConverter;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

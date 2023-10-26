@@ -24,6 +24,7 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
         return isFileType(scalarType);
     }
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     protected Object resolveScalarType(Class<?> scalarType, Object parameterValue, MethodParameter methodParameter) throws Exception {
         // 压根没有上传文件时，parameterValue就是null，这个时候直接返回null即可
@@ -59,6 +60,7 @@ public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMetho
                 MultipartFile.class == fileType;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T resolveUploadedFile(Part part, Class<T> fileType) {
         if (Part.class == fileType) {
             return (T) part;

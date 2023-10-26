@@ -101,6 +101,7 @@ public class LinkedMultiValueMap<K, V> extends MultiValueMapAdapter<K, V>  // ne
 	 * @see LinkedMultiValueMap#LinkedMultiValueMap(Map)
 	 * @see #deepCopy()
 	 */
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public LinkedMultiValueMap<K, V> clone() {
 		return new LinkedMultiValueMap<>(this);

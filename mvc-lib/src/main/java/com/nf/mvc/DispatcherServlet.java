@@ -532,6 +532,7 @@ public class DispatcherServlet extends HttpServlet {
      * @param resp 响应对象
      * @throws Exception 设置编码时可能抛出的IOException
      */
+    @SuppressWarnings("JavaDoc")
     protected void setEncoding(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");

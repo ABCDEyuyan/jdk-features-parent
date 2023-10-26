@@ -7,6 +7,6 @@ public class CharacterTypeConverter implements WebTypeConverter {
 
     @Override
     public Character convert(String paramValue) throws Exception {
-        return Character.valueOf(paramValue.charAt(0));
+        return paramValue.charAt(0);
     }
 }

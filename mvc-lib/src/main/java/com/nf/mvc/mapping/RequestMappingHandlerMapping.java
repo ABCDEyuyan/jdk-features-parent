@@ -75,6 +75,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         }
         this.handlers.put(url, handlerMethod);
     }
+    @SuppressWarnings("RedundantThrows")
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = RequestUtils.getRequestUrl(request);

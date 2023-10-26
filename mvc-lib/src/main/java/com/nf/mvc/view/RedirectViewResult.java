@@ -11,7 +11,7 @@ public class RedirectViewResult extends ViewResult {
 
     private static final int LENGTH_OF_QUESTION_AND_AMP = 2;
     private String url;
-    private Map<String,String> model;
+    private final Map<String,String> model;
 
     public RedirectViewResult(String url) {
         this(url, new HashMap<>());

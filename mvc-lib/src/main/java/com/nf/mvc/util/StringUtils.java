@@ -63,8 +63,8 @@ public abstract class StringUtils {
     return builder.toString();
   }
 
-  public static boolean hasLength(CharSequence str) {
-    return (str != null && str.length() > 0);
+  public static boolean isEmpty(CharSequence str) {
+    return (str == null || str.length() <= 0);
   }
 
   /**
@@ -107,7 +107,7 @@ public abstract class StringUtils {
    * @return 有空白字符就返回true，否则返回false
    */
   public static boolean containsWhitespace(CharSequence str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return false;
     }
 
@@ -131,7 +131,7 @@ public abstract class StringUtils {
    * @see java.lang.Character#isWhitespace
    */
   public static String trimLeadingWhitespace(String str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -149,7 +149,7 @@ public abstract class StringUtils {
    * @see java.lang.Character#isWhitespace
    */
   public static String trimTrailingWhitespace(String str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -167,7 +167,7 @@ public abstract class StringUtils {
    * @return the trimmed {@code String}
    */
   public static String trimLeadingCharacter(String str, char leadingCharacter) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -185,7 +185,7 @@ public abstract class StringUtils {
    * @return the trimmed {@code String}
    */
   public static String trimTrailingCharacter(String str, char trailingCharacter) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -202,7 +202,7 @@ public abstract class StringUtils {
    * @return 剔除前后中间所有空白之后的字符串
    */
   public static String trimAllWhitespace(String str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -252,7 +252,7 @@ public abstract class StringUtils {
   }
 
   private static String changeFirstCharacterCase(String str, boolean capitalize) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -325,7 +325,7 @@ public abstract class StringUtils {
   }
 
   public static String deleteAny(String inString, String charsToDelete) {
-    if (!hasLength(inString) || !hasLength(charsToDelete)) {
+    if (isEmpty(inString) || isEmpty(charsToDelete)) {
       return inString;
     }
 

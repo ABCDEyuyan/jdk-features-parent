@@ -406,7 +406,6 @@ public abstract class ReflectionUtils {
         return getAnnoValue(ele, annoClass, "value");
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T getAnnoValue(AnnotatedElement ele,Class<? extends Annotation> annoClass,String attrName){
         if (!ele.isAnnotationPresent(annoClass)) {
             throw new IllegalStateException("元素:" + ele + " 上没有注解:" + annoClass.getName());

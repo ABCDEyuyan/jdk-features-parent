@@ -1,20 +1,7 @@
 package com.nf.mvc.support;
 
 import com.nf.mvc.argument.MethodArgumentResolverComposite;
-import com.nf.mvc.support.converter.BigDecimalTypeConverter;
-import com.nf.mvc.support.converter.BooleanTypeConverter;
-import com.nf.mvc.support.converter.ByteTypeConverter;
-import com.nf.mvc.support.converter.CharacterTypeConverter;
-import com.nf.mvc.support.converter.DateTypeConverter;
-import com.nf.mvc.support.converter.DoubleTypeConverter;
-import com.nf.mvc.support.converter.FloatTypeConverter;
-import com.nf.mvc.support.converter.IntegerTypeConverter;
-import com.nf.mvc.support.converter.LocalDateTimeTypeConverter;
-import com.nf.mvc.support.converter.LocalDateTypeConverter;
-import com.nf.mvc.support.converter.LocalTimeTypeConverter;
-import com.nf.mvc.support.converter.LongTypeConverter;
-import com.nf.mvc.support.converter.ShortTypeConverter;
-import com.nf.mvc.support.converter.StringTypeConverter;
+import com.nf.mvc.support.converter.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -82,6 +69,7 @@ public abstract class WebTypeConverters {
      * @return 返回转换成功后的数据
      * @throws Exception 但指定的类型没有对应的转换器会抛UnsupportedOperationException；有转换器但转换失败会抛IllegalArgumentException
      */
+    @SuppressWarnings("RedundantThrows")
     public static <T> Object toSimpleTypeValue(Class<T> paramType, String requestParamValue) throws Exception {
         WebTypeConverter typeConverter = getTypeConverter(paramType);
 
