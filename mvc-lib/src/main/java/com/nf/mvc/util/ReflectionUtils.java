@@ -11,6 +11,7 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.net.URI;
 import java.net.URL;
@@ -79,10 +80,14 @@ public abstract class ReflectionUtils {
 
     /**
      * 此方法目前只是用来注入配置属性类使用的
-     * <p>此方法本不应该写在这里,因为它与注入有关,但不想增加复杂性,也不想给mvc框架提供ioc的能力,就简单注入配置属性类,所以就写在了这里</p>
+     * <p>此方法本不应该写在这里,因为它与注入有关,但不想增加复杂性,
+     * 也不想给mvc框架提供ioc的能力,就简单注入配置属性类,所以就写在了这里</p>
+     *
+     * <p>此方法也应该设计为抛出Exception更好，这里抛出的调用setAccessible方法时产生的异常，
+     * 主要是为了在{@link #newInstance(Class)}方法里演示catch的或（|）写法</p>
      * @param instance 某个需要注入配置属性的实例
      * @param <T> 实例的类型
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException 注入ConfigurationProperties时产生的异常
      */
     private static <T> void injectConfigurationProperties(T instance) throws IllegalAccessException {
         Field[] fields = instance.getClass().getDeclaredFields();
@@ -119,7 +124,7 @@ public abstract class ReflectionUtils {
      * @return 方法各个参数的名字（依据参数位置顺序依次返回）
      */
     @Deprecated
-    public static List<String> getParamNamesWithParamType(Class<?> clazz, String methodName, Class... paramTypes) {
+    public static List<String> getParamNamesWithParamType(Class<?> clazz, String methodName, Class<?>... paramTypes) {
         List<String> paramNames = new ArrayList<>();
         ClassPool pool = ClassPool.getDefault();
         int paramLength = 0;
@@ -128,7 +133,7 @@ public abstract class ReflectionUtils {
         pool.insertClassPath(new ClassClassPath(ReflectionUtils.class));
         try {
             CtClass ctClass = pool.getCtClass(clazz.getName());
-            CtMethod ctMethod = null;
+            CtMethod ctMethod;
             if (paramTypes != null && paramTypes.length > 0) {
                 CtClass[] paramClasses = new CtClass[paramTypes.length];
                 for (int i = 0; i < paramTypes.length; i++) {
@@ -145,7 +150,7 @@ public abstract class ReflectionUtils {
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             if (attr != null) {
                 //必须是对索引进行排序，所以选定一个可以排序的集合
-                TreeMap<Integer, String> sortMap = new TreeMap<Integer, String>();
+                TreeMap<Integer, String> sortMap = new TreeMap<>();
                 for (int i = 0; i < attr.tableLength(); i++) {
                     sortMap.put(attr.index(i), attr.variableName(i));
                 }
@@ -189,8 +194,8 @@ public abstract class ReflectionUtils {
      * </ul>
      * <p>所以^set[A-Z].* 意思就是以set开头，之后跟一个大写字母，大写字母之后可以出现0个或多个字符</p>
      *
-     * @param method
-     * @return
+     * @param method 方法
+     * @return 是setter方法就返回true，否则返回false
      */
     public static boolean isSetter(Method method) {
         return Modifier.isPublic(method.getModifiers()) &&
@@ -206,10 +211,8 @@ public abstract class ReflectionUtils {
                     !method.getReturnType().equals(void.class)) {
                 return true;
             }
-            if (method.getName().matches(GETTER_IS_METHOD_Pattern) &&
-                    method.getReturnType().equals(boolean.class)) {
-                return true;
-            }
+            return method.getName().matches(GETTER_IS_METHOD_Pattern) &&
+                    method.getReturnType().equals(boolean.class);
         }
         return false;
     }
@@ -220,8 +223,8 @@ public abstract class ReflectionUtils {
      * 是一个数组，并且数组的成员（Component）是简单类型，就认为是一个简单属性
      * 比如int[],Integer[],String[]就认为是简单属性，但Emp[]不是简单属性，因为其成员Emp不是简单类型
      *
-     * @param type
-     * @return
+     * @param type 类型信息
+     * @return 基本类型及其包装类型或是这些类型的数组类型就返回true
      */
     public static boolean isSimpleProperty(Class<?> type) {
         return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
@@ -234,11 +237,11 @@ public abstract class ReflectionUtils {
      * 这个方法的初衷是想让我们自己写的pojo类才返回true
      * 我们的pojo类通常不继承任何父类，就是普通的属性的封装
      *
-     * @param type
-     * @return
+     * @param type 类型信息
+     * @return 非简单类型并且也不是集合类型就返回true
      */
     public static boolean isComplexProperty(Class<?> type) {
-        return isSimpleProperty(type) == false && isCollection(type) == false;
+        return !isSimpleProperty(type) && !isCollection(type);
     }
 
     /**
@@ -275,8 +278,8 @@ public abstract class ReflectionUtils {
     /**
      * 如果是Collection以及Map的子类型，就认为是一个集合
      *
-     * @param type
-     * @return
+     * @param type 类型信息
+     * @return 是Collection或者是Map就返回true，否则返回false
      */
     public static boolean isCollection(Class<?> type) {
         return Collection.class.isAssignableFrom(type) ||
@@ -287,8 +290,8 @@ public abstract class ReflectionUtils {
     /**
      * 如果是基本类型、包装类型或者date，number等等就认为是简单类型
      *
-     * @param type
-     * @return
+     * @param type 类型信息
+     * @return 基本类型、包装类型或者date，number类型就返回true，否则返回false
      */
     public static boolean isSimpleType(Class<?> type) {
         return (Void.class != type && void.class != type &&
@@ -311,7 +314,7 @@ public abstract class ReflectionUtils {
      * 判断是否是基本类型的包装类型，比如传递的参数是Integer就会返回true
      *
      * @param clazz：包装类型
-     * @return
+     * @return 是包装类型就返回true，否则返回false
      */
     public static boolean isPrimitiveWrapper(Class<?> clazz) {
         return WRAPPER_TYPE_TO_PRIMITIVE_MAP.containsKey(clazz);
@@ -325,8 +328,8 @@ public abstract class ReflectionUtils {
     /**
      * 判断一个类是否是简单类型或者简单类型对应的包装类型
      *
-     * @param clazz
-     * @return
+     * @param clazz 类型信息
+     * @return 是基本类型或包装类型就返回true，否则返回false
      */
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         return (clazz.isPrimitive() || isPrimitiveWrapper(clazz));
@@ -337,9 +340,9 @@ public abstract class ReflectionUtils {
      * 也考虑了基本类型，比如Integer与int认为是isAssignable
      * assignable：可赋值的
      *
-     * @param lhsType
-     * @param rhsType
-     * @return
+     * @param lhsType 左手边类型信息
+     * @param rhsType 右手边类型信息
+     * @return 右手边类型可以赋值给左手边类型时返回true，否则返回false
      */
     public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
         if (lhsType.isAssignableFrom(rhsType)) {
@@ -358,7 +361,7 @@ public abstract class ReflectionUtils {
         boolean isAssignable = false;
         for (Class<?> rhsType : rhsTypes) {
             isAssignable = isAssignable(rhsType, lhsType);
-            if (isAssignable == true) {
+            if (isAssignable) {
                 break;
             }
         }
@@ -368,10 +371,10 @@ public abstract class ReflectionUtils {
     /**
      * 此方法是用来获取方法泛型参数的类型实参的
      *
-     * @param parameter
-     * @return
+     * @param parameter 方法参数信息,要求是一个泛型实参类型
+     * @return 返回所有的泛型实参类型信息
      */
-    public static Class[] getActualArgument(Parameter parameter) {
+    public static Class<?>[] getActualArgument(Parameter parameter) {
 
         Type type = parameter.getParameterizedType();
         if (!(type instanceof ParameterizedType)) {
@@ -381,9 +384,9 @@ public abstract class ReflectionUtils {
         // 如果方法的参数是List这样的类型，而不是List<String>,List<Integer>这样的，直接进行类型转换抛出ClassCastException异常
         ParameterizedType parameterizedType = (ParameterizedType) type;
         Type[] types = parameterizedType.getActualTypeArguments();
-        Class[] actualTypeArguments = new Class[types.length];
+        Class<?>[] actualTypeArguments = new Class[types.length];
         for (int i = 0; i < types.length; i++) {
-            actualTypeArguments[i] = (Class) types[i];
+            actualTypeArguments[i] = (Class<?>) types[i];
         }
         return actualTypeArguments;
     }
@@ -396,5 +399,26 @@ public abstract class ReflectionUtils {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("字段值设置失败",e);
         }
+    }
+
+    //=======================注解相关=============================
+    public static <T> T getAnnoValue( AnnotatedElement ele,Class<? extends Annotation> annoClass){
+        return getAnnoValue(ele, annoClass, "value");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getAnnoValue(AnnotatedElement ele,Class<? extends Annotation> annoClass,String attrName){
+        if (!ele.isAnnotationPresent(annoClass)) {
+            throw new IllegalStateException("元素:" + ele + " 上没有注解:" + annoClass.getName());
+        }
+        Annotation anno = ele.getDeclaredAnnotation(annoClass);
+        T result;
+        try {
+            Method valueMethod = annoClass.getDeclaredMethod(attrName);
+            result = (T)valueMethod.invoke(anno);
+        } catch (Exception e) {
+            throw new IllegalStateException("注解:" + annoClass.getName() + " 没有value属性");
+        }
+        return result;
     }
 }

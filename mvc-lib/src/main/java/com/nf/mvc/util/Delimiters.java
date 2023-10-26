@@ -52,8 +52,8 @@ public enum Delimiters {
      */
     Pipe("\\|","竖线分隔符")
     ;
-    private String pattern;
-    private String desc;
+    private final String pattern;
+    private final String desc;
 
     Delimiters(String pattern, String desc) {
         this.pattern = pattern;
@@ -75,8 +75,8 @@ public enum Delimiters {
      *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.Space, Delimiters.Colon);
      *    String pattern = getCombinedPattern(spaceAndColon);
      * </pre>
-     * @param delimiters
-     * @return
+     * @param delimiters 所有分隔符枚举实例
+     * @return 所有枚举实例对应的正则表达式，是或者的关系
      */
     public static String getCombinedPattern(EnumSet<Delimiters> delimiters) {
         List<String> patternList = delimiters.stream().map(Delimiters::getPattern).collect(Collectors.toList());

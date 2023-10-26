@@ -1,5 +1,7 @@
 package com.nf.mvc.util;
 
+import static com.nf.mvc.util.ReflectionUtils.isAssignable;
+
 public interface ExceptionUtils {
     /**
      *
@@ -13,8 +15,8 @@ public interface ExceptionUtils {
      * <a href="https://stackoverflow.com/questions/6020719/what-could-cause-java-lang-reflect-invocationtargetexception">invocationtargetexception</a><br/>
      * <a href="https://stackoverflow.com/questions/17747175/how-can-i-loop-through-exception-getcause-to-find-root-cause-with-detail-messa">root exception</a>
      * </p>
-     * @param ex
-     * @return
+     * @param ex 当前抛出的异常
+     * @return 返回最源头的异常
      */
      static Throwable getRootCause(Throwable ex){
         Throwable cause;
@@ -23,5 +25,9 @@ public interface ExceptionUtils {
             result = cause;
         }
         return result;
+    }
+
+    static int exceptionCompare(Class<? extends Throwable> ex1Class,Class<? extends Throwable> ex2Class){
+        return ex1Class == ex2Class ? 0 : isAssignable(ex1Class,ex2Class) ? 1 : -1;
     }
 }

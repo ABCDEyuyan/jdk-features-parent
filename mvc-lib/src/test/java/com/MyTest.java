@@ -1,9 +1,13 @@
 package com;
 
+import com.nf.mvc.exception.ExceptionHandler;
+import com.nf.mvc.mapping.RequestMapping;
 import com.nf.mvc.support.path.AntPathMatcher;
 import com.nf.mvc.util.JacksonUtils;
+import com.nf.mvc.util.ReflectionUtils;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -78,5 +82,21 @@ public class MyTest {
         map.put(1, "a");
         map.put(2, "b");
         System.out.println(JacksonUtils.toJson(map));
+    }
+
+    @Test
+    public void s6() throws Exception {
+        Method me = A.class.getDeclaredMethod("test");
+        String value = ReflectionUtils.getAnnoValue(me, RequestMapping.class);
+        System.out.println("value = " + value);
+    }
+
+
+    static class A {
+        @ExceptionHandler(ArithmeticException.class)
+        @RequestMapping("/a/b/c")
+        public void test(){
+
+        }
     }
 }

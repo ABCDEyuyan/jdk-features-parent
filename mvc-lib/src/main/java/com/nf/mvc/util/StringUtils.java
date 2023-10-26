@@ -24,9 +24,9 @@ public abstract class StringUtils {
    * 把List字符串数据变成一个分隔符分隔的字符串，比如List集合中有a b c三条记录，<br/>
    * 而指定的分隔符是逗号，那么调用此方法之后生成的字符串是：a,b,c
    *
-   * @param stringList
-   * @param delimiter
-   * @return
+   * @param stringList 字符串List集合
+   * @param delimiter 分隔符
+   * @return 合并字符串集合变成一个字符串，之间用分隔符分隔
    */
   public static String toCommaDelimitedString(Iterable<String> stringList, String delimiter) {
     StringJoiner joiner = new StringJoiner(delimiter);
@@ -198,8 +198,8 @@ public abstract class StringUtils {
 
   /**
    * 裁剪掉所有的空白字符，包含前部，中间，尾部的所有空白
-   * @param str
-   * @return
+   * @param str 要处理的字符串
+   * @return 剔除前后中间所有空白之后的字符串
    */
   public static String trimAllWhitespace(String str) {
     if (!hasLength(str)) {
@@ -224,7 +224,7 @@ public abstract class StringUtils {
    *
    * @param source:一个字符串数据
    * @param regex：正则表达式，通常是分隔符，可以使用{@link Delimiters}来指定常用的分隔符及分隔符组合
-   * @return
+   * @return 拆分后的字符串集合
    */
   public static List<String> split(String source, String regex) {
     Assert.notNull(source, "原始字符串不能是null的");
@@ -349,7 +349,7 @@ public abstract class StringUtils {
    * @param str 要处理的字符串
    * @param delimiter 分隔符字符串
    * @param charsToDelete 要删除掉的字符串
-   * @return
+   * @return 拆分之后的字符串数组
    */
   public static String[] delimitedListToStringArray(
           String str, String delimiter, String charsToDelete) {

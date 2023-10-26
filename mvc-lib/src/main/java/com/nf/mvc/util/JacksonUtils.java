@@ -34,7 +34,7 @@ import static com.nf.mvc.support.converter.DateTypeConverter.*;
  * </p>
  */
 public abstract class JacksonUtils {
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
         //设置java.util.Date时间类的序列化以及反序列化的格式
@@ -80,10 +80,10 @@ public abstract class JacksonUtils {
      * <pre class="code">
      *     User u = JacksonUtils.fromJson(str,User.class);
      * </pre>
-     * @param json
-     * @param type
-     * @param <T>
-     * @return
+     * @param json json文本
+     * @param type 反序列化的类型
+     * @param <T> 反序列化泛型
+     * @return json文本反序列化之后的对象
      */
     public static <T> T fromJson(final String json, Class<T> type) {
         T data;
@@ -117,8 +117,8 @@ public abstract class JacksonUtils {
      * @param json json文本
      * @param genericClass 普通的泛型类或者泛型集合类
      * @param actualType 普通泛型类的实参类型或者集合泛型类的实参类型
-     * @param <T>
-     * @return
+     * @param <T> 反序列化泛型
+     * @return json文本反序列化之后的对象
      */
     public static <T> T fromJson(String json,Class<?> genericClass,Class<?>... actualType){
         JavaType javaType= getObjectMapper().getTypeFactory().constructParametricType(genericClass,actualType);

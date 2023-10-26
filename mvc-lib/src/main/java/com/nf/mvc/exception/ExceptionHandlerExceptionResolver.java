@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.nf.mvc.ViewResult.adaptHandlerResult;
+import static com.nf.mvc.util.ExceptionUtils.exceptionCompare;
 import static com.nf.mvc.util.ExceptionUtils.getRootCause;
+import static com.nf.mvc.util.ReflectionUtils.getAnnoValue;
 
 /**
  * 这是mvc框架主用的一个异常解析器，此异常解析器支持用ExceptionHandler注解.
@@ -153,13 +155,9 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
    * @param exHandlerMethods 异常处理方法集合
    */
   protected void postHandleExceptionHandlerMethods(List<HandlerMethod> exHandlerMethods) {
-    exHandlerMethods.sort((m1, m2) ->
-            m1.getMethod()
-                    .getDeclaredAnnotation(ExceptionHandler.class)
-                    .value()
-                    .isAssignableFrom(m2.getMethod()
-                            .getDeclaredAnnotation(ExceptionHandler.class)
-                            .value()) ? 1 : -1);
+    exHandlerMethods.sort((m1, m2) ->exceptionCompare(
+            getAnnoValue(m1.getMethod(),ExceptionHandler.class),
+            getAnnoValue(m2.getMethod(),ExceptionHandler.class)));
   }
 
 
