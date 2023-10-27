@@ -150,8 +150,8 @@ public class AntPathMatcher implements PathMatcher {
       return pathVariables;
     }
 
-    String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, "" + this.pathSeparator, this.trimTokens, true);
-    String[] pathSegments = StringUtils.tokenizeToStringArray(path, "" + this.pathSeparator, this.trimTokens, true);
+    String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, String.valueOf(this.pathSeparator), this.trimTokens, true);
+    String[] pathSegments = StringUtils.tokenizeToStringArray(path, String.valueOf(this.pathSeparator), this.trimTokens, true);
     for (int i = 0; i < pathSegments.length; i++) {
       String patternSegment = patternSegments[i];
       // 大于2是确保{}之间有字符

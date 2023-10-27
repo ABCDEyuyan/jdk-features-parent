@@ -114,7 +114,6 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         return array;
     }
 
-    @SuppressWarnings("unchecked")
     private <T> List<T> resolveScalarTypeList(Class<T> scalarType, Object[] values, MethodParameter parameter) throws Exception {
         List<T> list = new ArrayList<>();
         for (int i = 0; i < Array.getLength(values); i++) {

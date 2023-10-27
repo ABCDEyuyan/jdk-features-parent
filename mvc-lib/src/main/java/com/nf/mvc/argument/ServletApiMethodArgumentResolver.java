@@ -32,7 +32,6 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
      * @return 解析之后的值
      * @throws Exception 解析过程中可能抛出的异常
      */
-    @SuppressWarnings("ConstantConditions")
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
         Class<?> paramType = parameter.getParameterType();

@@ -44,7 +44,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
 public class RequestMappingHandlerMapping implements HandlerMapping {
     private final Map<String, HandlerMethod> handlers = new HashMap<>();
     private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
-    Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
+    private final Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
             .build();
