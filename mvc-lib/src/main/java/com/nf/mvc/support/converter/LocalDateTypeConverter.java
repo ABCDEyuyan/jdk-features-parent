@@ -6,10 +6,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 
-public class LocalDateTypeConverter implements WebTypeConverter{
+public class LocalDateTypeConverter implements WebTypeConverter<LocalDate> {
 
-    @Override
-    public LocalDate convert(String paramValue) throws Exception {
-        return LocalDate.parse(paramValue, DateTimeFormatter.ofPattern(DateTypeConverter.DATEPATTERN));
-    }
+  @Override
+  public LocalDate convert(String paramValue) throws Exception {
+    return LocalDate.parse(paramValue, DateTimeFormatter.ofPattern(DateTypeConverter.DATE_PATTERN));
+  }
 }
