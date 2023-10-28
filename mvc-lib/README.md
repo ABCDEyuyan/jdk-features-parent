@@ -67,7 +67,7 @@
 - HttpMethod：典型枚举写法
 - CommonResultCode ：这里枚举实现了接口
 - Delimiters：这里在枚举里写了方法
-- com.nf.mvc.argument.ServletApiMethodArgumentResolver.ServletApiEnum
+- ServletApiMethodArgumentResolver.ServletApiEnum
 
 ## 正则表达式
 - AntPathMatcher

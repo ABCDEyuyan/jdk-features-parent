@@ -1,6 +1,11 @@
 package com.nf.mvc.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +30,7 @@ public abstract class StringUtils {
    * 而指定的分隔符是逗号，那么调用此方法之后生成的字符串是：a,b,c
    *
    * @param stringList 字符串List集合
-   * @param delimiter 分隔符
+   * @param delimiter  分隔符
    * @return 合并字符串集合变成一个字符串，之间用分隔符分隔
    */
   public static String toCommaDelimitedString(Iterable<String> stringList, String delimiter) {
@@ -41,6 +46,7 @@ public abstract class StringUtils {
   /**
    * 把一个字符串转换成驼峰命名的字符串，在指定的分隔符处进行处理。
    * 比如text="get_by_id",delimiter="_",那么转换结果就是"getById"
+   *
    * @param text      要进行转换的字符串
    * @param delimiter 分隔符，通常是下划线，空格之类的字符
    * @return 驼峰规范的字符串
@@ -70,6 +76,7 @@ public abstract class StringUtils {
   /**
    * 判断字符串是否有数据，其中空白字符是不算有数据的，
    * 空白字符由方法{@link Character#isWhitespace(char)}决定
+   *
    * @param str 字符串数据
    * @return 有内容就是true否则就是false
    */
@@ -90,6 +97,7 @@ public abstract class StringUtils {
   /**
    * 此方法返回第一个非空白字符的索引位置，字符串中间有空格是不处理的，
    * 比如"   abc"这个字符串前面有3个空格，那么调用此方法后返回值是3，
+   *
    * @param str 字符串数据
    * @return 返回第一个非空白字符的索引位置
    */
@@ -103,6 +111,7 @@ public abstract class StringUtils {
 
   /**
    * 字符串中任何位置有空白字符就返回true
+   *
    * @param str 字符串数据
    * @return 有空白字符就返回true，否则返回false
    */
@@ -126,6 +135,7 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串前面的空白
+   *
    * @param str the {@code String} to check
    * @return the trimmed {@code String}
    * @see java.lang.Character#isWhitespace
@@ -144,6 +154,7 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串尾部的空白
+   *
    * @param str the {@code String} to check
    * @return the trimmed {@code String}
    * @see java.lang.Character#isWhitespace
@@ -162,6 +173,7 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串前面所有指定的字符
+   *
    * @param str              the {@code String} to check
    * @param leadingCharacter the leading character to be trimmed
    * @return the trimmed {@code String}
@@ -180,6 +192,7 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串后面所有指定的字符
+   *
    * @param str               the {@code String} to check
    * @param trailingCharacter the trailing character to be trimmed
    * @return the trimmed {@code String}
@@ -198,6 +211,7 @@ public abstract class StringUtils {
 
   /**
    * 裁剪掉所有的空白字符，包含前部，中间，尾部的所有空白
+   *
    * @param str 要处理的字符串
    * @return 剔除前后中间所有空白之后的字符串
    */
@@ -284,9 +298,9 @@ public abstract class StringUtils {
 
   /**
    * Extract the filename extension from the given Java resource path,
-   * e.g. "mypath/myfile.txt" -> "txt".
+   * e.g. "path/file.txt" -> "txt".
    *
-   * @param path the file path (may be {@code null})
+   * @param path the file path (maybe {@code null})
    * @return the extracted filename extension, or {@code null} if none
    */
   public static String getFilenameExtension(String path) {
@@ -346,8 +360,8 @@ public abstract class StringUtils {
    * </p>
    * <p>此方法的代码来自于spring框架中的同名方法源代码</p>
    *
-   * @param str 要处理的字符串
-   * @param delimiter 分隔符字符串
+   * @param str           要处理的字符串
+   * @param delimiter     分隔符字符串
    * @param charsToDelete 要删除掉的字符串
    * @return 拆分之后的字符串数组
    */
