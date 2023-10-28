@@ -13,16 +13,6 @@ import java.util.stream.Collectors;
  */
 public abstract class StringUtils {
   private static final String[] EMPTY_STRING_ARRAY = {};
-
-  private static final String FOLDER_SEPARATOR = "/";
-
-  private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
-
-  private static final String TOP_PATH = "..";
-
-  private static final String CURRENT_PATH = ".";
-
-  private static final char EXTENSION_SEPARATOR = '.';
   private static final char BLANK = ' ';
 
   /**
@@ -286,40 +276,6 @@ public abstract class StringUtils {
     return new String(chars);
   }
 
-
-  public static String getFilename(String path) {
-    if (path == null) {
-      return null;
-    }
-
-    int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
-    return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
-  }
-
-  /**
-   * Extract the filename extension from the given Java resource path,
-   * e.g. "path/file.txt" -> "txt".
-   *
-   * @param path the file path (maybe {@code null})
-   * @return the extracted filename extension, or {@code null} if none
-   */
-  public static String getFilenameExtension(String path) {
-    if (path == null) {
-      return null;
-    }
-
-    int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
-    if (extIndex == -1) {
-      return null;
-    }
-
-    int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
-    if (folderIndex > extIndex) {
-      return null;
-    }
-
-    return path.substring(extIndex + 1);
-  }
 
   public static boolean isNumeric(CharSequence str) {
     if (str == null || str.length() == 0) {

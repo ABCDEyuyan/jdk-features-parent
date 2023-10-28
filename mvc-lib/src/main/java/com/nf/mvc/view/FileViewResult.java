@@ -1,8 +1,8 @@
 package com.nf.mvc.view;
 
 
+import com.nf.mvc.util.FileUtils;
 import com.nf.mvc.util.StreamUtils;
-import com.nf.mvc.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -58,7 +58,7 @@ public class FileViewResult extends StreamViewResult {
   public FileViewResult(String realPath, Map<String, String> headers) {
     super(StreamUtils.getInputStreamFromRealPath(realPath), headers);
     // this.realPath = realPath;
-    this.filename = StringUtils.getFilename(realPath);
+    this.filename = FileUtils.getFilename(realPath);
   }
 
   public FileViewResult(InputStream inputStream, String filename) {

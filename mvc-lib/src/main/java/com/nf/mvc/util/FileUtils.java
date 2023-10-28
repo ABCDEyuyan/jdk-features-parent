@@ -16,6 +16,15 @@ import java.nio.file.Files;
 public abstract class FileUtils {
 
   public static final int BUFFER_SIZE = StreamUtils.BUFFER_SIZE;
+  private static final char EXTENSION_SEPARATOR = '.';
+  private static final String FOLDER_SEPARATOR = "/";
+
+  private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
+
+  private static final String TOP_PATH = "..";
+
+  private static final String CURRENT_PATH = ".";
+
   //---------------------------------------------------------------------
   // Copy methods for java.io.File
   //---------------------------------------------------------------------
@@ -133,10 +142,44 @@ public abstract class FileUtils {
 
   public static String getMediaType(String filename) {
     // guessContentTypeFromName是从文件名猜测其内容类型，如果为null就猜测失败
-    String midiaType = URLConnection.guessContentTypeFromName(filename);
-    if (midiaType == null) {
-      midiaType = StreamUtils.APPLICATION_OCTET_STREAM_VALUE;
+    String mediaType = URLConnection.guessContentTypeFromName(filename);
+    if (mediaType == null) {
+      mediaType = StreamUtils.APPLICATION_OCTET_STREAM_VALUE;
     }
-    return midiaType;
+    return mediaType;
+  }
+
+  public static String getFilename(String path) {
+    if (path == null) {
+      return null;
+    }
+
+    int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+    return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
+  }
+
+  /**
+   * Extract the filename extension from the given Java resource path,
+   * e.g. "path/file.txt" -> "txt".
+   *
+   * @param path the file path (maybe {@code null})
+   * @return the extracted filename extension, or {@code null} if none
+   */
+  public static String getFilenameExtension(String path) {
+    if (path == null) {
+      return null;
+    }
+
+    int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
+    if (extIndex == -1) {
+      return null;
+    }
+
+    int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+    if (folderIndex > extIndex) {
+      return null;
+    }
+
+    return path.substring(extIndex + 1);
   }
 }
