@@ -15,8 +15,6 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -431,28 +429,5 @@ public abstract class ReflectionUtils {
     } catch (IllegalAccessException e) {
       throw new RuntimeException("字段值设置失败", e);
     }
-  }
-
-  //---------------------------------------------------------------------
-  // 注解相关
-  //---------------------------------------------------------------------
-
-  public static <T> T getAnnoValue(AnnotatedElement ele, Class<? extends Annotation> annoClass) {
-    return getAnnoValue(ele, annoClass, "value");
-  }
-
-  public static <T> T getAnnoValue(AnnotatedElement ele, Class<? extends Annotation> annoClass, String attrName) {
-    if (!ele.isAnnotationPresent(annoClass)) {
-      throw new IllegalStateException("元素:" + ele + " 上没有注解:" + annoClass.getName());
-    }
-    Annotation anno = ele.getDeclaredAnnotation(annoClass);
-    T result;
-    try {
-      Method valueMethod = annoClass.getDeclaredMethod(attrName);
-      result = (T) valueMethod.invoke(anno);
-    } catch (Exception e) {
-      throw new IllegalStateException("注解:" + annoClass.getName() + " 没有" + attrName + "属性");
-    }
-    return result;
   }
 }
