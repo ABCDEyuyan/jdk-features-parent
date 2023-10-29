@@ -80,6 +80,9 @@ public abstract class WebTypeConverters {
    * 因为要让异常往调用链上抛出以便用户知道数据有问题。
    * 此方法是可能返回null，比如原始数据本身就是null，经过StringTypeConverter转换后仍然是返回null的
    *
+   * <p>此方法像一个门面模式方法,代表着所有{@link WebTypeConverter}的方法{@link WebTypeConverter#convert(String)},
+   * 可以直接使用此方法,而不用写类似这样的代码{@code WebTypeConverters.getTypeConverter(parameter.getParameterType()).convert(value)}</p>
+   *
    * @param paramType         简单类型
    * @param requestParamValue 原始web请求数据
    * @param <T>               要转换的目标类型
@@ -87,7 +90,7 @@ public abstract class WebTypeConverters {
    * @throws Exception 但指定的类型没有对应的转换器会抛UnsupportedOperationException；有转换器但转换失败会抛IllegalArgumentException
    */
   @SuppressWarnings("RedundantThrows")
-  public static <T> Object toSimpleTypeValue(Class<T> paramType, String requestParamValue) throws Exception {
+  public static <T> Object convert(Class<T> paramType, String requestParamValue) throws Exception {
     WebTypeConverter<?> typeConverter = getTypeConverter(paramType);
     if (typeConverter == null) {
       throw new UnsupportedOperationException("不支持对此类型:" + paramType.getName() + "的类型转换");

@@ -17,6 +17,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  */
 public class PathVariableMethodArgumentResolver implements MethodArgumentResolver {
   private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
+
   @Override
   public boolean supports(MethodParameter parameter) {
     return parameter.isPresent(PathVariable.class) && parameter.isSimpleType();
@@ -31,10 +32,12 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
     String path = RequestUtils.getRequestUrl(request);
 
     Map<String, String> variables = pathMatcher.extractPathVariables(pattern, path);
-    String varName = parameter.getParameter().getDeclaredAnnotation(PathVariable.class).value();
+    String varName = parameter.getParameter()
+            .getDeclaredAnnotation(PathVariable.class)
+            .value();
 
     String value = variables.get(varName);
-    return WebTypeConverters.getTypeConverter(parameter.getParameterType()).convert(value);
+    return WebTypeConverters.convert(parameter.getParameterType(), value);
   }
 
   public void setPathMatcher(AntPathMatcher pathMatcher) {
