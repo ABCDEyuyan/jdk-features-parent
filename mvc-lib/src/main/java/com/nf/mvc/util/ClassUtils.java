@@ -5,15 +5,9 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class ClassUtils {
+public abstract class ClassUtils {
   /**
    * 这个map集合，key是包装类型（wrapper），值是此包装类型对应的基本类型(primitive)
    * IdentityHashMap表示的是key用==符号比较是true才相等，而不是普通HashMap用equals比较

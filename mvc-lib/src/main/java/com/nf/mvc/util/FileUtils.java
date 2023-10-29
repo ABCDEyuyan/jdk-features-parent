@@ -1,15 +1,8 @@
 package com.nf.mvc.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
+import com.nf.mvc.support.Assert;
+
+import java.io.*;
 import java.net.URLConnection;
 import java.nio.file.Files;
 

@@ -1,4 +1,4 @@
-package com.nf.mvc.util;
+package com.nf.mvc.support;
 
 /**
  * 拷贝自spring，原本是个抽象类，只保留了一个方法

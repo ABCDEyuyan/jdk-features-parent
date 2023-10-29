@@ -16,7 +16,6 @@
 
 package com.nf.mvc.support;
 
-import com.nf.mvc.util.Assert;
 import com.nf.mvc.util.CollectionUtils;
 
 import java.io.Serializable;
