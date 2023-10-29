@@ -25,8 +25,6 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     private static final MethodArgumentResolverComposite DEFAULT_RESOLVERS = MethodArgumentResolverComposite.defaultInstance();
-
-    private final MethodArgumentResolverComposite resolvers;
     private final MethodInvoker methodInvoker;
 
     public RequestMappingHandlerAdapter() {
@@ -34,7 +32,6 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     public RequestMappingHandlerAdapter(MethodArgumentResolverComposite resolvers) {
-        this.resolvers = resolvers;
         methodInvoker = new MethodInvoker(resolvers);
     }
 

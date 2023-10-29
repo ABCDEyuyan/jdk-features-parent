@@ -1,8 +1,5 @@
 package com.nf.mvc.support;
 
-import java.util.List;
-import java.util.StringJoiner;
-
 public abstract class HttpHeaders {
     /**
      * The HTTP {@code Accept} header field name.

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.nf.mvc.ViewResult.adaptHandlerResult;
+import static com.nf.mvc.util.AnnotationUtils.getAttrValue;
+import static com.nf.mvc.util.ExceptionUtils.exceptionCompare;
 import static com.nf.mvc.util.ExceptionUtils.getRootCause;
 
 /**
@@ -153,13 +155,9 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
    * @param exHandlerMethods 异常处理方法集合
    */
   protected void postHandleExceptionHandlerMethods(List<HandlerMethod> exHandlerMethods) {
-    exHandlerMethods.sort((m1, m2) ->
-            m1.getMethod()
-                    .getDeclaredAnnotation(ExceptionHandler.class)
-                    .value()
-                    .isAssignableFrom(m2.getMethod()
-                            .getDeclaredAnnotation(ExceptionHandler.class)
-                            .value()) ? 1 : -1);
+    exHandlerMethods.sort((m1, m2) -> exceptionCompare(
+            getAttrValue(m1.getMethod(), ExceptionHandler.class),
+            getAttrValue(m2.getMethod(), ExceptionHandler.class)));
   }
 
 
@@ -179,7 +177,7 @@ public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolv
        就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递进来的第四个参数的值 */
       return null;
     }
-    //return executeExceptionHandlerMethod(exceptionHandlerMethod,raisedException);
+    // return executeExceptionHandlerMethod(exceptionHandlerMethod,raisedException);
   }
 
   protected Exception getRaisedException(Exception ex) {

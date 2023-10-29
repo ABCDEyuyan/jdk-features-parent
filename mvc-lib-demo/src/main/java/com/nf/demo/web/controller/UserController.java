@@ -5,7 +5,7 @@ import com.nf.demo.service.UserService;
 import com.nf.demo.service.impl.UserServiceImpl;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.mapping.RequestMapping;
-import com.nf.mvc.support.ResponseVO;
+import com.nf.mvc.support.vo.ResponseVO;
 
 import static com.nf.mvc.handler.HandlerHelper.json;
 

@@ -10,7 +10,7 @@ import static com.nf.mvc.util.JacksonUtils.getObjectMapper;
 
 
 public class JsonViewResult extends ViewResult {
-    private Object obj;
+    private final Object obj;
 
     public JsonViewResult(Object obj) {
         this.obj = obj;

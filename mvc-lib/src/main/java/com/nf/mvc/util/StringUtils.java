@@ -1,6 +1,13 @@
 package com.nf.mvc.util;
 
-import java.util.*;
+import com.nf.mvc.support.Delimiters;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 /**
@@ -8,25 +15,15 @@ import java.util.stream.Collectors;
  */
 public abstract class StringUtils {
   private static final String[] EMPTY_STRING_ARRAY = {};
-
-  private static final String FOLDER_SEPARATOR = "/";
-
-  private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
-
-  private static final String TOP_PATH = "..";
-
-  private static final String CURRENT_PATH = ".";
-
-  private static final char EXTENSION_SEPARATOR = '.';
   private static final char BLANK = ' ';
 
   /**
    * 把List字符串数据变成一个分隔符分隔的字符串，比如List集合中有a b c三条记录，<br/>
    * 而指定的分隔符是逗号，那么调用此方法之后生成的字符串是：a,b,c
    *
-   * @param stringList
-   * @param delimiter
-   * @return
+   * @param stringList 字符串List集合
+   * @param delimiter  分隔符
+   * @return 合并字符串集合变成一个字符串，之间用分隔符分隔
    */
   public static String toCommaDelimitedString(Iterable<String> stringList, String delimiter) {
     StringJoiner joiner = new StringJoiner(delimiter);
@@ -41,6 +38,7 @@ public abstract class StringUtils {
   /**
    * 把一个字符串转换成驼峰命名的字符串，在指定的分隔符处进行处理。
    * 比如text="get_by_id",delimiter="_",那么转换结果就是"getById"
+   *
    * @param text      要进行转换的字符串
    * @param delimiter 分隔符，通常是下划线，空格之类的字符
    * @return 驼峰规范的字符串
@@ -63,13 +61,14 @@ public abstract class StringUtils {
     return builder.toString();
   }
 
-  public static boolean hasLength(CharSequence str) {
-    return (str != null && str.length() > 0);
+  public static boolean isEmpty(CharSequence str) {
+    return (str == null || str.length() == 0);
   }
 
   /**
    * 判断字符串是否有数据，其中空白字符是不算有数据的，
    * 空白字符由方法{@link Character#isWhitespace(char)}决定
+   *
    * @param str 字符串数据
    * @return 有内容就是true否则就是false
    */
@@ -90,6 +89,7 @@ public abstract class StringUtils {
   /**
    * 此方法返回第一个非空白字符的索引位置，字符串中间有空格是不处理的，
    * 比如"   abc"这个字符串前面有3个空格，那么调用此方法后返回值是3，
+   *
    * @param str 字符串数据
    * @return 返回第一个非空白字符的索引位置
    */
@@ -103,11 +103,12 @@ public abstract class StringUtils {
 
   /**
    * 字符串中任何位置有空白字符就返回true
+   *
    * @param str 字符串数据
    * @return 有空白字符就返回true，否则返回false
    */
   public static boolean containsWhitespace(CharSequence str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return false;
     }
 
@@ -126,12 +127,13 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串前面的空白
+   *
    * @param str the {@code String} to check
    * @return the trimmed {@code String}
    * @see java.lang.Character#isWhitespace
    */
   public static String trimLeadingWhitespace(String str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -144,12 +146,13 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串尾部的空白
+   *
    * @param str the {@code String} to check
    * @return the trimmed {@code String}
    * @see java.lang.Character#isWhitespace
    */
   public static String trimTrailingWhitespace(String str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -162,12 +165,13 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串前面所有指定的字符
+   *
    * @param str              the {@code String} to check
    * @param leadingCharacter the leading character to be trimmed
    * @return the trimmed {@code String}
    */
   public static String trimLeadingCharacter(String str, char leadingCharacter) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -180,12 +184,13 @@ public abstract class StringUtils {
 
   /**
    * 删除字符串后面所有指定的字符
+   *
    * @param str               the {@code String} to check
    * @param trailingCharacter the trailing character to be trimmed
    * @return the trimmed {@code String}
    */
   public static String trimTrailingCharacter(String str, char trailingCharacter) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -198,11 +203,12 @@ public abstract class StringUtils {
 
   /**
    * 裁剪掉所有的空白字符，包含前部，中间，尾部的所有空白
-   * @param str
-   * @return
+   *
+   * @param str 要处理的字符串
+   * @return 剔除前后中间所有空白之后的字符串
    */
   public static String trimAllWhitespace(String str) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -224,7 +230,7 @@ public abstract class StringUtils {
    *
    * @param source:一个字符串数据
    * @param regex：正则表达式，通常是分隔符，可以使用{@link Delimiters}来指定常用的分隔符及分隔符组合
-   * @return
+   * @return 拆分后的字符串集合
    */
   public static List<String> split(String source, String regex) {
     Assert.notNull(source, "原始字符串不能是null的");
@@ -252,7 +258,7 @@ public abstract class StringUtils {
   }
 
   private static String changeFirstCharacterCase(String str, boolean capitalize) {
-    if (!hasLength(str)) {
+    if (isEmpty(str)) {
       return str;
     }
 
@@ -273,40 +279,6 @@ public abstract class StringUtils {
   }
 
 
-  public static String getFilename(String path) {
-    if (path == null) {
-      return null;
-    }
-
-    int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
-    return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
-  }
-
-  /**
-   * Extract the filename extension from the given Java resource path,
-   * e.g. "mypath/myfile.txt" -> "txt".
-   *
-   * @param path the file path (may be {@code null})
-   * @return the extracted filename extension, or {@code null} if none
-   */
-  public static String getFilenameExtension(String path) {
-    if (path == null) {
-      return null;
-    }
-
-    int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
-    if (extIndex == -1) {
-      return null;
-    }
-
-    int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
-    if (folderIndex > extIndex) {
-      return null;
-    }
-
-    return path.substring(extIndex + 1);
-  }
-
   public static boolean isNumeric(CharSequence str) {
     if (str == null || str.length() == 0) {
       return false;
@@ -325,7 +297,7 @@ public abstract class StringUtils {
   }
 
   public static String deleteAny(String inString, String charsToDelete) {
-    if (!hasLength(inString) || !hasLength(charsToDelete)) {
+    if (isEmpty(inString) || isEmpty(charsToDelete)) {
       return inString;
     }
 
@@ -346,10 +318,10 @@ public abstract class StringUtils {
    * </p>
    * <p>此方法的代码来自于spring框架中的同名方法源代码</p>
    *
-   * @param str 要处理的字符串
-   * @param delimiter 分隔符字符串
+   * @param str           要处理的字符串
+   * @param delimiter     分隔符字符串
    * @param charsToDelete 要删除掉的字符串
-   * @return
+   * @return 拆分之后的字符串数组
    */
   public static String[] delimitedListToStringArray(
           String str, String delimiter, String charsToDelete) {

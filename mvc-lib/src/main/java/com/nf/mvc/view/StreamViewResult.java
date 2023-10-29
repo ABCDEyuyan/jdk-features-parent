@@ -18,8 +18,8 @@ import java.util.Map;
  * @see com.nf.mvc.handler.HandlerHelper
  */
 public class StreamViewResult extends ViewResult {
-    private  Map<String, String> headers ;
-    private InputStream inputStream;
+    private final Map<String, String> headers ;
+    private final InputStream inputStream;
 
     public StreamViewResult(InputStream inputStream) {
         this(inputStream, new HashMap<>());
@@ -45,7 +45,7 @@ public class StreamViewResult extends ViewResult {
         if (ObjectUtils.isEmpty(headers)) {
             return;
         }
-        headers.forEach((k,v)-> resp.setHeader(k,v));
+        headers.forEach(resp::setHeader);
     }
 
     protected void writeContent(HttpServletResponse resp) throws Exception {

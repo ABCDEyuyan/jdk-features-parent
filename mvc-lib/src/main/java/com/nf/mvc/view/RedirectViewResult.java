@@ -11,7 +11,7 @@ public class RedirectViewResult extends ViewResult {
 
     private static final int LENGTH_OF_QUESTION_AND_AMP = 2;
     private String url;
-    private Map<String,String> model;
+    private final Map<String,String> model;
 
     public RedirectViewResult(String url) {
         this(url, new HashMap<>());
@@ -39,13 +39,11 @@ public class RedirectViewResult extends ViewResult {
             builder.append(entry.getValue());
             builder.append("&");
         }
-
         //这里写大于2的逻辑是前面的？加上最后多余的那个&
         if(builder.length()>=LENGTH_OF_QUESTION_AND_AMP){
             builder.deleteCharAt(builder.length()-1);
         }
         return builder.toString();
     }
-
 
 }

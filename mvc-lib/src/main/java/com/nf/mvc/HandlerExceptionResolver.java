@@ -35,12 +35,15 @@ import javax.servlet.http.HttpServletResponse;
 public interface HandlerExceptionResolver {
     /**
      * 执行链的异常解析器设计为只处理Exception异常，Error异常是不处理的，
+     * <p>异常解析器能解析就正常返回一个ViewResult类型的对象，
+     * 异常解析器解析过程中出异常或者返回null被认为是解析不了当前异常，
+     * 框架会查找下一个异常解析器去解析异常</p>
      * 由{@link DispatcherServlet#doService(HttpServletRequest, HttpServletResponse)}去处理
-     * @param request
-     * @param response
-     * @param handler
-     * @param ex
-     * @return 返回null表示本异常解析器不能解析此异常, 会继续交给下一个异常解析器去处理
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 处理者，通常是控制器方法所在类的对象
+     * @param ex 控制器方法执行时抛出的异常
+     * @return 返回解析之后的ViewResult
      * @see com.nf.mvc.exception.ExceptionHandlerExceptionResolver
      */
     ViewResult resolveException(

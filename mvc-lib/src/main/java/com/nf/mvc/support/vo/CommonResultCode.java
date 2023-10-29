@@ -1,4 +1,4 @@
-package com.nf.mvc.support;
+package com.nf.mvc.support.vo;
 
 public enum CommonResultCode implements ResultCode {
     /**
@@ -14,8 +14,8 @@ public enum CommonResultCode implements ResultCode {
      */
     FORBIDDEN(403,"没有权限访问资源");
 
-    private Integer code;
-    private String message;
+    private final Integer code;
+    private final String message;
 
     CommonResultCode(Integer code, String message) {
         this.code = code;

@@ -24,7 +24,7 @@ import java.time.LocalTime;
  * <ul>
  *     <li>contextPath=/mvc</li>
  *     <li>port=8080</li>
- *     <li>basePackage=mvcdemo</li>
+ *     <li>basePackage=mvc</li>
  *     <li>urlPattern=/</li>
  *     <li>文件上传时使用的临时目录=System.getProperty("java.io.tmpdir")</li>
  * </ul>
@@ -48,7 +48,7 @@ public class MvcApplication {
      */
     private static final String CONTEXT_PATH_DEFAULT = "";
     private static final int PORT_DEFAULT = 8080;
-    private static final String BASE_PACKAGE_DEFAULT = "mvcdemo";
+    private static final String BASE_PACKAGE_DEFAULT = "mvc";
     private static final String URL_PATTERN_DEFAULT = "/";
     private static final String TEMP_DIR_DEFAULT = System.getProperty("java.io.tmpdir");
 
@@ -125,19 +125,19 @@ public class MvcApplication {
     private Context registerContext(Tomcat tomcat, String docBase) {
         // 在这篇文章里有说明addContext与addWebApp的区别https://stackoverflow.com/questions/67253024/tomcat-catalina-context-add-existing-servlet-to-context
         // 如果仅仅只是把addContext方法换成addWebApp方法会导致DispatcherServlet注册url-pattern为/失效
-        Context ctx = tomcat.addContext(contextPath, docBase);
-        return ctx;
+        return tomcat.addContext(contextPath, docBase);
     }
 
     /**
      * 使用这个方法而不使用Tomcat.initWebappDefaults(ctx)可以剔除掉pom中一些关于jsp的相关依赖,
      * Tomcat.initWebappDefaults(ctx)这行代码除了注册默认servlet,还有欢迎页等其他常见的默认初始化设置
-     * @param ctx
+     * @param ctx Tomcat的Context
      */
     private void registerDefaultServlet(Context ctx) {
         Tomcat.addServlet(ctx,"default", DefaultServlet.class.getTypeName());
         ctx.addServletMappingDecoded("/", "default");
     }
+
     private void registerDispatcherServlet(Context ctx) {
         Wrapper wrapper = Tomcat.addServlet(ctx, "dispatcherServlet", new DispatcherServlet());
         ctx.addServletMappingDecoded(urlPattern, "dispatcherServlet");

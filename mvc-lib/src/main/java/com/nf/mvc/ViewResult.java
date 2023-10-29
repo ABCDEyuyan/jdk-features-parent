@@ -30,13 +30,19 @@ public abstract class ViewResult {
     public abstract void render(HttpServletRequest req, HttpServletResponse resp) throws Exception;
 
     /**
-     * 这段代码在Adapter与ExceptionResolver里面都有使用，因为Adapter与ExceptionResolver本质上不相关
-     * 所以这段代码放在两个里面的任意一个都不合适，放在这里更合理
-     * <p>不放在HandlerHelper里是因为这个类主要是用户使用，用户基本用不到这个方法，会形成污染，<br/>
-     * 把修饰符搞成默认修饰符让用户看不到，但这样别的地方又访问不到，所以就把此方法放到了这里
+     * 此方法是用来把控制器方法的执行结果统一适配为ViewResult类型用的，适配逻辑是
+     * <ul>
+     *     <li>控制器方法返回null：比如方法签名为void或就是return null,那么就适配为VoidViewResult</li>
+     *     <li>控制器方法返回ViewResult类型：原样返回，无需适配</li>
+     *     <li>控制器方法返回非ViewResult类型：那么就把返回对象的toString()值适配为PlainViewResult</li>
+     * </ul>
+     * <p>这段代码在Adapter与ExceptionResolver里面都有使用，因为Adapter与ExceptionResolver本质上不相关
+     * 所以这段代码放在两个里面的任意一个都不合适</p>
+     * <p>不放在HandlerHelper里是因为此类主要是用户使用，但此方法用户基本不用，
+     * 所以选择把此方法放到ViewResult类里
      * </p>
      * @param handlerResult: handler执行之后的结果，可能是null，ViewResult或者别的类型，详见{@link HandlerAdapter}
-     * @return
+     * @return 返回handler方法执行后适配的结果
      */
     public static ViewResult adaptHandlerResult(Object handlerResult) {
         ViewResult viewResult;

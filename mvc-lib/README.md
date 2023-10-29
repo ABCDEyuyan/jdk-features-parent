@@ -67,13 +67,14 @@
 - HttpMethod：典型枚举写法
 - CommonResultCode ：这里枚举实现了接口
 - Delimiters：这里在枚举里写了方法
-- com.nf.mvc.argument.ServletApiMethodArgumentResolver.ServletApiEnum
+- ServletApiMethodArgumentResolver.ServletApiEnum
 
 ## 正则表达式
 - AntPathMatcher
 - Delimiters
 - com.nf.mvc.util.ReflectionUtils#isSetter
-- com.nf.mvc.support.AntPathMatcher#validateDoubleAsterisk
+- com.nf.mvc.support.path.AntPathMatcher#validateDoubleAsterisk
+- SpiderPathMatcher
 
 ## 静态方法导入的运用
 - HandlerHelper
@@ -115,6 +116,10 @@ public interface MethodArgumentResolver {
 ### catch的or写法
 
 - com.nf.mvc.util.ReflectionUtils#newInstance
+
+### throws
+
+- NameConventionHandlerMapping#getHandler:此方法由于没有抛出异常，可以删掉方法签名上的throws语句，虽然与其实现的接口上的方法签名不一致，但是符合java语法规则的。但不建议这么做，此类不用，所以删掉了，演示知识使用
 
 ## null
 
@@ -184,7 +189,7 @@ MethodArgumentResolverComposite
 - MethodArgumentResolverComposite类的insertResolvers方法
 - ServletApiMethodArgumentResolver#supports
 - com.nf.mvc.util.StringUtils#split
-- BeanPropertyMethodArgumentResolver#getResolvers
+- BeanMethodArgumentResolver#getResolvers
 
 ## 链式方法实现
 
@@ -256,12 +261,12 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 ## 递归
 
-- BeanPropertyMethodArgumentResolver
+- BeanMethodArgumentResolver
 
 ## 线程安全
 
 - HandlerContext的ThreadLocal
-- BeanPropertyMethodArgumentResolver的getResolvers方法的synchronized语句块
+- BeanMethodArgumentResolver的getResolvers方法的synchronized语句块
 - WebTypeConverters里的ConcurrentHashMap的使用
 
 ## ascii文本log
@@ -306,7 +311,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 ## stack的运用
 
-- BeanPropertyMethodArgumentResolver#resolveArgument
+- BeanMethodArgumentResolver#resolveArgument
 
 ## 内部类
 

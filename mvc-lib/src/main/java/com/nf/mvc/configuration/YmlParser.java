@@ -47,11 +47,11 @@ public class YmlParser {
   /**
    * 解析yml配置文件后获得的顶层map结构
    */
-  private Map origin;
+  private Map<?,?> origin;
   /**
    * 获取的对象
    */
-  private Map current;
+  private Map<?,?> current;
 
   private YmlParser() {
   }
@@ -87,9 +87,9 @@ public class YmlParser {
     String[] keys = prefix.trim().split("\\.");
     for (String key : keys) {
       //只对map类型进行了处理,没有处理current是其它类型的情况
-      this.current = (Map) (this.current.get(key));
+      this.current = (Map<?,?>) (this.current.get(key));
     }
-    return populateBean(configurationPropertiesCLass, ((Map) this.current));
+    return populateBean(configurationPropertiesCLass, this.current);
   }
 
   /**
@@ -116,11 +116,11 @@ public class YmlParser {
   }
 
   /**
-   * @param clazz
-   * @param <T>
-   * @return
+   * @param clazz 配置类的class
+   * @param <T> 泛型形参
+   * @return 填充了数据之后的配置类对象
    */
-  private <T> T populateBean(Class<T> clazz, Map map) {
+  private <T> T populateBean(Class<T> clazz, Map<?,?> map) {
     T obj;
     try {
       //实例化配置属性类,不能使用ReflectionUtils.newInstance,因为它还有一个作用就是用来注入配置属性类的

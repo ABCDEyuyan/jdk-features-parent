@@ -38,7 +38,7 @@ import javax.servlet.http.HttpSession;
  */
 public class HandlerContext {
 
-    private static ThreadLocal<HandlerContext> local = new ThreadLocal<>();
+    private static final ThreadLocal<HandlerContext> local = new ThreadLocal<>();
     private HttpServletRequest request;
     private HttpServletResponse response;
 

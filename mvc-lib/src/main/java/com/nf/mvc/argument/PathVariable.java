@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * 也就意味着路径变量要么有值,要么handler方法不会得到执行.
  * <p>注解的value属性指定的路径变量的名字,类似下面用法
  * <pre class="code">
- *    &#064;RequestMapping("/list/{pageno}/{pagesize}")
- *     public JsonViewResult simple(@PathVariable("pageno") int pageNo){}
+ *    &#064;RequestMapping("/list/{no}/{size}")
+ *     public JsonViewResult simple(@PathVariable("no") int pageNo){}
  * </pre>
  * </p>
  * <p>参数的类型必须是简单类型,复杂类型没什么意义,数据也可能产生转换异常的问题</p>

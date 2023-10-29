@@ -5,7 +5,7 @@ import com.nf.demo.service.CategoryService;
 import com.nf.demo.service.impl.CategoryServiceImpl;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.mapping.RequestMapping;
-import com.nf.mvc.support.ResponseVO;
+import com.nf.mvc.support.vo.ResponseVO;
 
 import java.util.List;
 

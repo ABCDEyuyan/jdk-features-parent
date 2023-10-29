@@ -1,6 +1,6 @@
 package com.nf.mvc.file;
 
-import com.nf.mvc.util.FileCopyUtils;
+import com.nf.mvc.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,24 +10,24 @@ import java.nio.file.Path;
 
 public interface MultipartFile {
 
-    String getName();
+  String getName();
 
-    String getOriginalFilename();
+  String getOriginalFilename();
 
-    String getContentType();
+  String getContentType();
 
-    boolean isEmpty();
+  boolean isEmpty();
 
-    long getSize();
+  long getSize();
 
-    byte[] getBytes() throws IOException;
+  byte[] getBytes() throws IOException;
 
-    InputStream getInputStream() throws IOException;
+  InputStream getInputStream() throws IOException;
 
-    void transferTo(File dest) throws IOException, IllegalStateException;
+  void transferTo(File dest) throws IOException, IllegalStateException;
 
-    default void transferTo(Path dest) throws IOException, IllegalStateException {
-        FileCopyUtils.copy(getInputStream(), Files.newOutputStream(dest));
-    }
+  default void transferTo(Path dest) throws IOException, IllegalStateException {
+    FileUtils.copy(getInputStream(), Files.newOutputStream(dest));
+  }
 
 }

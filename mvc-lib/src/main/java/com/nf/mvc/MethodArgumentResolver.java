@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
  * @see RequestBodyMethodArgumentResolver
  * @see com.nf.mvc.argument.MultipartFileMethodArgumentResolver
  * @see SimpleTypeMethodArgumentResolver
- * @see BeanPropertyMethodArgumentResolver
+ * @see BeanMethodArgumentResolver
  */
 public interface MethodArgumentResolver {
 

@@ -5,8 +5,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.nf.mvc.*;
 import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.handler.HandlerMethod;
-import com.nf.mvc.support.AntPathMatcher;
 import com.nf.mvc.support.PathMatcher;
+import com.nf.mvc.support.path.AntPathMatcher;
 import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,9 +42,9 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * @see RequestMapping
  */
 public class RequestMappingHandlerMapping implements HandlerMapping {
-    private Map<String, HandlerMethod> handlers = new HashMap<>();
+    private final Map<String, HandlerMethod> handlers = new HashMap<>();
     private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
-    Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
+    private final Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
             .build();
@@ -75,6 +75,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         }
         this.handlers.put(url, handlerMethod);
     }
+    @SuppressWarnings("RedundantThrows")
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = RequestUtils.getRequestUrl(request);

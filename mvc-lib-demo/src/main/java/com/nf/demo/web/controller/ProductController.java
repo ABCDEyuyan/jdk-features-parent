@@ -10,7 +10,7 @@ import com.nf.demo.vo.PagedProductVO;
 import com.nf.mvc.ViewResult;
 import com.nf.mvc.argument.RequestParam;
 import com.nf.mvc.mapping.RequestMapping;
-import com.nf.mvc.support.ResponseVO;
+import com.nf.mvc.support.vo.ResponseVO;
 
 import java.util.List;
 

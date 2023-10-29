@@ -1,5 +1,7 @@
 package com.nf.mvc;
 
+import com.nf.mvc.support.path.AntPathMatcher;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,7 +18,7 @@ import java.lang.annotation.Target;
  *
  * <p>如果includePattern与excludePattern设置有冲突以排除设置为准</p>
  * @see com.nf.mvc.HandlerInterceptor
- * @see com.nf.mvc.support.AntPathMatcher
+ * @see AntPathMatcher
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
  */
 @Target({ElementType.TYPE})

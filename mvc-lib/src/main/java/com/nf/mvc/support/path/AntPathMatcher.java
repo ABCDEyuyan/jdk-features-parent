@@ -1,6 +1,7 @@
-package com.nf.mvc.support;
+package com.nf.mvc.support.path;
 
 
+import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.util.StringUtils;
 
 import java.util.Comparator;
@@ -56,13 +57,6 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  *         boolean matchStart = pathMatcher2.isMatch(pattern, path); //true
  *         System.out.println("matchStart = " + matchStart);
  * </pre>
- * <h3>参考资料</h3>
- * <p>参考spring的PathMatcher，AntPathMatcher。现在spring 5.0有另一个新的路径处理的类PathPattern（spring 5.0才出现）</p>
- * <a href="https://github.com/azagniotov/ant-style-path-matcher">AntPathMatcher简单实现</a>
- * <a href="https://my.oschina.net/iqoFil/blog/221623">spring AntPathMatcher匹配算法解析</a>
- * <a href="https://www.nationalfinder.com/html/char-asc.htm">html ascii码字母,文档注释中*的转译</a>
- * <a href="https://wangwl.net/static/projects/visualRegex#">正则表达式可视化与语义解释</a>
- *
  * @see com.nf.mvc.support.PathMatcher
  * @see EqualIgnoreCasePathMatcher
  * @see EqualPathMatcher
@@ -156,8 +150,8 @@ public class AntPathMatcher implements PathMatcher {
       return pathVariables;
     }
 
-    String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, "" + this.pathSeparator, this.trimTokens, true);
-    String[] pathSegments = StringUtils.tokenizeToStringArray(path, "" + this.pathSeparator, this.trimTokens, true);
+    String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, String.valueOf(this.pathSeparator), this.trimTokens, true);
+    String[] pathSegments = StringUtils.tokenizeToStringArray(path, String.valueOf(this.pathSeparator), this.trimTokens, true);
     for (int i = 0; i < pathSegments.length; i++) {
       String patternSegment = patternSegments[i];
       // 大于2是确保{}之间有字符
