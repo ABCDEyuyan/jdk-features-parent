@@ -20,56 +20,21 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
 /**
  * 此类的代码参考了spring 的ClassUtils，ReflectionUtils,BeanUtils
+ * 此类的功能暂定只处理对类,方法,字段,方法参数进行处理,其它功能可以放到其它类型中去处理
  */
 public abstract class ReflectionUtils {
-
-  /**
-   * 这个map集合，key是包装类型（wrapper），值是此包装类型对应的基本类型(primitive)
-   * IdentityHashMap表示的是key用==符号比较是true才相等，而不是普通HashMap用equals比较
-   * ==符号表示指向的是同一个对象，equals表示的内容相等，简单来说，==是true就表示两者完全一样，
-   * 那么equals也肯定是true，但equals是true不一定==也是true
-   */
-  private static final Map<Class<?>, Class<?>> WRAPPER_TYPE_TO_PRIMITIVE_MAP = new IdentityHashMap<>(9);
-  private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(9);
 
   private static final String GETTER_METHOD_Pattern = "^get[A-Z].*";
   private static final String GETTER_IS_METHOD_Pattern = "^is[A-Z].*";
   private static final String SETTER_METHOD_Pattern = "^set[A-Z].*";
-
-  static {
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Boolean.class, boolean.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Byte.class, byte.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Character.class, char.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Double.class, double.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Float.class, float.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Integer.class, int.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Long.class, long.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Short.class, short.class);
-    WRAPPER_TYPE_TO_PRIMITIVE_MAP.put(Void.class, void.class);
-
-    for (Map.Entry<Class<?>, Class<?>> entry : WRAPPER_TYPE_TO_PRIMITIVE_MAP.entrySet()) {
-      PRIMITIVE_TYPE_TO_WRAPPER_MAP.put(entry.getValue(), entry.getKey());
-    }
-  }
 
   /**
    * 现在这种写法是默认调用class的默认构造函数来实例化对象的
@@ -135,6 +100,98 @@ public abstract class ReflectionUtils {
     return setterMethods;
   }
 
+
+  /**
+   * <a href="https://www.runoob.com/regexp/regexp-syntax.html">正则表达式入门教程</a>
+   * <ul>
+   * <li>^:表示以什么开始，^set意思就是以set开头</li>
+   * <li>[A-Z] ： 表示一个区间，匹配所有大写字母，[a-z] 表示所有小写字母</li>
+   * <li>句号：匹配除换行符（\n、\r）之外的任何单个字符</li>
+   * <li>‘*’：匹配前面的子表达式零次或多次,在下面的例子就是前面的句号</li>
+   * </ul>
+   * <p>所以^set[A-Z].* 意思就是以set开头，之后跟一个大写字母，大写字母之后可以出现0个或多个字符</p>
+   *
+   * @param method 方法
+   * @return 是setter方法就返回true，否则返回false
+   */
+  public static boolean isSetter(Method method) {
+    return Modifier.isPublic(method.getModifiers()) &&
+            method.getReturnType()
+                    .equals(void.class) &&
+            method.getParameterTypes().length == 1 &&
+            method.getName()
+                    .matches(SETTER_METHOD_Pattern);
+  }
+
+  public static boolean isGetter(Method method) {
+    if (Modifier.isPublic(method.getModifiers()) &&
+            method.getParameterTypes().length == 0) {
+      if (method.getName()
+              .matches(GETTER_METHOD_Pattern) &&
+              !method.getReturnType()
+                      .equals(void.class)) {
+        return true;
+      }
+      return method.getName()
+              .matches(GETTER_IS_METHOD_Pattern) &&
+              method.getReturnType()
+                      .equals(boolean.class);
+    }
+    return false;
+  }
+  
+  public static void setFieldValue(Object instance, Field field, Object value) {
+    try {
+      field.setAccessible(true);
+      field.set(instance, value);
+      field.setAccessible(false);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException("字段值设置失败", e);
+    }
+  }
+
+  public static List<String> getParameterNames(Method method) {
+    Parameter[] parameters = method.getParameters();
+    List<String> parameterNames = new ArrayList<>();
+
+    for (Parameter parameter : parameters) {
+      if (!parameter.isNamePresent()) {
+        throw new IllegalStateException("编译的时候需要指定-parameters选项");
+      }
+      String parameterName = parameter.getName();
+      parameterNames.add(parameterName);
+    }
+    return parameterNames;
+  }
+
+  /**
+   * 此方法是用来获取方法泛型参数的类型实参的
+   *
+   * @param parameter 方法参数信息,要求是一个泛型实参类型
+   * @return 返回所有的泛型实参类型信息
+   */
+  public static Class<?>[] getActualArgument(Parameter parameter) {
+
+    Type type = parameter.getParameterizedType();
+    if (!(type instanceof ParameterizedType)) {
+      throw new IllegalArgumentException("参数要求是一个参数化的泛型类型，不能使用原生类型");
+    }
+
+    // 如果方法的参数是List这样的类型，而不是List<String>,List<Integer>这样的，直接进行类型转换抛出ClassCastException异常
+    ParameterizedType parameterizedType = (ParameterizedType) type;
+    Type[] types = parameterizedType.getActualTypeArguments();
+    Class<?>[] actualTypeArguments = new Class[types.length];
+    for (int i = 0; i < types.length; i++) {
+      actualTypeArguments[i] = (Class<?>) types[i];
+    }
+    return actualTypeArguments;
+  }
+
+  //---------------------------------------------------------------------
+  // 下面的是存放废弃的方法,不删除是为了让学生也了解这些信息,
+  // 下面2个利用javassist库获取方法参数的功能不完善,有bug
+  //---------------------------------------------------------------------
+
   /**
    * 参考
    * <a href="https://blog.csdn.net/hehuanchun0311/article/details/79755266">...</a>
@@ -194,240 +251,4 @@ public abstract class ReflectionUtils {
     return getParamNamesWithParamType(clazz, methodName);
   }
 
-  public static List<String> getParameterNames(Method method) {
-    Parameter[] parameters = method.getParameters();
-    List<String> parameterNames = new ArrayList<>();
-
-    for (Parameter parameter : parameters) {
-      if (!parameter.isNamePresent()) {
-        throw new IllegalStateException("编译的时候需要指定-parameters选项");
-      }
-      String parameterName = parameter.getName();
-      parameterNames.add(parameterName);
-    }
-    return parameterNames;
-  }
-
-  /**
-   * <a href="https://www.runoob.com/regexp/regexp-syntax.html">正则表达式入门教程</a>
-   * <ul>
-   * <li>^:表示以什么开始，^set意思就是以set开头</li>
-   * <li>[A-Z] ： 表示一个区间，匹配所有大写字母，[a-z] 表示所有小写字母</li>
-   * <li>句号：匹配除换行符（\n、\r）之外的任何单个字符</li>
-   * <li>‘*’：匹配前面的子表达式零次或多次,在下面的例子就是前面的句号</li>
-   * </ul>
-   * <p>所以^set[A-Z].* 意思就是以set开头，之后跟一个大写字母，大写字母之后可以出现0个或多个字符</p>
-   *
-   * @param method 方法
-   * @return 是setter方法就返回true，否则返回false
-   */
-  public static boolean isSetter(Method method) {
-    return Modifier.isPublic(method.getModifiers()) &&
-            method.getReturnType()
-                    .equals(void.class) &&
-            method.getParameterTypes().length == 1 &&
-            method.getName()
-                    .matches(SETTER_METHOD_Pattern);
-  }
-
-  public static boolean isGetter(Method method) {
-    if (Modifier.isPublic(method.getModifiers()) &&
-            method.getParameterTypes().length == 0) {
-      if (method.getName()
-              .matches(GETTER_METHOD_Pattern) &&
-              !method.getReturnType()
-                      .equals(void.class)) {
-        return true;
-      }
-      return method.getName()
-              .matches(GETTER_IS_METHOD_Pattern) &&
-              method.getReturnType()
-                      .equals(boolean.class);
-    }
-    return false;
-  }
-
-  /**
-   * 是简单类型或者简单类型的数组就认为是一个简单属性
-   * 比如int，Integer这种就是简单类型（SimpleType）
-   * 是一个数组，并且数组的成员（Component）是简单类型，就认为是一个简单属性
-   * 比如int[],Integer[],String[]就认为是简单属性，但Emp[]不是简单属性，因为其成员Emp不是简单类型
-   *
-   * @param type 类型信息
-   * @return 基本类型及其包装类型或是这些类型的数组类型就返回true
-   */
-  public static boolean isSimpleProperty(Class<?> type) {
-    return isSimpleType(type) || (type.isArray() && isSimpleType(type.getComponentType()));
-  }
-
-  /**
-   * 通常指的就是我们自己写的pojo类，比如Emp
-   * 判断是<b><i>不严谨</i></b>的，比如我们自己写的一个Servlet的类，它也是返回true
-   * <p>
-   * 这个方法的初衷是想让我们自己写的pojo类才返回true
-   * 我们的pojo类通常不继承任何父类，就是普通的属性的封装
-   *
-   * @param type 类型信息
-   * @return 非简单类型并且也不是集合类型就返回true
-   */
-  public static boolean isComplexProperty(Class<?> type) {
-    return !isSimpleProperty(type) && !isCollection(type);
-  }
-
-  /**
-   * 判断是否是简单类型的数组，比如int[],Integer[],Date[]
-   *
-   * @param type 数据类型
-   * @return 简单类型就返回true，否则返回false
-   */
-  public static boolean isSimpleTypeArray(Class<?> type) {
-    return type.isArray() && isSimpleType(type.getComponentType());
-  }
-
-  public static boolean isSimpleCollection(Class<?> type) {
-    return isAssignable(List.class, type) ||
-            isAssignable(Set.class, type) ||
-            isAssignable(Map.class, type);
-  }
-
-  public static boolean isList(Class<?> type) {
-    return isAssignable(List.class, type);
-  }
-
-  public static boolean isSet(Class<?> type) {
-    return isAssignable(Set.class, type);
-  }
-
-  public static boolean isSimpleTypeCollection(Class<?> collectionType, Class<?> actualParamType) {
-    return isSimpleCollection(collectionType) && isSimpleType(actualParamType);
-  }
-
-  public static boolean isSimpleTypeList(Class<?> listType, Class<?> actualTypeParam) {
-    return isList(listType) && isSimpleType(actualTypeParam);
-  }
-
-  /**
-   * 如果是Collection以及Map的子类型，就认为是一个集合
-   *
-   * @param type 类型信息
-   * @return 是Collection或者是Map就返回true，否则返回false
-   */
-  public static boolean isCollection(Class<?> type) {
-    return Collection.class.isAssignableFrom(type) ||
-            Map.class.isAssignableFrom(type);
-  }
-
-
-  /**
-   * 如果是基本类型、包装类型或者date，number等等就认为是简单类型
-   *
-   * @param type 类型信息
-   * @return 基本类型、包装类型或者date，number类型就返回true，否则返回false
-   */
-  public static boolean isSimpleType(Class<?> type) {
-    return (Void.class != type && void.class != type &&
-            (isPrimitiveOrWrapper(type) ||
-                    Enum.class.isAssignableFrom(type) ||
-                    CharSequence.class.isAssignableFrom(type) ||
-                    Number.class.isAssignableFrom(type) ||
-                    Date.class.isAssignableFrom(type) ||
-                    Temporal.class.isAssignableFrom(type) ||
-                    URI.class == type ||
-                    URL.class == type ||
-                    Locale.class == type ||
-                    Class.class == type) ||
-            LocalDate.class == type ||
-            LocalDateTime.class == type
-    );
-  }
-
-  /**
-   * 判断是否是基本类型的包装类型，比如传递的参数是Integer就会返回true
-   *
-   * @param clazz：包装类型
-   * @return 是包装类型就返回true，否则返回false
-   */
-  public static boolean isPrimitiveWrapper(Class<?> clazz) {
-    return WRAPPER_TYPE_TO_PRIMITIVE_MAP.containsKey(clazz);
-  }
-
-  public static boolean isPrimitive(Class<?> clazz) {
-    return clazz.isPrimitive();
-  }
-
-  /**
-   * 判断一个类是否是简单类型或者简单类型对应的包装类型
-   *
-   * @param clazz 类型信息
-   * @return 是基本类型或包装类型就返回true，否则返回false
-   */
-  public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
-    return (clazz.isPrimitive() || isPrimitiveWrapper(clazz));
-  }
-
-  /**
-   * 判断第二个参数是否是第一个参数的子类或者实现类
-   * 也考虑了基本类型，比如Integer与int认为是isAssignable
-   * assignable：可赋值的
-   *
-   * @param lhsType 左手边类型信息
-   * @param rhsType 右手边类型信息
-   * @return 右手边类型可以赋值给左手边类型时返回true，否则返回false
-   */
-  public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
-    if (lhsType.isAssignableFrom(rhsType)) {
-      return true;
-    }
-    if (lhsType.isPrimitive()) {
-      Class<?> resolvedPrimitive = WRAPPER_TYPE_TO_PRIMITIVE_MAP.get(rhsType);
-      return (lhsType == resolvedPrimitive);
-    } else {
-      Class<?> resolvedWrapper = PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(rhsType);
-      return (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper));
-    }
-  }
-
-  public static boolean isAssignableToAny(Class<?> lhsType, Class<?>... rhsTypes) {
-    boolean isAssignable = false;
-    for (Class<?> rhsType : rhsTypes) {
-      isAssignable = isAssignable(rhsType, lhsType);
-      if (isAssignable) {
-        break;
-      }
-    }
-    return isAssignable;
-  }
-
-  /**
-   * 此方法是用来获取方法泛型参数的类型实参的
-   *
-   * @param parameter 方法参数信息,要求是一个泛型实参类型
-   * @return 返回所有的泛型实参类型信息
-   */
-  public static Class<?>[] getActualArgument(Parameter parameter) {
-
-    Type type = parameter.getParameterizedType();
-    if (!(type instanceof ParameterizedType)) {
-      throw new IllegalArgumentException("参数要求是一个参数化的泛型类型，不能使用原生类型");
-    }
-
-    // 如果方法的参数是List这样的类型，而不是List<String>,List<Integer>这样的，直接进行类型转换抛出ClassCastException异常
-    ParameterizedType parameterizedType = (ParameterizedType) type;
-    Type[] types = parameterizedType.getActualTypeArguments();
-    Class<?>[] actualTypeArguments = new Class[types.length];
-    for (int i = 0; i < types.length; i++) {
-      actualTypeArguments[i] = (Class<?>) types[i];
-    }
-    return actualTypeArguments;
-  }
-
-  public static void setFieldValue(Object instance, Field field, Object value) {
-    try {
-      field.setAccessible(true);
-      field.set(instance, value);
-      field.setAccessible(false);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException("字段值设置失败", e);
-    }
-  }
 }

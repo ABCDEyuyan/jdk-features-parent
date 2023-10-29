@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 
-public class AnnotationUtils {
+public abstract class AnnotationUtils {
   public static <T> T getAttrValue(AnnotatedElement ele, Class<? extends Annotation> annoClass) {
     return getAttrValue(ele, annoClass, "value");
   }

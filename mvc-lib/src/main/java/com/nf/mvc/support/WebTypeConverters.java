@@ -15,6 +15,7 @@ import com.nf.mvc.support.converter.LocalTimeTypeConverter;
 import com.nf.mvc.support.converter.LongTypeConverter;
 import com.nf.mvc.support.converter.ShortTypeConverter;
 import com.nf.mvc.support.converter.StringTypeConverter;
+import com.nf.mvc.util.ClassUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public abstract class WebTypeConverters {
    * 设置一个初始的容量，可以避免一些不必要的多次扩容
    * </p>
    *
-   * <p>此类在静态代码块初始化的一些转换器要尽量与{@link com.nf.mvc.util.ReflectionUtils#isSimpleType(Class)}
+   * <p>此类在静态代码块初始化的一些转换器要尽量与{@link ClassUtils#isSimpleType(Class)}
    * 方法对简单类型的定义匹配</p>
    * <p>此类有一个简单的缓存实现，缓存实现的详细介绍见{@link MethodArgumentResolverComposite}</p>
    */
