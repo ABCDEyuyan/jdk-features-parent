@@ -4,6 +4,77 @@
 
 # 框架功能
 
+基本与spring mvc类似，就是在视图的处理类似于asp.net mvc的方式，采用ViewResult的体系，典型用法如下:
+
+```java
+import static com.nf.mvc.handler.HandlerHelper.json;
+
+@RequestMapping("/product")
+public class ProductController {
+
+    @Injected
+    private MyConfigurationProperties1 config1;
+    
+    @RequestMapping("/list/{pageno}/{pagesize}")
+    public JsonViewResult demo(@PathVariable("pageno") int pageNo,
+                                 @PathVariable("pagesize") int pageSize,
+                                 @RequestParam("username") String name,
+                                 @RequestParam(defaultValue = "100")int id,
+                                 int age,
+                                MultipartFile file,
+                                 Emp e,
+                                @RequestBody Emp emp){
+        
+        return json(new ResponseVO(200,"ok",true));
+    }
+}
+```
+
+配置属性类
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ConfigurationProperties("s1")
+public class MyConfigurationProperties1 {
+    private int id;
+    private String name;
+}
+```
+
+application.yml文件内容
+
+```yml
+s1:
+  id: 1000
+  name: abcd
+s2:
+  id: 2000
+  name: defg
+```
+
+如果要写拦截器,通过注解@Intercepts指定要拦截的地址与要排除拦截的地址，如果不加注解就表示拦截器拦截所有的请求
+
+```java
+@Intercepts(value={"/product/insert"},excludePattern = {"/login/**"})
+public class FirstInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("first pre---");
+        return  true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("first post---");
+
+    }
+}
+```
+
+
+
 # 各个技术点
 
 这里列出的一些技术点，是我认为初学者能学会，但不知道如何应用在实际的项目中的一些技术点，排名不分先后
@@ -194,7 +265,9 @@ MethodArgumentResolverComposite
 
 ## 链式方法实现
 
-MethodArgumentResolverComposite类的添加解析器的相关方法
+- MethodArgumentResolverComposite类的添加解析器的相关方法
+- AntPathMatcher的Builder类
+- HandlerContext
 
 ## 任意值但用户不会提供的值
 
