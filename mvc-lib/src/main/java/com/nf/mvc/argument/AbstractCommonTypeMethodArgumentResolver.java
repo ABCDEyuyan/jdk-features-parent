@@ -59,6 +59,16 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
     protected abstract boolean supportsInternal(Class<?> scalarType);
 
     /**
+     * 此方法用来获取请求中的数据源的，数据源主要是request.getParameterValues(name)与request.getParts()两大类<br/>
+     * 这里通过这个方法抽象化了2种不同的数据获取方式
+     *
+     * @param methodParameter：方法参数，利用它可以获取参数名之内的信息
+     * @param request：请求对象
+     * @return 通常返回某个key下的数组数据，即便只有一个数据，也以数组的形式返回
+     */
+    protected abstract Object[] getSource(MethodParameter methodParameter, HttpServletRequest request);
+
+    /**
      * 此方法只负责标量（Scalar）类型的值进行解析，不会对标量类型的数组，List进行处理，因为在resolveArgument方法里已经进行了处理
      *
      * @param scalarType      标量类型
@@ -68,16 +78,6 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
      * @throws Exception 抛出解析过程中产生的异常
      */
     protected abstract Object resolveScalarType(Class<?> scalarType, Object parameterValue, MethodParameter methodParameter) throws Exception;
-
-    /**
-     * 此方法用来获取请求中的数据源的，数据源主要是request.getParameterValues(name)与request.getParts()两大类<br/>
-     * 这里通过这个方法抽象化了2种不同的数据获取方式
-     *
-     * @param methodParameter：方法参数，利用它可以获取参数名之内的信息
-     * @param request：请求对象
-     * @return 通常返回某个key下的数组数据，即便只有一个数据，也以数组的形式返回
-     */
-    protected abstract Object[] getSource(MethodParameter methodParameter, HttpServletRequest request);
 
     /**
      * 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
