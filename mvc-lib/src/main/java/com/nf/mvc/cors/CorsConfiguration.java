@@ -5,18 +5,18 @@ import com.nf.mvc.util.CollectionUtils;
 import com.nf.mvc.util.ObjectUtils;
 import com.nf.mvc.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CorsConfiguration {
 
     public static final String ALL = "*";
 
-    private final List<String> allowedOrigins = new ArrayList<>();
+    private final Set<String> allowedOrigins = new HashSet<>();
 
-    private final List<String> allowedMethods = new ArrayList<>();
+    private final Set<String> allowedMethods = new HashSet<>();
 
-    private final List<String> allowedHeaders = new ArrayList<>();
+    private final Set<String> allowedHeaders = new HashSet<>();
 
     private Boolean allowCredentials = false;
 
@@ -27,7 +27,7 @@ public class CorsConfiguration {
         return this;
     }
 
-    public List<String> getAllowedOrigins() {
+    public Set<String> getAllowedOrigins() {
         return this.allowedOrigins;
     }
 
@@ -45,7 +45,7 @@ public class CorsConfiguration {
         return this;
     }
 
-    public List<String> getAllowedHeaders() {
+    public Set<String> getAllowedHeaders() {
         return this.allowedHeaders;
     }
 
@@ -56,7 +56,7 @@ public class CorsConfiguration {
         return this;
     }
 
-    public List<String> getAllowedMethods() {
+    public Set<String> getAllowedMethods() {
         return this.allowedMethods;
     }
 
@@ -134,5 +134,4 @@ public class CorsConfiguration {
                             "or consider using \"allowedOriginPatterns\" instead.");
         }
     }
-
 }

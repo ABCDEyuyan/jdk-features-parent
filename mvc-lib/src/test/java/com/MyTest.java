@@ -8,12 +8,8 @@ import com.nf.mvc.util.JacksonUtils;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MyTest {
   private long counter;
@@ -24,16 +20,19 @@ public class MyTest {
 
   @Test
   public void ss() {
-    List<String> list = Arrays.asList("abc1", "abc2", "abc3");
-    counter = 0;
-    Stream<String> stream = list.stream()
-            .filter(element -> {
-              wasCalled();
-              return element.contains("2");
-            });
-    System.out.println(counter);
+    final List<String> list = new ArrayList<>();
+    list.add("a");
+    list.add("a");
+    list.add("b");
+    list.add("c");
+    List<String> list1 = distinct(list);
+    System.out.println("list1.hashCode() = " + list1.hashCode());
+    System.out.println("list.hashCode() = " + list.hashCode());
+    list1.forEach(System.out::println);
   }
-
+  private List<String> distinct(List<String> values) {
+    return values.stream().distinct().collect(Collectors.toList());
+  }
   @Test
   public void ss2() {
     List<String> list = Arrays.asList("abc1", "abc2", "abc3");

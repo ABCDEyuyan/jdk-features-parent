@@ -1,6 +1,6 @@
 # 说明
 这个框架是一个教学用的框架，主要目标是只利用Servlet技术与jdk 8基础知识来实现一个功能上类似spring mvc框架的小框架，
-以便初学者能更好的理解知识的运用，特别是OOP编程的思维逻辑与代码实现
+以便初学者能更好的理解知识的运用，特别是OOP编程的思维逻辑与代码实现，联系作者可以加QQ：417278483
 
 # 框架功能
 
@@ -268,6 +268,7 @@ MethodArgumentResolverComposite
 - MethodArgumentResolverComposite类的添加解析器的相关方法
 - AntPathMatcher的Builder类
 - HandlerContext
+- CorsConfiguration
 
 ## 任意值但用户不会提供的值
 
@@ -387,6 +388,10 @@ MethodArgumentResolverComposite
 
 - BeanMethodArgumentResolver#resolveArgument
 
+## Set集合的运用
+
+- CorsConfiguration中的三个Set型字段
+
 ## 内部类
 
 - AntPathMatcher
@@ -394,7 +399,7 @@ MethodArgumentResolverComposite
 
 ## 代码块
 
-- WebTypeConverters
+- WebTypeConverters中的静态代码块
 
 ## 文档化注释
 
