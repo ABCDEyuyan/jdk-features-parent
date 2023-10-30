@@ -20,60 +20,60 @@ import java.util.List;
  * @see MultipartFile
  */
 public class MultipartFileMethodArgumentResolver extends AbstractCommonTypeMethodArgumentResolver {
-  @Override
-  protected boolean supportsInternal(Class<?> scalarType) {
-    return isFileType(scalarType);
-  }
-
-  @SuppressWarnings("RedundantThrows")
-  @Override
-  protected Object resolveScalarType(Class<?> scalarType, Object parameterValue, MethodParameter methodParameter) throws Exception {
-    // 压根没有上传文件时，parameterValue就是null，这个时候直接返回null即可
-    if (parameterValue == null) {
-      return null;
+    @Override
+    protected boolean supportsInternal(Class<?> scalarType) {
+        return isFileType(scalarType);
     }
 
-    return resolveUploadedFile((Part) parameterValue, scalarType);
-  }
-
-  @Override
-  protected Object[] getSource(MethodParameter methodParameter, HttpServletRequest request) {
-    Object[] source = null;
-    try {
-      List<Part> matchedParts = new ArrayList<>();
-      Collection<Part> parts = request.getParts();
-      for (Part part : parts) {
-        if (part.getName()
-                .equals(methodParameter.getParameterName())) {
-          matchedParts.add(part);
+    @SuppressWarnings("RedundantThrows")
+    @Override
+    protected Object resolveScalarType(Class<?> scalarType, Object parameterValue, MethodParameter methodParameter) throws Exception {
+        // 压根没有上传文件时，parameterValue就是null，这个时候直接返回null即可
+        if (parameterValue == null) {
+            return null;
         }
-      }
-      source = matchedParts.toArray();
-    } catch (IOException | ServletException e) {
-      /* 没有上传文件时，调用request.getParts()方法是会抛异常的. 这里不抛出异常，什么也不干，相当于返回null,
-       * 针对的一种场景是：比如修改商品记录不牵涉到图片的修改，那么文件类型的参数属性直接赋值为null即可 ，抛异常的话会中断控制器方法的执行
-       * */
+
+        return resolveUploadedFile((Part) parameterValue, scalarType);
     }
-    return source;
-  }
 
-  protected boolean isFileType(Class<?> fileType) {
-    return Part.class == fileType ||
-            MultipartFile.class == fileType;
-  }
-
-  @SuppressWarnings("unchecked")
-  protected <T> T resolveUploadedFile(Part part, Class<T> fileType) {
-    if (Part.class == fileType) {
-      return (T) part;
-    } else {
-      return (T) new StandardMultipartFile(part, getFileName(part));
+    @Override
+    protected Object[] getSource(MethodParameter methodParameter, HttpServletRequest request) {
+        Object[] source = null;
+        try {
+            List<Part> matchedParts = new ArrayList<>();
+            Collection<Part> parts = request.getParts();
+            for (Part part : parts) {
+                if (part.getName()
+                        .equals(methodParameter.getParameterName())) {
+                    matchedParts.add(part);
+                }
+            }
+            source = matchedParts.toArray();
+        } catch (IOException | ServletException e) {
+            /* 没有上传文件时，调用request.getParts()方法是会抛异常的. 这里不抛出异常，什么也不干，相当于返回null,
+             * 针对的一种场景是：比如修改商品记录不牵涉到图片的修改，那么文件类型的参数属性直接赋值为null即可 ，抛异常的话会中断控制器方法的执行
+             * */
+        }
+        return source;
     }
-  }
 
-  protected String getFileName(Part part) {
-    return part.getSubmittedFileName();
-  }
+    protected boolean isFileType(Class<?> fileType) {
+        return Part.class == fileType ||
+                MultipartFile.class == fileType;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T resolveUploadedFile(Part part, Class<T> fileType) {
+        if (Part.class == fileType) {
+            return (T) part;
+        } else {
+            return (T) new StandardMultipartFile(part, getFileName(part));
+        }
+    }
+
+    protected String getFileName(Part part) {
+        return part.getSubmittedFileName();
+    }
 
 }
 

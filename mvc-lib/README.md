@@ -102,6 +102,7 @@ public interface MethodArgumentResolver {
 ### catch里什么都没写
 
 - FileCopyUtils的close方法
+- MultipartFileMethodArgumentResolver#getSource
 
 ### 主动抛异常是有业务意义的
 
