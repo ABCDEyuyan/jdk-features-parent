@@ -72,7 +72,7 @@ public abstract class WebTypeConverters {
      *
      * @param <T>       要转换的目标类型
      * @param value     原始web请求数据
-     * @param valueType 简单类型
+     * @param valueType 值要转换成的类型，通常是简单类型
      * @return 返回转换成功后的数据
      * @throws Exception 但指定的类型没有对应的转换器会抛UnsupportedOperationException；有转换器但转换失败会抛IllegalArgumentException
      */
