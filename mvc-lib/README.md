@@ -113,6 +113,7 @@ public class FirstInterceptor implements HandlerInterceptor {
 
 - RequestMappingHandlerAdapter类的构造函数写法
 - HandlerMethod#HandlerMethod(java.lang.Class<?>, java.lang.reflect.Method)构造函数的额外的初始化逻辑处理
+- FileViewResult的构造函数对父类构造函数的调用
 
 ## 接口
 
@@ -192,6 +193,10 @@ public interface MethodArgumentResolver {
 ### throws
 
 - NameConventionHandlerMapping#getHandler:此方法由于没有抛出异常，可以删掉方法签名上的throws语句，虽然与其实现的接口上的方法签名不一致，但是符合java语法规则的。但不建议这么做，此类不用，所以删掉了，演示知识使用
+
+### try with resource写法
+
+- StreamViewResult#writeContent
 
 ## null
 
