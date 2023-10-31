@@ -109,24 +109,24 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     @Override
     public List<HandlerInterceptor> getInterceptors(HttpServletRequest request) {
-        List<HandlerInterceptor> result = new ArrayList<>();
-        List<HandlerInterceptor> interceptors = MvcContext.getMvcContext().getCustomHandlerInterceptors();
+        List<HandlerInterceptor> currentRequestInterceptors = new ArrayList<>();
+        List<HandlerInterceptor> allInterceptors = MvcContext.getMvcContext().getCustomHandlerInterceptors();
         String requestUrl = RequestUtils.getRequestUrl(request);
-        for (HandlerInterceptor interceptor : interceptors) {
+        for (HandlerInterceptor interceptor : allInterceptors) {
             Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
             if (interceptorClass.isAnnotationPresent(Intercepts.class)) {
                 Intercepts annotation = interceptorClass.getDeclaredAnnotation(Intercepts.class);
                 String[] includesPattern = annotation.value();
                 String[] excludesPattern = annotation.excludePattern();
                 if (shouldApply(requestUrl, includesPattern) && !shouldApply(requestUrl, excludesPattern)) {
-                    result.add(interceptor);
+                    currentRequestInterceptors.add(interceptor);
                 }
             }else{
                 //没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
-                result.add(interceptor);
+                currentRequestInterceptors.add(interceptor);
             }
         }
-        return result;
+        return currentRequestInterceptors;
     }
 
     protected boolean shouldApply(String requestUrl,String... patterns) {

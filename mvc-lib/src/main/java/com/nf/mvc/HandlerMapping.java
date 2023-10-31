@@ -31,7 +31,9 @@ public interface HandlerMapping {
     HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception;
 
     /**
-     * 默认的拦截器实现，这种实现是把所有的拦截器都应用到当前请求中去，并不考虑请求地址与注解Interceptors的情况
+     * 默认的拦截器实现，这种实现是把所有的用户定制拦截器都应用到当前请求中去，
+     * 当前mvc框架并没有实现对Mvc框架内部提供的拦截器的支持。
+     * {@link HandlerMapping}的实现类可以考虑获取与当前请求匹配的拦截器
      * @param request servlet请求对象
      * @return 所有当前请求的拦截器
      */

@@ -41,18 +41,20 @@ public class MvcContext {
 
     private ScanResult scanResult;
 
+    private final List<Class<?>> allScannedClasses = new ArrayList<>();
+
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
-
-    private final List<Class<?>> allScannedClasses = new ArrayList<>();
+    
     private final List<HandlerMapping> customHandlerMappings = new ArrayList<>();
     private final List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
     private final List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
     private final List<HandlerExceptionResolver> customExceptionResolvers = new ArrayList<>();
     private final List<HandlerInterceptor> customInterceptors = new ArrayList<>();
     private final List<MvcConfigurer> customConfigurers = new ArrayList<>();
+
     private final Map<Class<?>,Object> configurationProperties = new HashMap<>(16);
 
     private MvcContext() {
