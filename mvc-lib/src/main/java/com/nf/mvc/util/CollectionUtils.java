@@ -14,7 +14,7 @@ public abstract class CollectionUtils {
 
     /**
      * 合并数组（第一个参数）的成员到集合（第二个参数）里面去
-     * <p>此类是复制spring框架的同名方法，SuppressWarnings注解
+     * <p>此类是复制spring框架的同名方法，SuppressWarnings("unchecked")注解
      * 用来消除“Unchecked cast: 'java.lang.Object' to 'E'”</p>
      * @param array 数组对象
      * @param collection 集合对象

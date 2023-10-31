@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see MethodArgumentResolverComposite
  * @see com.nf.mvc.argument.RequestParam
  * @see RequestBodyMethodArgumentResolver
+ * @see PathVariableMethodArgumentResolver
  * @see com.nf.mvc.argument.MultipartFileMethodArgumentResolver
  * @see SimpleTypeMethodArgumentResolver
  * @see BeanMethodArgumentResolver

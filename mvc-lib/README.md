@@ -245,6 +245,7 @@ MethodArgumentResolverComposite
 - DispatcherServlet类
 - ExceptionHandlerExceptionResolver，特别留意resolveExceptionHandlerMethods方法
 - AbstractCommonTypeMethodArgumentResolver
+- StreamViewResult与FileViewResult
 
 ## 适配器
 

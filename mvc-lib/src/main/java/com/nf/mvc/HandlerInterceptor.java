@@ -4,11 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 拦截器实现，这个拦截器类似于Servlet技术中的Filter，执行情况也类似，与Spring Mvc的拦截器执行逻辑是不同的。
+ * 拦截器实现，这个拦截器类似于Servlet技术中的Filter，执行情况也类似，与Spring Mvc的拦截器执行逻辑也类似，但不完全一样。
  * 假定有3个拦截器I1,I2,I3,其中I2拦截器的preHandle返回false，那么执行顺序如下：
  * <ol>
  *     <li>I1.preHandle</li>
- *     <li>I1.preHandle(正是此前置代码返回false才阻止了链的执行)</li>
+ *     <li>I2.preHandle(正是此前置代码返回false才阻止了链的执行)</li>
  *     <li>I1.postHandle</li>
  * </ol>
  * 如果没有一个拦截器的前置逻辑返回false，那么执行顺序如下
@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  *     <li>I2.postHandle</li>
  *     <li>I1.postHandle</li>
  * </ol>
+ * <p>handler如果执行过程中出了异常，那么已经执行过preHandle逻辑的拦截器，其postHandle逻辑也是会执行的，
+ * 拦截器与handler执行过程中的异常都是会被异常解析器处理的</p>
  * <p>
  *     如果创建的拦截器没有通过注解{@link Intercepts}进行拦截url方面的设置，那么此拦截器默认拦截所有的请求，
  *     如果拦截器经过了注解的设置，那么只会对符合设置条件的请求进行拦截，实现逻辑见{@link com.nf.mvc.mapping.RequestMappingHandlerMapping#getInterceptors(HttpServletRequest)}
