@@ -36,7 +36,7 @@ public class SimpleTypeMethodArgumentResolver extends AbstractCommonTypeMethodAr
         // 值不为null才进行类型转换，这个不为null的值可能是从请求端获取的，也可能是默认值提供的。注解提供的默认值也是需要进行类型转换的
         // 转换是可能失败的，比如把字符串abc值转换为整数，所以这里是可能抛异常的
         if (value != null) {
-            value = WebTypeConverters.convert(scalarType, value.toString());
+            value = WebTypeConverters.convert(value.toString(), scalarType);
         }
         // 这里返回的可能是null或者类型转换成功后的数据,value是null赋值给非基本类型是没有问题的
         return value;

@@ -7,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalTimeTypeConverter implements WebTypeConverter<LocalTime> {
 
-  @Override
-  public LocalTime convert(String paramValue) throws Exception {
-    return LocalTime.parse(paramValue, DateTimeFormatter.ofPattern(DateTypeConverter.TIME_PATTERN));
-  }
+    @Override
+    public LocalTime convert(String value) throws Exception {
+        return LocalTime.parse(value, DateTimeFormatter.ofPattern(DateTypeConverter.TIME_PATTERN));
+    }
 }

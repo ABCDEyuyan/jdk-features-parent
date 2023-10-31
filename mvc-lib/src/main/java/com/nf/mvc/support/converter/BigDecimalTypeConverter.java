@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 
 public class BigDecimalTypeConverter implements WebTypeConverter<BigDecimal> {
 
-  @Override
-  public BigDecimal convert(String paramValue) throws Exception {
-    return new BigDecimal(paramValue);
-  }
+    @Override
+    public BigDecimal convert(String value) throws Exception {
+        return new BigDecimal(value);
+    }
 }

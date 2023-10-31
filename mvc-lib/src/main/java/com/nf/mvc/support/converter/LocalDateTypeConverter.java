@@ -8,8 +8,8 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTypeConverter implements WebTypeConverter<LocalDate> {
 
-  @Override
-  public LocalDate convert(String paramValue) throws Exception {
-    return LocalDate.parse(paramValue, DateTimeFormatter.ofPattern(DateTypeConverter.DATE_PATTERN));
-  }
+    @Override
+    public LocalDate convert(String value) throws Exception {
+        return LocalDate.parse(value, DateTimeFormatter.ofPattern(DateTypeConverter.DATE_PATTERN));
+    }
 }

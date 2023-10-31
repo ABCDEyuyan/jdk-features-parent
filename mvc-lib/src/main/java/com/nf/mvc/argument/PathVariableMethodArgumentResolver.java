@@ -37,7 +37,7 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
                 .value();
 
         String value = variables.get(varName);
-        return WebTypeConverters.convert(parameter.getParameterType(), value);
+        return WebTypeConverters.convert(value, parameter.getParameterType());
     }
 
     public void setPathMatcher(AntPathMatcher pathMatcher) {
