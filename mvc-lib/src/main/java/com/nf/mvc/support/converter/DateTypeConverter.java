@@ -2,7 +2,6 @@ package com.nf.mvc.support.converter;
 
 import com.nf.mvc.support.WebTypeConverter;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,10 +13,6 @@ public class DateTypeConverter implements WebTypeConverter<Date> {
 
     @Override
     public Date convert(String value) throws Exception {
-        try {
-            return new SimpleDateFormat(DATETIME_PATTERN).parse(value);
-        } catch (ParseException e1) {
-            throw new IllegalArgumentException("Date convert error.", e1);
-        }
+        return new SimpleDateFormat(DATETIME_PATTERN).parse(value);
     }
 }
