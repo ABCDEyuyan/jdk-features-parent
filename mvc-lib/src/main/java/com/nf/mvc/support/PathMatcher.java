@@ -24,8 +24,7 @@ public interface PathMatcher {
     PathMatcher DEFAULT_PATH_MATCHER = new AntPathMatcher.Builder().build();
 
     /**
-     * 目前的实现中支持把**写在路径中间,比如/a/&#042;&#042;/c 这种写法,
-     * 但spring最新版不建议这样写,会引起歧义,类似可变长度的方法参数一样,最好用在路径的最后一段里
+     * 检查path是否符合pattern
      *
      * @param pattern:模式，比如/*,
      * @param path:具体的请求地址/a
@@ -39,7 +38,7 @@ public interface PathMatcher {
 
     /**
      * 这个路径变量的默认实现是基于pattern与path的分段是相等的思路来实现的，
-     * 实现类有不同实现逻辑可以重写此方法的实现
+     * 实现类如果有不同实现逻辑可以重写此方法的实现
      *
      * @param pattern 路径模式
      * @param path    路径
@@ -64,7 +63,7 @@ public interface PathMatcher {
         return pathVariables;
     }
 
-    default boolean isPathVariable(String varPattern) {
-        return varPattern.startsWith("{") && varPattern.endsWith("}") && varPattern.length() > 2;
+    default boolean isPathVariable(String pattern) {
+        return pattern.startsWith("{") && pattern.endsWith("}") && pattern.length() > 2;
     }
 }

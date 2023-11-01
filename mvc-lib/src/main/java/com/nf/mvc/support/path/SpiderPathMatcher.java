@@ -70,7 +70,7 @@ public final class SpiderPathMatcher implements PathMatcher {
     @Override
     public Comparator<String> getPatternComparator(String path) {
         return (p1, p2) -> p1.equals(p2) ? 0
-                : haveWildcard(p1) ? 1 : -1;
+                : containsWildcard(p1) ? 1 : -1;
     }
 
     /**
@@ -112,7 +112,7 @@ public final class SpiderPathMatcher implements PathMatcher {
         return Pattern.quote(s.substring(start, end));
     }
 
-    private boolean haveWildcard(String path) {
+    private boolean containsWildcard(String path) {
         return path.contains("?") || path.contains("*");
     }
 }

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static com.nf.mvc.util.StringUtils.skipBlanks;
 
 /**
- * 此类参考spring 的AntPathMatcher实现.
+ * 此类是spring的AntPathMatcher简化实现，提供了类似的功能
  * <p>ant地址主要用在web的url路径匹配上,其中三个核心通配符含义如下</p>
  * <ul>
  *   <li>'?' - 匹配一个字符</li>
@@ -78,7 +78,7 @@ public class AntPathMatcher implements PathMatcher {
      */
     private static final String PATH_VARIABLE_PATTERN = "\\{.*?}";
     private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
-    private static final int LENGTH_OF_SLASH_ASTERISK = 2;
+    private static final int LENGTH_OF_DOUBLE_WILDCARD = 2;
 
     private final char pathSeparator;
     private final boolean ignoreCase;
@@ -103,7 +103,7 @@ public class AntPathMatcher implements PathMatcher {
         } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
             if (matchStart) {
                 return true;
-            } else if (pattern.length() == LENGTH_OF_SLASH_ASTERISK && pattern.charAt(1) == ASTERISK) {
+            } else if (pattern.length() == LENGTH_OF_DOUBLE_WILDCARD && pattern.charAt(1) == ASTERISK) {
                 return false;
             }
             return isMatch(pattern.substring(1), path);
@@ -144,7 +144,7 @@ public class AntPathMatcher implements PathMatcher {
      */
     @Override
     public Map<String, String> extractPathVariables(String pattern, String path) {
-        validateDoubleAsterisk(pattern);
+        validateDoubleAsteriskPos(pattern);
 
         Map<String, String> pathVariables = new LinkedHashMap<>();
         if (!isMatch(pattern, path)) {
@@ -155,8 +155,7 @@ public class AntPathMatcher implements PathMatcher {
         String[] pathSegments = StringUtils.tokenizeToStringArray(path, String.valueOf(this.pathSeparator), this.trimTokens, true);
         for (int i = 0; i < pathSegments.length; i++) {
             String patternSegment = patternSegments[i];
-            // 大于2是确保{}之间有字符
-            if (patternSegment.length() > 2 && patternSegment.startsWith("{") && patternSegment.endsWith("}")) {
+            if (isPathVariable(patternSegment)) {
                 String variableName = patternSegment.substring(1, patternSegment.length() - 1);
                 String variableValue = pathSegments[i];
                 pathVariables.put(variableName, variableValue);
@@ -165,7 +164,16 @@ public class AntPathMatcher implements PathMatcher {
         return pathVariables;
     }
 
-    private void validateDoubleAsterisk(String pattern) {
+    /**
+     * 用来校验**这种模式不要出现在路径变量模式的前面，比如“/list/&#042;&#042;/{no}”这种写法就不允许，
+     * 因为当前类的{@link #extractPathVariables(String, String)}实现如果让双星符号出现在路径变量之前是会有bug的。
+     * 如果没有路径变量，那么路径模式中是允许&#042;&#042;写法的
+     * <p>spring的AntPathMatcher实现是支持双星在路径模式中的任何位置，但新版spring提供了路径模式新的实现类,
+     * 新的实现类不支持双星在前面,因为会引起歧义,类似可变长度的方法参数一样,最好用在路径的最后一段里</p>
+     *
+     * @param pattern 路径模式
+     */
+    private void validateDoubleAsteriskPos(String pattern) {
         int posDoubleAsterisk = pattern.indexOf("/**");
         int posPathVar = -1;
         Pattern reg = Pattern.compile(PATH_VARIABLE_PATTERN);
@@ -174,17 +182,16 @@ public class AntPathMatcher implements PathMatcher {
             // 获取第一个匹配的路径变量模式的位置
             posPathVar = matcher.start();
         }
-
         if (posDoubleAsterisk > -1 && posPathVar > -1
                 && posDoubleAsterisk < posPathVar) {
-            throw new UnsupportedOperationException("不支持/**通配符在路径变量的前面");
+            throw new UnsupportedOperationException("当模式中有路径变量时,不支持/**通配符在路径变量的前面");
         }
     }
 
     private boolean doubleAsteriskMatch(String pattern, String path) {
         if (pattern.charAt(1) != ASTERISK) {
             return false;
-        } else if (pattern.length() > LENGTH_OF_SLASH_ASTERISK) {
+        } else if (pattern.length() > LENGTH_OF_DOUBLE_WILDCARD) {
             return isMatch(pattern.substring(3), path);
         }
         return false;
