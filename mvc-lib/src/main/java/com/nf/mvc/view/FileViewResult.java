@@ -87,6 +87,7 @@ public class FileViewResult extends StreamViewResult {
     @Override
     protected void writeHeaders(HttpServletResponse resp) throws Exception {
         // attachment表示以附件的形式下载，对文件名编码以防止中文文件名在保存对话框中是乱码的
+        // 不要调整这2行代码的顺序，相当于以构造函数传递过来的headers为准
         resp.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
         super.writeHeaders(resp);
     }

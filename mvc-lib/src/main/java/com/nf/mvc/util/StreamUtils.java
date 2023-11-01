@@ -109,7 +109,7 @@ public abstract class StreamUtils {
     public static InputStream getInputStreamFromRealPath(String realPath) {
         InputStream inputStream;
         try {
-            // 要用Path（java.nio),不能用File，因为jetty下会报文件找不到的异常
+            // 要用Path（java.nio),不能用File[new File(realPath)]，因为jetty下会报文件找不到的异常
             Path path = Paths.get(realPath);
             inputStream = Files.newInputStream(path);
         } catch (IOException e) {
