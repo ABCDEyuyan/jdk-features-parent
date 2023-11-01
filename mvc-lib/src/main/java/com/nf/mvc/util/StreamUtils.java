@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 
 /**
  * 此工具类主要是处理流相关的事情，很多方法是没有处理流的关闭的事情的，
- * 需要由使用方去处理流的关闭
+ * 需要由使用方去处理流的关闭.FileUtils中的许多copy的方法是有对关闭进行处理的
  *
  * @see com.nf.mvc.view.StreamViewResult
  */
@@ -104,47 +104,6 @@ public abstract class StreamUtils {
         }
         out.flush();
         return byteCount;
-    }
-
-    public static long copyRange(InputStream in, OutputStream out, long start, long end) throws IOException {
-        Assert.notNull(in, "No InputStream specified");
-        Assert.notNull(out, "No OutputStream specified");
-
-        long skipped = in.skip(start);
-        if (skipped < start) {
-            throw new IOException("Skipped only " + skipped + " bytes out of " + start + " required");
-        }
-
-        long bytesToCopy = end - start + 1;
-        byte[] buffer = new byte[(int) Math.min(StreamUtils.BUFFER_SIZE, bytesToCopy)];
-        while (bytesToCopy > 0) {
-            int bytesRead = in.read(buffer);
-            if (bytesRead == -1) {
-                break;
-            } else if (bytesRead <= bytesToCopy) {
-                out.write(buffer, 0, bytesRead);
-                bytesToCopy -= bytesRead;
-            } else {
-                out.write(buffer, 0, (int) bytesToCopy);
-                bytesToCopy = 0;
-            }
-        }
-        return (end - start + 1 - bytesToCopy);
-    }
-
-    public static int drain(InputStream in) throws IOException {
-        Assert.notNull(in, "No InputStream specified");
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int bytesRead;
-        int byteCount = 0;
-        while ((bytesRead = in.read(buffer)) != -1) {
-            byteCount += bytesRead;
-        }
-        return byteCount;
-    }
-
-    public static InputStream emptyInput() {
-        return new ByteArrayInputStream(EMPTY_CONTENT);
     }
 
     public static InputStream getInputStreamFromRealPath(String realPath) {
