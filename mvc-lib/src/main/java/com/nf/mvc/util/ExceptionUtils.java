@@ -20,11 +20,11 @@ public interface ExceptionUtils {
      */
     static Throwable getRootCause(Throwable ex) {
         Throwable cause;
-        Throwable result = ex;
-        while (null != (cause = result.getCause()) && (result != cause)) {
-            result = cause;
+        Throwable root = ex;
+        while (null != (cause = root.getCause()) && (root != cause)) {
+            root = cause;
         }
-        return result;
+        return root;
     }
 
     static int exceptionCompare(Class<? extends Throwable> ex1Class, Class<? extends Throwable> ex2Class) {
