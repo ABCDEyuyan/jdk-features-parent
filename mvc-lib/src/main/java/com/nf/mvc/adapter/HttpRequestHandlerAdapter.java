@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  * 此HandlerAdapter是用来处理实现了{@link HttpRequestHandler}接口的处理者,
  * <p>此接口的方法{@link HttpRequestHandler#processRequest(HttpServletRequest, HttpServletResponse)}设计为返回void，
  * 所以此接口的实现类如果要响应请求，只能通过方法的参数HttpServletResponse对象直接生成响应，此HandlerAdapter会把Handler的结果适配为VoidViewResult</p>
+ *
  * @see HttpRequestHandler
  * @see VoidViewResult
  * @see HandlerAdapter
@@ -20,9 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-       return handler instanceof HandlerClass
+        return handler instanceof HandlerClass
                 && HttpRequestHandler.class
-                        .isAssignableFrom(((HandlerClass)handler).getHandlerClass());
+                .isAssignableFrom(((HandlerClass) handler).getHandlerClass());
     }
 
     @Override

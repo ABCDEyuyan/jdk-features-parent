@@ -26,65 +26,65 @@ import java.util.stream.Collectors;
  * @see com.nf.mvc.DispatcherServlet
  */
 public enum Delimiters {
-  /**
-   * 逗号分隔符
-   */
-  Comma(",+", "逗号分隔符"),
-  /**
-   * 空格分隔符
-   */
-  Space("\\s+", "空格分隔符"),
-  /**
-   * 分号分隔符
-   */
-  SemiColon(";+", "分号分隔符"),
-  /**
-   * spring常用的分隔符，逗号，空格，分号
-   */
-  Common("[\\s,;]+", "spring常用的分隔符，逗号，空格，分号"),
-  /**
-   * 连字符分隔符
-   */
-  Hyphen("-+", "连字符分隔符"),
-  /**
-   * 冒号分隔符
-   */
-  Colon(":+", "冒号分隔符"),
-  /**
-   * 竖线分隔符(Vertical Line),也叫管道符
-   */
-  Pipe("\\|", "竖线分隔符");
-  private final String pattern;
-  private final String desc;
+    /**
+     * 逗号分隔符
+     */
+    Comma(",+", "逗号分隔符"),
+    /**
+     * 空格分隔符
+     */
+    Space("\\s+", "空格分隔符"),
+    /**
+     * 分号分隔符
+     */
+    SemiColon(";+", "分号分隔符"),
+    /**
+     * spring常用的分隔符，逗号，空格，分号
+     */
+    Common("[\\s,;]+", "spring常用的分隔符，逗号，空格，分号"),
+    /**
+     * 连字符分隔符
+     */
+    Hyphen("-+", "连字符分隔符"),
+    /**
+     * 冒号分隔符
+     */
+    Colon(":+", "冒号分隔符"),
+    /**
+     * 竖线分隔符(Vertical Line),也叫管道符
+     */
+    Pipe("\\|", "竖线分隔符");
+    private final String pattern;
+    private final String desc;
 
-  Delimiters(String pattern, String desc) {
-    this.pattern = pattern;
-    this.desc = desc;
-  }
+    Delimiters(String pattern, String desc) {
+        this.pattern = pattern;
+        this.desc = desc;
+    }
 
-  public String getPattern() {
-    return pattern;
-  }
+    public String getPattern() {
+        return pattern;
+    }
 
-  public String getDesc() {
-    return desc;
-  }
+    public String getDesc() {
+        return desc;
+    }
 
-  /**
-   * 此方法是用来处理定制的分隔符组合的pattern的
-   * <h3>基本用法</h3>
-   * <pre class="code">
-   *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.Space, Delimiters.Colon);
-   *    String pattern = getCombinedPattern(spaceAndColon);
-   * </pre>
-   *
-   * @param delimiters 所有分隔符枚举实例
-   * @return 所有枚举实例对应的正则表达式，是或者的关系
-   */
-  public static String getCombinedPattern(EnumSet<Delimiters> delimiters) {
-    List<String> patternList = delimiters.stream()
-            .map(Delimiters::getPattern)
-            .collect(Collectors.toList());
-    return String.join("|", patternList);
-  }
+    /**
+     * 此方法是用来处理定制的分隔符组合的pattern的
+     * <h3>基本用法</h3>
+     * <pre class="code">
+     *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.Space, Delimiters.Colon);
+     *    String pattern = getCombinedPattern(spaceAndColon);
+     * </pre>
+     *
+     * @param delimiters 所有分隔符枚举实例
+     * @return 所有枚举实例对应的正则表达式，是或者的关系
+     */
+    public static String getCombinedPattern(EnumSet<Delimiters> delimiters) {
+        List<String> patternList = delimiters.stream()
+                .map(Delimiters::getPattern)
+                .collect(Collectors.toList());
+        return String.join("|", patternList);
+    }
 }

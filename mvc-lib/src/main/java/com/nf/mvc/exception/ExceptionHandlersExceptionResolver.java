@@ -22,6 +22,7 @@ import java.util.List;
  * 那么就需要使用{@link ParameterizedExceptionHandlersExceptionResolver}</p>
  *
  * <p>此类并没有直接使用在框架中,而是用了其子类{@link ParameterizedExceptionHandlersExceptionResolver}</p>
+ *
  * @see com.nf.mvc.DispatcherServlet
  * @see HandlerExceptionResolver
  * @see ExceptionHandlers
@@ -40,7 +41,7 @@ public class ExceptionHandlersExceptionResolver extends ExceptionHandlerExceptio
     }
 
     @Override
-    protected HandlerMethod findMostMatchedHandlerMethod(List<HandlerMethod> handlerMethods,Exception exception) {
+    protected HandlerMethod findMostMatchedHandlerMethod(List<HandlerMethod> handlerMethods, Exception exception) {
         HandlerMethod mostMatchedHandlerMethod = null;
         Class<?> mostMatchedExceptionClass = null;
         for (HandlerMethod exHandleMethod : handlerMethods) {

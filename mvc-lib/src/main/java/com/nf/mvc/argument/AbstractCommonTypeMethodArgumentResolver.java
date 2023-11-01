@@ -52,6 +52,7 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     /**
      * 判断参数解析器是否支持指定的类型
+     *
      * @param scalarType 实际要处理的类型，比如方法参数是Integer类型，那么传递给此方法的type就是Integer.class,如果参数是Integer[]，那么type仍然是Integer.class
      *                   如果参数是List<Integer>,那么type仍然是Integer.class
      * @return true表示支持对此类型的解析

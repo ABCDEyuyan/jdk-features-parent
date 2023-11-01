@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  *       return json(new ResponseVO(...));
  *   }
  * </pre>
+ *
  * @see com.nf.mvc.view.JsonViewResult
  * @see PlainViewResult
  * @see com.nf.mvc.view.ForwardViewResult
@@ -41,6 +42,7 @@ public abstract class ViewResult {
      * <p>不放在HandlerHelper里是因为此类主要是用户使用，但此方法用户基本不用，
      * 所以选择把此方法放到ViewResult类里
      * </p>
+     *
      * @param handlerResult: handler执行之后的结果，可能是null，ViewResult或者别的类型，详见{@link HandlerAdapter}
      * @return 返回handler方法执行后适配的结果
      */

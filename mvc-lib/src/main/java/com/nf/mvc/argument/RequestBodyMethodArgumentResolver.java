@@ -15,6 +15,7 @@ import static com.nf.mvc.util.JacksonUtils.fromJson;
  *   public JsonViewResult json(@RequestBody Emp emp,@RequestBody List<Emp> empList){}
  * </pre>
  * </p>
+ *
  * @see RequestBody
  * @see MethodParameter#isParameterizedType()
  */

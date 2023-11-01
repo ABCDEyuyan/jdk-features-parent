@@ -17,6 +17,7 @@ import static com.nf.mvc.ViewResult.adaptHandlerResult;
  * 的参数进行解析，解析之后再调用方法以处理请求
  * <p>此HandlerAdapter对Handler的返回类型会进行适配，适配的逻辑见{@link ViewResult#adaptHandlerResult(Object)},
  * 详细解释见{@link HandlerAdapter}的注释说明</p>
+ *
  * @see HandlerAdapter
  * @see MethodArgumentResolverComposite
  * @see MethodInvoker

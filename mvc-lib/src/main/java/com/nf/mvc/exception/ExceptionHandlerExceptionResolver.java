@@ -84,137 +84,137 @@ import static com.nf.mvc.util.ExceptionUtils.getRootCause;
  * @see ExceptionHandlersExceptionResolver
  */
 public class ExceptionHandlerExceptionResolver implements HandlerExceptionResolver {
-  /**
-   * 子类不要直接访问此字段，通过对应的getter方法来访问此字段，
-   * 这里用HandlerMethod类型而不用Method类型是为了以后可能的功能增强，比如支持的参数与Handler一致(RequestMappingHandlerAdapter 处理的handler就是HandlerMethod)，
-   * 而不是像此类实现一样只支持一个Exception类型的参数
-   */
-  private final List<HandlerMethod> exceptionHandlerMethods = new ArrayList<>();
+    /**
+     * 子类不要直接访问此字段，通过对应的getter方法来访问此字段，
+     * 这里用HandlerMethod类型而不用Method类型是为了以后可能的功能增强，比如支持的参数与Handler一致(RequestMappingHandlerAdapter 处理的handler就是HandlerMethod)，
+     * 而不是像此类实现一样只支持一个Exception类型的参数
+     */
+    private final List<HandlerMethod> exceptionHandlerMethods = new ArrayList<>();
 
-  public ExceptionHandlerExceptionResolver() {
-    resolveExceptionHandlerMethods();
-  }
+    public ExceptionHandlerExceptionResolver() {
+        resolveExceptionHandlerMethods();
+    }
 
-  /**
-   * 这个方法就是用来找到异常处理方法以及对他们对找到的这些异常处理方法进行后置处理,通常的后置处理是对这些异常处理方法基于其能处理的异常进行排序处理.
-   * <p>比如有下面的两个异常处理方法,都能对ArithmeticException异常进行处理,那么更合适的就是m1,进行后置处理之后,m1就排在m2的前面
-   * <pre class="code">
-   *    &#064;ExceptionHandler(ArithmeticException ex)
-   *    m1(ArithmeticException ex){},
-   *
-   *    &#064;ExceptionHandler( RuntimeException ex)
-   *    m2(RuntimeException ex){}
-   * </pre>
-   * </p>
-   * <p>
-   * 这个方法被设计成protected，是为了可以被继承，以便改写ExceptionHandlerExceptionResolver的异常处理逻辑，
-   * 比如支持其它的注解或者有其它的排序算法等。给scanExceptionHandlerMethods与方法sortExceptionHandleMethods设计为有参数的形式
-   * 是为了增加灵活性，比如下面的重写方法就改变成了方法上有ExHandler注解的才是异常处理方法
-   * <pre class="code">
-   *         &#064;Override
-   *         protected void resolveExceptionHandlerMethods(){
-   *             scanExceptionHandlerMethods(method->method.isAnnotationPresent(ExHandler.class));
-   *             sortExceptionHandleMethods(this.exHandleMethods);
-   *         }
-   *      </pre>
-   * 而如果重写了scanExceptionHandlerMethods方法，那么可以完全改写扫描获取异常处理的逻辑，具有更大的灵活性,
-   * 子类可以通过调用方法{@link #getExceptionHandlerMethods()}来获取所有的异常处理方法的集合类型,
-   * 这样子类在编写自定义异常方法扫描逻辑时就可以把找到的处理方法添加到这个集合中，以便后续的方法使用，比如handleExceptionHandlerMethods
-   * </p>
-   */
-  protected void resolveExceptionHandlerMethods() {
-    scanExceptionHandlerMethods(method -> method.isAnnotationPresent(ExceptionHandler.class));
-    postHandleExceptionHandlerMethods(this.exceptionHandlerMethods);
-  }
+    /**
+     * 这个方法就是用来找到异常处理方法以及对他们对找到的这些异常处理方法进行后置处理,通常的后置处理是对这些异常处理方法基于其能处理的异常进行排序处理.
+     * <p>比如有下面的两个异常处理方法,都能对ArithmeticException异常进行处理,那么更合适的就是m1,进行后置处理之后,m1就排在m2的前面
+     * <pre class="code">
+     *    &#064;ExceptionHandler(ArithmeticException ex)
+     *    m1(ArithmeticException ex){},
+     *
+     *    &#064;ExceptionHandler( RuntimeException ex)
+     *    m2(RuntimeException ex){}
+     * </pre>
+     * </p>
+     * <p>
+     * 这个方法被设计成protected，是为了可以被继承，以便改写ExceptionHandlerExceptionResolver的异常处理逻辑，
+     * 比如支持其它的注解或者有其它的排序算法等。给scanExceptionHandlerMethods与方法sortExceptionHandleMethods设计为有参数的形式
+     * 是为了增加灵活性，比如下面的重写方法就改变成了方法上有ExHandler注解的才是异常处理方法
+     * <pre class="code">
+     *         &#064;Override
+     *         protected void resolveExceptionHandlerMethods(){
+     *             scanExceptionHandlerMethods(method->method.isAnnotationPresent(ExHandler.class));
+     *             sortExceptionHandleMethods(this.exHandleMethods);
+     *         }
+     *      </pre>
+     * 而如果重写了scanExceptionHandlerMethods方法，那么可以完全改写扫描获取异常处理的逻辑，具有更大的灵活性,
+     * 子类可以通过调用方法{@link #getExceptionHandlerMethods()}来获取所有的异常处理方法的集合类型,
+     * 这样子类在编写自定义异常方法扫描逻辑时就可以把找到的处理方法添加到这个集合中，以便后续的方法使用，比如handleExceptionHandlerMethods
+     * </p>
+     */
+    protected void resolveExceptionHandlerMethods() {
+        scanExceptionHandlerMethods(method -> method.isAnnotationPresent(ExceptionHandler.class));
+        postHandleExceptionHandlerMethods(this.exceptionHandlerMethods);
+    }
 
-  /**
-   * 此方法解析出所有的异常处理方法，
-   *
-   * @param predicate:判断条件，此谓词返回true的才是有效的异常处理方法
-   */
-  protected void scanExceptionHandlerMethods(Predicate<Method> predicate) {
-    List<Class<?>> classList = MvcContext.getMvcContext()
-            .getAllScannedClasses();
+    /**
+     * 此方法解析出所有的异常处理方法，
+     *
+     * @param predicate:判断条件，此谓词返回true的才是有效的异常处理方法
+     */
+    protected void scanExceptionHandlerMethods(Predicate<Method> predicate) {
+        List<Class<?>> classList = MvcContext.getMvcContext()
+                .getAllScannedClasses();
 
-    for (Class<?> clz : classList) {
-      Method[] methods = clz.getDeclaredMethods();
-      for (Method method : methods) {
-        if (predicate.test(method)) {
-          HandlerMethod exHandleMethod = new HandlerMethod(method);
-          exceptionHandlerMethods.add(exHandleMethod);
+        for (Class<?> clz : classList) {
+            Method[] methods = clz.getDeclaredMethods();
+            for (Method method : methods) {
+                if (predicate.test(method)) {
+                    HandlerMethod exHandleMethod = new HandlerMethod(method);
+                    exceptionHandlerMethods.add(exHandleMethod);
+                }
+            }
         }
-      }
     }
-  }
 
-  /**
-   * 这个方法是用来对所有的异常处理方法进行后置处理用的，常见的处理是对异常处理方法基于其能处理的异常进行排序，
-   * 也可以不对这些异常处理方法进行任何额外的处理，子类可以通过重写此方法并留空或者重写{@link ExceptionHandlerExceptionResolver#resolveExceptionHandlerMethods()}
-   * 但只调用{@link ExceptionHandlerExceptionResolver#scanExceptionHandlerMethods(Predicate)}的方式来达成不对异常处理方法进行额外处理的效果
-   *
-   * @param exHandlerMethods 异常处理方法集合
-   */
-  protected void postHandleExceptionHandlerMethods(List<HandlerMethod> exHandlerMethods) {
-    exHandlerMethods.sort((m1, m2) -> exceptionCompare(
-            getAttrValue(m1.getMethod(), ExceptionHandler.class),
-            getAttrValue(m2.getMethod(), ExceptionHandler.class)));
-  }
-
-
-  @Override
-  public final ViewResult resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-    Exception raisedException = getRaisedException(ex);
-    HandlerMethod exceptionHandlerMethod = findMostMatchedHandlerMethod(getExceptionHandlerMethods(), raisedException);
-    if (exceptionHandlerMethod == null) {
-      return null;
+    /**
+     * 这个方法是用来对所有的异常处理方法进行后置处理用的，常见的处理是对异常处理方法基于其能处理的异常进行排序，
+     * 也可以不对这些异常处理方法进行任何额外的处理，子类可以通过重写此方法并留空或者重写{@link ExceptionHandlerExceptionResolver#resolveExceptionHandlerMethods()}
+     * 但只调用{@link ExceptionHandlerExceptionResolver#scanExceptionHandlerMethods(Predicate)}的方式来达成不对异常处理方法进行额外处理的效果
+     *
+     * @param exHandlerMethods 异常处理方法集合
+     */
+    protected void postHandleExceptionHandlerMethods(List<HandlerMethod> exHandlerMethods) {
+        exHandlerMethods.sort((m1, m2) -> exceptionCompare(
+                getAttrValue(m1.getMethod(), ExceptionHandler.class),
+                getAttrValue(m2.getMethod(), ExceptionHandler.class)));
     }
-    try {
-      Object exceptionHandlerResult = executeExceptionHandlerMethod(exceptionHandlerMethod, raisedException, request);
-      return adaptHandlerResult(exceptionHandlerResult);
-    } catch (Exception e) {
+
+
+    @Override
+    public final ViewResult resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        Exception raisedException = getRaisedException(ex);
+        HandlerMethod exceptionHandlerMethod = findMostMatchedHandlerMethod(getExceptionHandlerMethods(), raisedException);
+        if (exceptionHandlerMethod == null) {
+            return null;
+        }
+        try {
+            Object exceptionHandlerResult = executeExceptionHandlerMethod(exceptionHandlerMethod, raisedException, request);
+            return adaptHandlerResult(exceptionHandlerResult);
+        } catch (Exception e) {
       /* 进入到这里就是异常处理方法本身的执行出了错，catch里如果什么都不干，相当于吞掉异常处理方法本身的异常;
        异常处理方法本身执行出问题其含义就是说本异常解析器无法处理异常.因此，通过在catch这里返回null的形式，
        就继续交给下一个异常解析器去处理，下一个异常解析器处理的仍然是最开始抛出的异常，也就是这个方法被调用时传递进来的第四个参数的值 */
-      return null;
+            return null;
+        }
+        // return executeExceptionHandlerMethod(exceptionHandlerMethod,raisedException);
     }
-    // return executeExceptionHandlerMethod(exceptionHandlerMethod,raisedException);
-  }
 
-  protected Exception getRaisedException(Exception ex) {
-    return (Exception) getRootCause(ex);
-  }
-
-  /**
-   * 此方法是用来找出能对当前用户引发异常进行处理的最合适的异常处理方法,通常是在{@link ExceptionHandlerExceptionResolver#postHandleExceptionHandlerMethods(List)}
-   * 方法调用之后才执行本方法,比如{@link ExceptionHandlerExceptionResolver#postHandleExceptionHandlerMethods(List)}已经依据其能处理的异常进行了排序,
-   * 那么本方法的实现只只需要找到第一个异常处理方法就可以了,不需要再有额外的逻辑处理,下面的方法就是这样实现的
-   *
-   * @param handlerMethods 异常处理方法的集合
-   * @param exception      当前用户代码引发的异常
-   * @return 找到的能处理当前用户异常的HandlerMethod
-   * @author cj
-   */
-  protected HandlerMethod findMostMatchedHandlerMethod(List<HandlerMethod> handlerMethods, Exception exception) {
-    HandlerMethod matchedHandlerMethod = null;
-    for (HandlerMethod handlerMethod : handlerMethods) {
-      Method method = handlerMethod.getMethod();
-      Class<?> exceptionClass = method.getDeclaredAnnotation(ExceptionHandler.class)
-              .value();
-      if (exceptionClass.isAssignableFrom(exception.getClass())) {
-        matchedHandlerMethod = handlerMethod;
-        break;
-      }
+    protected Exception getRaisedException(Exception ex) {
+        return (Exception) getRootCause(ex);
     }
-    return matchedHandlerMethod;
-  }
 
-  protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception raisedException, HttpServletRequest request) throws Exception {
-    Method method = exceptionHandlerMethod.getMethod();
-    Object instance = exceptionHandlerMethod.getHandlerObject();
-    return method.invoke(instance, raisedException);
-  }
+    /**
+     * 此方法是用来找出能对当前用户引发异常进行处理的最合适的异常处理方法,通常是在{@link ExceptionHandlerExceptionResolver#postHandleExceptionHandlerMethods(List)}
+     * 方法调用之后才执行本方法,比如{@link ExceptionHandlerExceptionResolver#postHandleExceptionHandlerMethods(List)}已经依据其能处理的异常进行了排序,
+     * 那么本方法的实现只只需要找到第一个异常处理方法就可以了,不需要再有额外的逻辑处理,下面的方法就是这样实现的
+     *
+     * @param handlerMethods 异常处理方法的集合
+     * @param exception      当前用户代码引发的异常
+     * @return 找到的能处理当前用户异常的HandlerMethod
+     * @author cj
+     */
+    protected HandlerMethod findMostMatchedHandlerMethod(List<HandlerMethod> handlerMethods, Exception exception) {
+        HandlerMethod matchedHandlerMethod = null;
+        for (HandlerMethod handlerMethod : handlerMethods) {
+            Method method = handlerMethod.getMethod();
+            Class<?> exceptionClass = method.getDeclaredAnnotation(ExceptionHandler.class)
+                    .value();
+            if (exceptionClass.isAssignableFrom(exception.getClass())) {
+                matchedHandlerMethod = handlerMethod;
+                break;
+            }
+        }
+        return matchedHandlerMethod;
+    }
 
-  protected List<HandlerMethod> getExceptionHandlerMethods() {
-    return exceptionHandlerMethods;
-  }
+    protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception raisedException, HttpServletRequest request) throws Exception {
+        Method method = exceptionHandlerMethod.getMethod();
+        Object instance = exceptionHandlerMethod.getHandlerObject();
+        return method.invoke(instance, raisedException);
+    }
+
+    protected List<HandlerMethod> getExceptionHandlerMethods() {
+        return exceptionHandlerMethods;
+    }
 }

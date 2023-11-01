@@ -14,21 +14,23 @@ import static com.nf.mvc.HandlerContext.getContext;
 
 /**
  * 此解析器主要是用来解析常见的Servlet相关的类型，比如HttpServletRequest，HttpSession等
+ *
  * @see HandlerContext
  */
 public class ServletApiMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public boolean supports(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
-        return Arrays.stream(ServletApiEnum.values()).anyMatch(api->api.getSupportedClass().isAssignableFrom(paramType));
+        return Arrays.stream(ServletApiEnum.values()).anyMatch(api -> api.getSupportedClass().isAssignableFrom(paramType));
     }
 
     /**
      * 参数解析，是从请求中获取数据的，所以方法设计没有response对象是合理的
      * 但这样给我们带来一个解析的问题，无法获取到response对象
      * request与response对象必须来自于DispatcherServlet的service
+     *
      * @param parameter MethodParameter
-     * @param request 请求对象
+     * @param request   请求对象
      * @return 解析之后的值
      * @throws Exception 解析过程中可能抛出的异常
      */
@@ -46,11 +48,11 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
      * <p>枚举作为内部类加static关键字是多余的</p>
      * <p><b>注意：这个类设计出来主要是为了演示通过enum来优化if过多的技巧</b></p>
      */
-    private enum ServletApiEnum{
-        HttpServletRequest(HttpServletRequest.class,()->getContext().getRequest()),
-        HttpServletResponse(HttpServletResponse.class,()-> getContext().getResponse()),
-        HttpSession(HttpSession.class,()-> getContext().getSession()),
-        ServletContext(ServletContext.class,()-> getContext().getApplication());
+    private enum ServletApiEnum {
+        HttpServletRequest(HttpServletRequest.class, () -> getContext().getRequest()),
+        HttpServletResponse(HttpServletResponse.class, () -> getContext().getResponse()),
+        HttpSession(HttpSession.class, () -> getContext().getSession()),
+        ServletContext(ServletContext.class, () -> getContext().getApplication());
 
         private final Class<?> supportedClass;
         private final Supplier<Object> valueSupplier;
@@ -64,13 +66,14 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
             return supportedClass;
         }
 
-        public Object getValue(){
+        public Object getValue() {
             return this.valueSupplier.get();
         }
 
         /**
          * 此方法依据类型来返回对应的枚举实例的，枚举类自带的valueOf方法是一种严格相等的形式
          * 来返回对应的枚举实例，这里是看apiClass是不是可以赋值给对应枚举实例支持的类型
+         *
          * @param apiClass api类型
          * @return 返回对应的枚举实例
          */

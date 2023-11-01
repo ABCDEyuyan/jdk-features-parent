@@ -42,47 +42,47 @@ public class HandlerHelper {
         return forward(url, new HashMap<>());
     }
 
-    public static ForwardViewResult forward(String url,Map<String, Object> model) {
-        return new ForwardViewResult(url,model);
+    public static ForwardViewResult forward(String url, Map<String, Object> model) {
+        return new ForwardViewResult(url, model);
     }
 
     public static RedirectViewResult redirect(String url) {
         return redirect(url, new HashMap<>());
     }
 
-    public static RedirectViewResult redirect(String url,Map<String,String> model) {
-        return new RedirectViewResult(url,model);
+    public static RedirectViewResult redirect(String url, Map<String, String> model) {
+        return new RedirectViewResult(url, model);
     }
 
     public static FileViewResult file(String realPath) {
-        return file(realPath,new HashMap<>(4));
+        return file(realPath, new HashMap<>(4));
     }
 
-    public static FileViewResult file(String realPath,Map<String,String> headers) {
-        return new FileViewResult(realPath,headers);
+    public static FileViewResult file(String realPath, Map<String, String> headers) {
+        return new FileViewResult(realPath, headers);
     }
 
-    public static FileViewResult file(InputStream inputStream,String filename) {
-        return file(inputStream,filename,new HashMap<>(4));
+    public static FileViewResult file(InputStream inputStream, String filename) {
+        return file(inputStream, filename, new HashMap<>(4));
     }
 
-    public static FileViewResult file(InputStream inputStream,String filename,Map<String,String> headers) {
-        return new FileViewResult(inputStream,filename,headers);
+    public static FileViewResult file(InputStream inputStream, String filename, Map<String, String> headers) {
+        return new FileViewResult(inputStream, filename, headers);
     }
 
     public static StreamViewResult stream(InputStream inputStream) {
         return stream(inputStream, new HashMap<>());
     }
 
-    public static StreamViewResult stream(InputStream inputStream, Map<String,String> headers) {
-        return new StreamViewResult(inputStream,headers);
+    public static StreamViewResult stream(InputStream inputStream, Map<String, String> headers) {
+        return new StreamViewResult(inputStream, headers);
     }
 
     public static StreamViewResult stream(String realPath) {
         return stream(realPath, new HashMap<>(4));
     }
 
-    public static StreamViewResult stream(String realPath, Map<String,String> headers) {
-        return new StreamViewResult(StreamUtils.getInputStreamFromRealPath(realPath),headers);
+    public static StreamViewResult stream(String realPath, Map<String, String> headers) {
+        return new StreamViewResult(StreamUtils.getInputStreamFromRealPath(realPath), headers);
     }
 }

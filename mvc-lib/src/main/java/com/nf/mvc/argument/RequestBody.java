@@ -9,13 +9,13 @@ import java.lang.annotation.Target;
  * 此注解修饰在方法参数上是用来反序列化前端请求体中的数据为参数类型数据用的.
  * <h3>注意事项</h3>
  * <p>
- *     由于是读取请求体中的数据进行反序列化操作，所以当方法参数有多个RequestBody修饰的参数时，
- *     解析第二个参数时就会报流已关闭的错误，比如下面的代码
- *     <pre class="code">
+ * 由于是读取请求体中的数据进行反序列化操作，所以当方法参数有多个RequestBody修饰的参数时，
+ * 解析第二个参数时就会报流已关闭的错误，比如下面的代码
+ * <pre class="code">
  *         public void doHandle(@RequestBody SomeClass1 sc1,@RequestBody SomeClass2 sc2){}
  *     </pre>
- *     解决办法是把只用一个参数修饰@RequestBody，把参数类型换成Map或者是把类型再包一层，比如
- *     <pre class="code">
+ * 解决办法是把只用一个参数修饰@RequestBody，把参数类型换成Map或者是把类型再包一层，比如
+ * <pre class="code">
  *         &#64;Data
  *          public class SomeVO{
  *              private SomeClass1 sc1;

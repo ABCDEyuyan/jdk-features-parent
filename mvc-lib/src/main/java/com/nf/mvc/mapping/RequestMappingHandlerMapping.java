@@ -36,6 +36,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * <h3>缓存</h3>
  * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能
  * 整个Mvc框架在缓存上的应用的详细介绍见{@link MethodArgumentResolverComposite}</p>
+ *
  * @see com.nf.mvc.HandlerMapping
  * @see PathMatcher
  * @see AntPathMatcher
@@ -53,7 +54,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         resolveHandlers();
     }
 
-    protected void resolveHandlers(){
+    protected void resolveHandlers() {
         List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
 
         for (Class<?> clz : classList) {
@@ -69,30 +70,32 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
             }
         }
     }
-    protected void addHandler(String url, HandlerMethod handlerMethod){
-        if(handlers.get(url)!=null){
+
+    protected void addHandler(String url, HandlerMethod handlerMethod) {
+        if (handlers.get(url) != null) {
             throw new IllegalStateException("不能有多个处理者对应同一个url");
         }
         this.handlers.put(url, handlerMethod);
     }
+
     @SuppressWarnings("RedundantThrows")
     @Override
     public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
         String requestUrl = RequestUtils.getRequestUrl(request);
         /* get方法的第二个参数是在缓存中没有对应的key时执行的函数，其返回值会自动放置到缓存中
-        * 如果返回值是null，那么不会放置到缓存中。
-        * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
-        return cache.get(requestUrl, k->{
+         * 如果返回值是null，那么不会放置到缓存中。
+         * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
+        return cache.get(requestUrl, k -> {
             HandlerMethod handler = getHandlerInternal(requestUrl);
             if (handler != null) {
-               return new HandlerExecutionChain(handler, getInterceptors(request));
+                return new HandlerExecutionChain(handler, getInterceptors(request));
             }
             return null;
         });
     }
 
     protected HandlerMethod getHandlerInternal(String requestUrl) {
-        HandlerMethod handler=null;
+        HandlerMethod handler = null;
 
         Set<String> keys = handlers.keySet();
         List<String> patternKeys = new ArrayList<>(keys);
@@ -121,7 +124,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 if (shouldApply(requestUrl, includesPattern) && !shouldApply(requestUrl, excludesPattern)) {
                     currentRequestInterceptors.add(interceptor);
                 }
-            }else{
+            } else {
                 //没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
                 currentRequestInterceptors.add(interceptor);
             }
@@ -129,13 +132,13 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return currentRequestInterceptors;
     }
 
-    protected boolean shouldApply(String requestUrl,String... patterns) {
+    protected boolean shouldApply(String requestUrl, String... patterns) {
         boolean shouldApply = false;
-        if (patterns == null ) {
+        if (patterns == null) {
             return false;
         }
         for (String pattern : patterns) {
-            shouldApply= getPathMatcher().isMatch(pattern, requestUrl);
+            shouldApply = getPathMatcher().isMatch(pattern, requestUrl);
             if (shouldApply) {
                 break;
             }
@@ -145,6 +148,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     /**
      * 可以通过实现自定义的{@link MvcConfigurer}来配置此HandlerMapping的PathMatcher
+     *
      * @param pathMatcher 路径匹配器
      */
     public void setPathMatcher(PathMatcher pathMatcher) {

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 此类是一个对请求方法进行封装的类型。
  * <p>
- *     既然用到此类，就表明是有方法的，所以父类注释中说的4种情况，只有2种情况是需要本类处理的：
+ * 既然用到此类，就表明是有方法的，所以父类注释中说的4种情况，只有2种情况是需要本类处理的：
  *     <ul>
  *         <li>有HandlerClass，有方法，对应{@link #HandlerMethod(Class, Method)}与{@link #HandlerMethod(Method)},
  *         后一个构造函数只是一个便利的构造函数
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class HandlerMethod extends HandlerClass {
 
-    private final  Method method;
+    private final Method method;
 
     private MethodParameter[] methodParameters;
 
@@ -30,8 +30,9 @@ public class HandlerMethod extends HandlerClass {
 
     /**
      * 这个构造函数几乎不会被用到，直接用第一个构造函数更方便
+     *
      * @param handlerClass handler方法所在的类
-     * @param method handler方法
+     * @param method       handler方法
      */
     public HandlerMethod(Class<?> handlerClass, Method method) {
         super(handlerClass);
@@ -48,7 +49,7 @@ public class HandlerMethod extends HandlerClass {
         int parameterCount = method.getParameterCount();
         methodParameters = new MethodParameter[parameterCount];
         for (int i = 0; i < parameterCount; i++) {
-            MethodParameter methodParameter = new MethodParameter(method, i,paramNames.get(i));
+            MethodParameter methodParameter = new MethodParameter(method, i, paramNames.get(i));
             methodParameters[i] = methodParameter;
         }
     }

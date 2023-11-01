@@ -14,11 +14,11 @@ import java.util.*;
  * mvc框架的上下文类，通过此类主要是获取只读的框架类型信息，此类的内容是在{@link DispatcherServlet}
  * 初始化的时候就已经获取并实例化完毕，之后就不在变动了，也就是说这里的这些类型都是单例的
  * <p>
- *     MvcContext类是一个单例实现，想获取其实例，调用{@link #getMvcContext()} 即可
+ * MvcContext类是一个单例实现，想获取其实例，调用{@link #getMvcContext()} 即可
  * </p>
  *
  * <p>
- *     此类有如下一些类型信息可以获取
+ * 此类有如下一些类型信息可以获取
  *     <ol>
  *         <li>扫描到的所有Class信息，这些类已经加载，但没有实例化，通过{@link #getAllScannedClasses()}获取</li>
  *         <li>获取mvc框架的核心组件，核心组件指的是如下几个,这些组件分为mvc框架内部提供的与用户提供的定制(custom)组件,这些组件分别用对用的getXxx方法来获取
@@ -33,6 +33,7 @@ import java.util.*;
  *         <li>获取拦截器，通过{@link #getCustomHandlerInterceptors()} }</li>
  *     </ol>
  * </p>
+ *
  * @see DispatcherServlet
  */
 public class MvcContext {
@@ -47,7 +48,7 @@ public class MvcContext {
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
     private List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
-    
+
     private final List<HandlerMapping> customHandlerMappings = new ArrayList<>();
     private final List<HandlerAdapter> customHandlerAdapters = new ArrayList<>();
     private final List<MethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
@@ -55,7 +56,7 @@ public class MvcContext {
     private final List<HandlerInterceptor> customInterceptors = new ArrayList<>();
     private final List<MvcConfigurer> customConfigurers = new ArrayList<>();
 
-    private final Map<Class<?>,Object> configurationProperties = new HashMap<>(16);
+    private final Map<Class<?>, Object> configurationProperties = new HashMap<>(16);
 
     private MvcContext() {
     }
@@ -73,6 +74,7 @@ public class MvcContext {
      * <p>
      * 目前扫描的是各种各样的类，没有规定只扫描Handler，比如有HandlerMapping，也有HandlerAdapter以及Handler等
      * <p>
+     *
      * @param scanResult ClassGraph的扫描结果
      */
     void resolveScannedResult(ScanResult scanResult) {
@@ -92,6 +94,7 @@ public class MvcContext {
      * 解析扫描到的类是否是mvc框架核心功能类
      * <p>解析参数解析器要放在解析HandlerAdapter之前,因为一些HandlerAdapter的构造函数用到了参数解析器,
      * Mvc框架并不是一个容器管理框架,并没有对bean的依赖顺序进行管理</p>
+     *
      * @param scannedClass 所有扫描到的类
      */
     private void resolveMvcClasses(Class<?> scannedClass) {
@@ -114,7 +117,7 @@ public class MvcContext {
         if (scannedClass.isAnnotationPresent(ConfigurationProperties.class)) {
             String prefix = scannedClass.getDeclaredAnnotation(ConfigurationProperties.class).value();
             Object instance = YmlParser.getInstance().parse(prefix, scannedClass);
-            configurationProperties.put(scannedClass,instance);
+            configurationProperties.put(scannedClass, instance);
         }
     }
 
@@ -144,10 +147,10 @@ public class MvcContext {
     }
 
     public MvcConfigurer getCustomWebMvcConfigurer() {
-        if (customConfigurers.size() >1) {
+        if (customConfigurers.size() > 1) {
             throw new IllegalStateException("配置器应该只写一个");
         }
-        return customConfigurers.size()==0?null:customConfigurers.get(0);
+        return customConfigurers.size() == 0 ? null : customConfigurers.get(0);
     }
 
     public Map<Class<?>, Object> getConfigurationProperties() {
@@ -182,6 +185,7 @@ public class MvcContext {
 
     /**
      * 以下这些方法是默认修饰符，主要是在框架内调用，用户不能调用
+     *
      * @return ClassGraph的扫描结果
      */
     ScanResult getScanResult() {

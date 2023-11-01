@@ -6,9 +6,9 @@ package com.nf.mvc.support;
  * 此类型的一些功能在jdk中的{@link java.util.Objects}是有类似的
  */
 public interface Assert {
-  static void notNull(Object object, String message) {
-    if (object == null) {
-      throw new IllegalArgumentException(message);
+    static void notNull(Object object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
     }
-  }
 }

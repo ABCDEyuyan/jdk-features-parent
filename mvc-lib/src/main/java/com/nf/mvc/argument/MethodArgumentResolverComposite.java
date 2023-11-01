@@ -97,6 +97,7 @@ public class MethodArgumentResolverComposite implements MethodArgumentResolver {
     /**
      * 此方法创建的实例已经包含mvc框架内提供的解析器与用户提供的定制解析器集合了，你可以在此基础上额外再添加一些解析器<br/>
      * <p><b><i>注意：此默认实例中的解析器集合并不包含此类型的实例</i></b></p>
+     *
      * @return HandlerMethodArgumentResolverComposite，里面包含着真正有解析能力的参数解析器集合
      */
     public static MethodArgumentResolverComposite defaultInstance() {

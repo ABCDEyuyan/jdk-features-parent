@@ -19,9 +19,13 @@ import java.util.Map;
  */
 public class NameConventionHandlerMapping implements HandlerMapping {
 
-    /** 类名的后缀 */
+    /**
+     * 类名的后缀
+     */
     private static final String SUFFIX = "Controller";
-    /** 此map中放置的是当前HandlerMapping所能处理的所有请求 */
+    /**
+     * 此map中放置的是当前HandlerMapping所能处理的所有请求
+     */
     private final Map<String, HandlerClass> handlers = new HashMap<>();
 
 
@@ -30,8 +34,8 @@ public class NameConventionHandlerMapping implements HandlerMapping {
         List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
         for (Class<?> clz : classList) {
             //com.FirstController(类的全程）--->FirstController（简单名）
-            String simpleName= clz.getSimpleName();
-            if(simpleName.endsWith(SUFFIX)){
+            String simpleName = clz.getSimpleName();
+            if (simpleName.endsWith(SUFFIX)) {
 
                 String url = generateHandleUrl(simpleName);
                 HandlerClass handlerClass = new HandlerClass(clz);
@@ -48,7 +52,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     public HandlerExecutionChain getHandler(HttpServletRequest request) {
         String requestUrl = RequestUtils.getRequestUrl(request);
         Object handler = handlers.get(requestUrl);
-        return handler==null?null:new HandlerExecutionChain(handler, getInterceptors(request));
+        return handler == null ? null : new HandlerExecutionChain(handler, getInterceptors(request));
     }
 
 }

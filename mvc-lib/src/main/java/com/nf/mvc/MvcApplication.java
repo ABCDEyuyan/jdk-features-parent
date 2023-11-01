@@ -35,6 +35,7 @@ import java.time.LocalTime;
  * <a href="https://www.cnblogs.com/lihw-study/p/17281721.html">嵌入式tomcat添加default servlet</a>
  * <a href="https://stackoverflow.com/questions/16239130/java-user-dir-property-what-exactly-does-it-mean">解释了user.dir的含义以及其它各种属性含义的链接</a>
  * <i>此类的编写参考了spring boot中的TomcatServletWebServerFactory中的代码(重点是getWebServer方法)</i>
+ *
  * @author cj
  */
 public class MvcApplication {
@@ -53,10 +54,10 @@ public class MvcApplication {
     private static final String TEMP_DIR_DEFAULT = System.getProperty("java.io.tmpdir");
 
 
-    private  String contextPath ;
+    private String contextPath;
     private int port;
-    private  String basePackage;
-    private  String urlPattern;
+    private String basePackage;
+    private String urlPattern;
 
 
     public static void run(String... args) {
@@ -131,10 +132,11 @@ public class MvcApplication {
     /**
      * 使用这个方法而不使用Tomcat.initWebappDefaults(ctx)可以剔除掉pom中一些关于jsp的相关依赖,
      * Tomcat.initWebappDefaults(ctx)这行代码除了注册默认servlet,还有欢迎页等其他常见的默认初始化设置
+     *
      * @param ctx Tomcat的Context
      */
     private void registerDefaultServlet(Context ctx) {
-        Tomcat.addServlet(ctx,"default", DefaultServlet.class.getTypeName());
+        Tomcat.addServlet(ctx, "default", DefaultServlet.class.getTypeName());
         ctx.addServletMappingDecoded("/", "default");
     }
 
@@ -176,7 +178,7 @@ public class MvcApplication {
         System.out.println(CONTEXT_PATH + ":" + this.contextPath);
         System.out.println(URL_PATTERN + ":" + this.urlPattern);
         System.out.println(BASE_PACKAGE + ":" + this.basePackage);
-        System.out.println("web资源路径:"+ System.getProperty("user.dir"));
+        System.out.println("web资源路径:" + System.getProperty("user.dir"));
         System.out.println("文件上传用的临时目录:" + ":" + TEMP_DIR_DEFAULT);
         System.out.println("=======================================================================");
     }

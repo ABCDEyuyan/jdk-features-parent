@@ -187,6 +187,7 @@ public class MethodParameter {
      * 所以需要把这种匹配关系缓存起来，而通常是用一个HashMap结构来缓存，键是{@link MethodParameter},值是{@link MethodArgumentResolver}，
      * 所以需要重写{@link Object#equals(Object)}与{@link Object#hashCode()},以便进行更合理的hash比较与判等比较，
      * 具体的实现见{@link MethodArgumentResolverComposite#getArgumentResolver(MethodParameter)}
+     *
      * @param other 其它的要比较的对象
      * @return 相等返回true，否则返回false
      */

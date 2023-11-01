@@ -18,7 +18,7 @@ public class HandlerExecutionChain {
         this(handler, (HandlerInterceptor[]) null);
     }
 
-    public HandlerExecutionChain(Object handler,  HandlerInterceptor... interceptors) {
+    public HandlerExecutionChain(Object handler, HandlerInterceptor... interceptors) {
         this(handler, (interceptors != null ? Arrays.asList(interceptors) : Collections.emptyList()));
     }
 
@@ -40,7 +40,7 @@ public class HandlerExecutionChain {
     }
 
     public void addInterceptors(HandlerInterceptor... interceptors) {
-        CollectionUtils.mergeArrayIntoCollection(interceptors,interceptorList);
+        CollectionUtils.mergeArrayIntoCollection(interceptors, interceptorList);
     }
 
     public HandlerInterceptor[] getInterceptors() {
@@ -53,7 +53,7 @@ public class HandlerExecutionChain {
     }
 
     public boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response)
-            throws Exception{
+            throws Exception {
 
         for (int i = 0; i < interceptorList.size(); i++) {
             HandlerInterceptor interceptor = interceptorList.get(i);
@@ -67,10 +67,10 @@ public class HandlerExecutionChain {
     }
 
     public void applyPostHandle(HttpServletRequest request, HttpServletResponse response)
-            throws Exception{
+            throws Exception {
         for (int i = interceptorIndex; i >= 0; i--) {
             HandlerInterceptor interceptor = interceptorList.get(i);
-            interceptor.postHandle(request,response,handler);
+            interceptor.postHandle(request, response, handler);
         }
     }
 }
