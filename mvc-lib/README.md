@@ -121,6 +121,7 @@ public class FirstInterceptor implements HandlerInterceptor {
 - 都是默认方法的接口:HandlerInterceptor
 - 部分默认方法：HandlerMapping
 - 有静态方法的接口:ScanUtils
+- AntPathMatcher的extractPathVariables方法有调用接口的默认方法的写法
 ## 注解
 
 - 修饰在方法参数上的PathVariable

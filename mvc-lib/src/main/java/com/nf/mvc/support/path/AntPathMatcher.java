@@ -5,7 +5,6 @@ import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.util.StringUtils;
 
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,23 +144,7 @@ public class AntPathMatcher implements PathMatcher {
     @Override
     public Map<String, String> extractPathVariables(String pattern, String path) {
         validateDoubleAsteriskPos(pattern);
-
-        Map<String, String> pathVariables = new LinkedHashMap<>();
-        if (!isMatch(pattern, path)) {
-            return pathVariables;
-        }
-
-        String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, String.valueOf(this.pathSeparator), this.trimTokens, true);
-        String[] pathSegments = StringUtils.tokenizeToStringArray(path, String.valueOf(this.pathSeparator), this.trimTokens, true);
-        for (int i = 0; i < pathSegments.length; i++) {
-            String patternSegment = patternSegments[i];
-            if (isPathVariable(patternSegment)) {
-                String variableName = patternSegment.substring(1, patternSegment.length() - 1);
-                String variableValue = pathSegments[i];
-                pathVariables.put(variableName, variableValue);
-            }
-        }
-        return pathVariables;
+        return PathMatcher.super.extractPathVariables(pattern, path);
     }
 
     /**
