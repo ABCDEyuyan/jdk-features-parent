@@ -16,31 +16,31 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * <p>此参数解析器最好放置在{@link SimpleTypeMethodArgumentResolver}之前使用</p>
  */
 public class PathVariableMethodArgumentResolver implements MethodArgumentResolver {
-  private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
+    private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
 
-  @Override
-  public boolean supports(MethodParameter parameter) {
-    return parameter.isPresent(PathVariable.class) && parameter.isSimpleType();
-  }
+    @Override
+    public boolean supports(MethodParameter parameter) {
+        return parameter.isPresent(PathVariable.class) && parameter.isSimpleType();
+    }
 
-  @Override
-  public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-    String patternInClass = getUrlPattern(parameter.getContainingClass());
-    String patternInMethod = getUrlPattern(parameter.getMethod());
-    String pattern = patternInClass + patternInMethod;
+    @Override
+    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
+        String patternInClass = getUrlPattern(parameter.getContainingClass());
+        String patternInMethod = getUrlPattern(parameter.getMethod());
+        String pattern = patternInClass + patternInMethod;
 
-    String path = RequestUtils.getRequestUrl(request);
+        String path = RequestUtils.getRequestUrl(request);
 
-    Map<String, String> variables = pathMatcher.extractPathVariables(pattern, path);
-    String varName = parameter.getParameter()
-            .getDeclaredAnnotation(PathVariable.class)
-            .value();
+        Map<String, String> variables = pathMatcher.extractPathVariables(pattern, path);
+        String varName = parameter.getParameter()
+                .getDeclaredAnnotation(PathVariable.class)
+                .value();
 
-    String value = variables.get(varName);
-    return WebTypeConverters.convert(parameter.getParameterType(), value);
-  }
+        String value = variables.get(varName);
+        return WebTypeConverters.convert(value, parameter.getParameterType());
+    }
 
-  public void setPathMatcher(AntPathMatcher pathMatcher) {
-    this.pathMatcher = pathMatcher;
-  }
+    public void setPathMatcher(AntPathMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+    }
 }

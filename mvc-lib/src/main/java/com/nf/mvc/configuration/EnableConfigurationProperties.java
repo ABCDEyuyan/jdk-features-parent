@@ -119,5 +119,5 @@ import java.util.List;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EnableConfigurationProperties {
-  Class<?>[] value() default {};
+    Class<?>[] value() default {};
 }

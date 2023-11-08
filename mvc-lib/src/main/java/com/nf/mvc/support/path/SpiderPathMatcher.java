@@ -26,29 +26,31 @@ import java.util.regex.Pattern;
  * <li><a href="https://www.nationalfinder.com/html/char-asc.htm">html ascii码字母,文档注释中*的转译</a></li>
  * <li><a href="https://wangwl.net/static/projects/visualRegex#">正则表达式可视化与语义解释</a></li>
  * </ul>
+ *
+ * @author cj
  * @see com.nf.mvc.support.PathMatcher
  * @see EqualIgnoreCasePathMatcher
  * @see EqualPathMatcher
  * @see AntPathMatcher
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
  * @see com.nf.mvc.argument.PathVariableMethodArgumentResolver
- * @author cj
  */
-public final class  SpiderPathMatcher implements PathMatcher {
+public final class SpiderPathMatcher implements PathMatcher {
     /**
      * 把下面的正则表达式放到类上面的参考网址，可以知道其含义如下
      * 匹配问号（?）、星号（*）或者花括号（{}）中的任意字符（除了斜杠/）。
-     *
+     * <p>
      * 具体解释如下：
      * - \?：匹配问号字符（?）。
      * - \|：表示或的意思，用于连接多个匹配项。
      * - \*：匹配星号字符（*）。
      * - \{[^/]+?}：匹配花括号（{}）中的任意字符（除了斜杠/），并且使用非贪婪模式（+?）进行匹配。
-     *
+     * <p>
      * 总结起来，这个正则表达式可以用来匹配问号、星号或者花括号中的任意字符（除了斜杠/）
      */
-    private static final Pattern PATH_PATTERN =Pattern.compile("\\?|\\*|\\{[^/]+?}");
+    private static final Pattern PATH_PATTERN = Pattern.compile("\\?|\\*|\\{[^/]+?}");
     private static final String PATH_VARIABLE_PATTERN = "[^/]+?";
+
     @Override
     public boolean isMatch(String pattern, String path) {
         if (path.isEmpty() || pattern.isEmpty()) {
@@ -61,13 +63,14 @@ public final class  SpiderPathMatcher implements PathMatcher {
     /**
      * 用来获取不同路径模式的比较器，基本比较规则就是路径模式中有通配符就靠后，
      * 目前的实现没有用到参数 path
+     *
      * @param path 要与路径模式进行匹配的路径
      * @return 比较器
      */
     @Override
     public Comparator<String> getPatternComparator(String path) {
-        return (p1,p2)->p1.equals(p2)?0
-                :haveWildcard(p1)?1:-1;
+        return (p1, p2) -> p1.equals(p2) ? 0
+                : containsWildcard(p1) ? 1 : -1;
     }
 
     /**
@@ -79,10 +82,11 @@ public final class  SpiderPathMatcher implements PathMatcher {
      *     <li>?:转成.,代表任意一个字符</li>
      *     <li>{a}:转成([^/])+?,任意字符（除了斜杠/），并且使用非贪婪模式（+?）</li>
      * </ul>
+     *
      * @param pattern 路径模式
      * @return 路径模式的正则表达式
      */
-    private  Pattern buildPathPattern(String pattern) {
+    private Pattern buildPathPattern(String pattern) {
         StringBuilder patternBuilder = new StringBuilder();
         Matcher matcher = PATH_PATTERN.matcher(pattern);
         int end = 0;
@@ -91,11 +95,9 @@ public final class  SpiderPathMatcher implements PathMatcher {
             String match = matcher.group();
             if ("?".equals(match)) {
                 patternBuilder.append('.');
-            }
-            else if ("*".equals(match)) {
+            } else if ("*".equals(match)) {
                 patternBuilder.append(".*");
-            }
-            else if (isPathVariable(match)) {
+            } else if (isPathVariable(match)) {
                 patternBuilder.append(PATH_VARIABLE_PATTERN);
             }
             end = matcher.end();
@@ -103,14 +105,14 @@ public final class  SpiderPathMatcher implements PathMatcher {
         return Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE);
     }
 
-    private  String quote(String s, int start, int end) {
+    private String quote(String s, int start, int end) {
         if (start == end) {
             return "";
         }
         return Pattern.quote(s.substring(start, end));
     }
 
-    private boolean haveWildcard(String path) {
+    private boolean containsWildcard(String path) {
         return path.contains("?") || path.contains("*");
     }
 }

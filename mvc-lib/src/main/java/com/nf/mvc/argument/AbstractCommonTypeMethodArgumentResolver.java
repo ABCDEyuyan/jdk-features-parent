@@ -52,22 +52,12 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
 
     /**
      * 判断参数解析器是否支持指定的类型
+     *
      * @param scalarType 实际要处理的类型，比如方法参数是Integer类型，那么传递给此方法的type就是Integer.class,如果参数是Integer[]，那么type仍然是Integer.class
      *                   如果参数是List<Integer>,那么type仍然是Integer.class
      * @return true表示支持对此类型的解析
      */
     protected abstract boolean supportsInternal(Class<?> scalarType);
-
-    /**
-     * 此方法只负责标量（Scalar）类型的值进行解析，不会对标量类型的数组，List进行处理，因为在resolveArgument方法里已经进行了处理
-     *
-     * @param scalarType      标量类型
-     * @param parameterValue  未解析的原始值
-     * @param methodParameter 方法参数
-     * @return 返回解析后的正确类型的值
-     * @throws Exception 抛出解析过程中产生的异常
-     */
-    protected abstract Object resolveScalarType(Class<?> scalarType, Object parameterValue, MethodParameter methodParameter) throws Exception;
 
     /**
      * 此方法用来获取请求中的数据源的，数据源主要是request.getParameterValues(name)与request.getParts()两大类<br/>
@@ -79,17 +69,16 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
      */
     protected abstract Object[] getSource(MethodParameter methodParameter, HttpServletRequest request);
 
-    private boolean isScalarType(MethodParameter methodParameter) {
-        return supportsInternal(methodParameter.getParameterType());
-    }
-
-    private boolean isScalarTypeArray(MethodParameter methodParameter) {
-        return methodParameter.isArray() && supportsInternal(methodParameter.getComponentType());
-    }
-
-    private boolean isScalarTypeList(MethodParameter methodParameter) {
-        return methodParameter.isList() && supportsInternal(methodParameter.getFirstActualTypeArgument());
-    }
+    /**
+     * 此方法只负责标量（Scalar）类型的值进行解析，不会对标量类型的数组，List进行处理，因为在resolveArgument方法里已经进行了处理
+     *
+     * @param scalarType      标量类型
+     * @param parameterValue  未解析的原始值
+     * @param methodParameter 方法参数
+     * @return 返回解析后的正确类型的值
+     * @throws Exception 抛出解析过程中产生的异常
+     */
+    protected abstract Object resolveScalarType(Class<?> scalarType, Object parameterValue, MethodParameter methodParameter) throws Exception;
 
     /**
      * 这里如果把方法签名改为<T> T[] resolveScalarTypeArray(Class<T>,,,)这种形式，那么泛型擦除会导致方法签名是返回Object[],
@@ -114,11 +103,25 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         return array;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> List<T> resolveScalarTypeList(Class<T> scalarType, Object[] values, MethodParameter parameter) throws Exception {
         List<T> list = new ArrayList<>();
         for (int i = 0; i < Array.getLength(values); i++) {
             list.add((T) resolveScalarType(scalarType, Array.get(values, i), parameter));
         }
         return list;
+    }
+
+
+    private boolean isScalarType(MethodParameter methodParameter) {
+        return supportsInternal(methodParameter.getParameterType());
+    }
+
+    private boolean isScalarTypeArray(MethodParameter methodParameter) {
+        return methodParameter.isArray() && supportsInternal(methodParameter.getComponentType());
+    }
+
+    private boolean isScalarTypeList(MethodParameter methodParameter) {
+        return methodParameter.isList() && supportsInternal(methodParameter.getFirstActualTypeArgument());
     }
 }

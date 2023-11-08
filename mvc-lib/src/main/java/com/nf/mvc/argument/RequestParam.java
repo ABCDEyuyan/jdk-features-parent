@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface RequestParam {
     String value() default ValueConstants.DEFAULT_NONE;
+
     String defaultValue() default ValueConstants.DEFAULT_NONE;
 }

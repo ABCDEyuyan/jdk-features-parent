@@ -5,7 +5,6 @@ import com.nf.mvc.support.PathMatcher;
 import com.nf.mvc.util.StringUtils;
 
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +12,7 @@ import java.util.regex.Pattern;
 import static com.nf.mvc.util.StringUtils.skipBlanks;
 
 /**
- * 此类参考spring 的AntPathMatcher实现.
+ * 此类是spring的AntPathMatcher简化实现，提供了类似的功能
  * <p>ant地址主要用在web的url路径匹配上,其中三个核心通配符含义如下</p>
  * <ul>
  *   <li>'?' - 匹配一个字符</li>
@@ -57,186 +56,178 @@ import static com.nf.mvc.util.StringUtils.skipBlanks;
  *         boolean matchStart = pathMatcher2.isMatch(pattern, path); //true
  *         System.out.println("matchStart = " + matchStart);
  * </pre>
+ *
+ * @author cj
  * @see com.nf.mvc.support.PathMatcher
  * @see EqualIgnoreCasePathMatcher
  * @see EqualPathMatcher
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
  * @see com.nf.mvc.argument.PathVariableMethodArgumentResolver
- * @author cj
  */
 public class AntPathMatcher implements PathMatcher {
-  private static final char ASTERISK = '*';
-  private static final char SLASH = '/';
-  private static final char QUESTION = '?';
-  /**
-   * 路径变量写法的正则表达式,比如{pageSize}这种写法就匹配这个正则表达式,
-   * spring源码中的正则表达式是:"\\{[^/]+?\\}",网上找到了一个表达式是
-   * \\{.*?\\},IDEA提示有冗余,删除之后就是下面的表达式,关于正则表达式语义
-   * 可以见类上面的参考网址.两个表达式的重大区别是:spring的模式认为大括号
-   * 之间没有字符不算路径变量,比如{}这种情况spring就不认为是路径变量
-   */
-  private static final String PATH_VARIABLE_PATTERN = "\\{.*?}";
-  private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
-  private static final int LENGTH_OF_SLASH_ASTERISK = 2;
+    private static final char ASTERISK = '*';
+    private static final char SLASH = '/';
+    private static final char QUESTION = '?';
+    /**
+     * 路径变量写法的正则表达式,比如{pageSize}这种写法就匹配这个正则表达式,
+     * spring源码中的正则表达式是:"\\{[^/]+?\\}",网上找到了一个表达式是
+     * \\{.*?\\},IDEA提示有冗余,删除之后就是下面的表达式,关于正则表达式语义
+     * 可以见类上面的参考网址.两个表达式的重大区别是:spring的模式认为大括号
+     * 之间没有字符不算路径变量,比如{}这种情况spring就不认为是路径变量
+     */
+    private static final String PATH_VARIABLE_PATTERN = "\\{.*?}";
+    private static final int ASCII_CASE_DIFFERENCE_VALUE = 32;
+    private static final int LENGTH_OF_DOUBLE_WILDCARD = 2;
 
-  private final char pathSeparator;
-  private final boolean ignoreCase;
-  private final boolean matchStart;
-  private final boolean trimTokens;
+    private final char pathSeparator;
+    private final boolean ignoreCase;
+    private final boolean matchStart;
+    private final boolean trimTokens;
 
-  private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart, boolean trimTokens) {
-    this.pathSeparator = pathSeparator;
-    this.ignoreCase = ignoreCase;
-    this.matchStart = matchStart;
-    this.trimTokens = trimTokens;
-  }
-
-  @Override
-  public boolean isMatch(String pattern, String path) {
-    //这个if块就是用来把路径变量(PathVariable)替换为一个*来处理匹配问题的
-    if (StringUtils.hasText(pattern)) {
-      pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
-    }
-    if (pattern.isEmpty()) {
-      return path.isEmpty();
-    } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
-      if (matchStart) {
-        return true;
-      } else if (pattern.length() == LENGTH_OF_SLASH_ASTERISK && pattern.charAt(1) == ASTERISK) {
-        return false;
-      }
-      return isMatch(pattern.substring(1), path);
+    private AntPathMatcher(final char pathSeparator, boolean ignoreCase, boolean matchStart, boolean trimTokens) {
+        this.pathSeparator = pathSeparator;
+        this.ignoreCase = ignoreCase;
+        this.matchStart = matchStart;
+        this.trimTokens = trimTokens;
     }
 
-    final char patternStart = pattern.charAt(0);
-    if (patternStart == ASTERISK) {
-      if (pattern.length() == 1) {
-        return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
-      } else if (doubleAsteriskMatch(pattern, path)) {
-        return true;
-      }
-
-      int start = 0;
-      while (start < path.length()) {
-        if (isMatch(pattern.substring(1), path.substring(start))) {
-          return true;
+    @Override
+    public boolean isMatch(String pattern, String path) {
+        //这个if块就是用来把路径变量(PathVariable)替换为一个*来处理匹配问题的
+        if (StringUtils.hasText(pattern)) {
+            pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
         }
-        start++;
-      }
-      return isMatch(pattern.substring(1), path.substring(start));
+        if (pattern.isEmpty()) {
+            return path.isEmpty();
+        } else if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
+            if (matchStart) {
+                return true;
+            } else if (pattern.length() == LENGTH_OF_DOUBLE_WILDCARD && pattern.charAt(1) == ASTERISK) {
+                return false;
+            }
+            return isMatch(pattern.substring(1), path);
+        }
+
+        final char patternStart = pattern.charAt(0);
+        if (patternStart == ASTERISK) {
+            if (pattern.length() == 1) {
+                return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
+            } else if (doubleAsteriskMatch(pattern, path)) {
+                return true;
+            }
+
+            int start = 0;
+            while (start < path.length()) {
+                if (isMatch(pattern.substring(1), path.substring(start))) {
+                    return true;
+                }
+                start++;
+            }
+            return isMatch(pattern.substring(1), path.substring(start));
+        }
+
+        int pointer = trimTokens ? skipBlanks(path) : 0;
+
+        return !path.isEmpty() && (charEqual(path.charAt(pointer), patternStart) || patternStart == QUESTION)
+                && isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
-    int pointer = trimTokens ? skipBlanks(path) : 0;
-
-    return !path.isEmpty() && (charEqual(path.charAt(pointer), patternStart) || patternStart == QUESTION)
-            && isMatch(pattern.substring(1), path.substring(pointer + 1));
-  }
-
-  /**
-   * 获取路径变量及其值的方法,这是个简化的实现,没有使用spring的实现.
-   * <p>比如路径模式是/list/{pageNo}/{pageSize},路径是/list/2/5,
-   * 那么返回的map大致是这样的:[{pageNo:2},{pageSize:5}]</p>
-   *
-   * @param pattern 路径模式
-   * @param path    路径
-   * @return 包含各个路径变量及其值的Map
-   */
-  @Override
-  public Map<String, String> extractPathVariables(String pattern, String path) {
-    validateDoubleAsterisk(pattern);
-
-    Map<String, String> pathVariables = new LinkedHashMap<>();
-    if (!isMatch(pattern, path)) {
-      return pathVariables;
+    /**
+     * 获取路径变量及其值的方法,这是个简化的实现,没有使用spring的实现.
+     * <p>比如路径模式是/list/{pageNo}/{pageSize},路径是/list/2/5,
+     * 那么返回的map大致是这样的:[{pageNo:2},{pageSize:5}]</p>
+     *
+     * @param pattern 路径模式
+     * @param path    路径
+     * @return 包含各个路径变量及其值的Map
+     */
+    @Override
+    public Map<String, String> extractPathVariables(String pattern, String path) {
+        validateDoubleAsteriskPos(pattern);
+        return PathMatcher.super.extractPathVariables(pattern, path);
     }
 
-    String[] patternSegments = StringUtils.tokenizeToStringArray(pattern, String.valueOf(this.pathSeparator), this.trimTokens, true);
-    String[] pathSegments = StringUtils.tokenizeToStringArray(path, String.valueOf(this.pathSeparator), this.trimTokens, true);
-    for (int i = 0; i < pathSegments.length; i++) {
-      String patternSegment = patternSegments[i];
-      // 大于2是确保{}之间有字符
-      if (patternSegment.length() > 2 && patternSegment.startsWith("{") && patternSegment.endsWith("}")) {
-        String variableName = patternSegment.substring(1, patternSegment.length() - 1);
-        String variableValue = pathSegments[i];
-        pathVariables.put(variableName, variableValue);
-      }
-    }
-    return pathVariables;
-  }
-
-  private void validateDoubleAsterisk(String pattern) {
-    int posDoubleAsterisk = pattern.indexOf("/**");
-    int posPathVar = -1;
-    Pattern reg = Pattern.compile(PATH_VARIABLE_PATTERN);
-    Matcher matcher = reg.matcher(pattern);
-    if (matcher.find()) {
-      // 获取第一个匹配的路径变量模式的位置
-      posPathVar = matcher.start();
-    }
-
-    if (posDoubleAsterisk >-1 && posPathVar >-1
-            && posDoubleAsterisk < posPathVar) {
-      throw new UnsupportedOperationException("不支持/**通配符在路径变量的前面");
-    }
-  }
-
-  private boolean doubleAsteriskMatch(String pattern, String path) {
-    if (pattern.charAt(1) != ASTERISK) {
-      return false;
-    } else if (pattern.length() > LENGTH_OF_SLASH_ASTERISK) {
-      return isMatch(pattern.substring(3), path);
-    }
-    return false;
-  }
-
-  @Override
-  public Comparator<String> getPatternComparator(String path) {
-    return new AntPatternComparator(path);
-  }
-
-  private boolean charEqual(char pathChar, char patternChar) {
-    if (ignoreCase) {
-      return pathChar == patternChar ||
-              ((pathChar > patternChar) ?
-                      pathChar == patternChar + ASCII_CASE_DIFFERENCE_VALUE :
-                      pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
-    }
-    return pathChar == patternChar;
-  }
-
-  public static final class Builder {
-
-    private char pathSeparator = SLASH;
-    private boolean ignoreCase = false;
-    private boolean matchStart = false;
-    private boolean trimTokens = false;
-
-    public Builder() {
-
+    /**
+     * 用来校验**这种模式不要出现在路径变量模式的前面，比如“/list/&#042;&#042;/{no}”这种写法就不允许，
+     * 因为当前类的{@link #extractPathVariables(String, String)}实现如果让双星符号出现在路径变量之前是会有bug的。
+     * 如果没有路径变量，那么路径模式中是允许&#042;&#042;写法的
+     * <p>spring的AntPathMatcher实现是支持双星在路径模式中的任何位置，但新版spring提供了路径模式新的实现类,
+     * 新的实现类不支持双星在前面,因为会引起歧义,类似可变长度的方法参数一样,最好用在路径的最后一段里</p>
+     *
+     * @param pattern 路径模式
+     */
+    private void validateDoubleAsteriskPos(String pattern) {
+        int posDoubleAsterisk = pattern.indexOf("/**");
+        int posPathVar = -1;
+        Pattern reg = Pattern.compile(PATH_VARIABLE_PATTERN);
+        Matcher matcher = reg.matcher(pattern);
+        if (matcher.find()) {
+            // 获取第一个匹配的路径变量模式的位置
+            posPathVar = matcher.start();
+        }
+        if (posDoubleAsterisk > -1 && posPathVar > -1
+                && posDoubleAsterisk < posPathVar) {
+            throw new UnsupportedOperationException("当模式中有路径变量时,不支持/**通配符在路径变量的前面");
+        }
     }
 
-    public Builder withPathSeparator(final char pathSeparator) {
-      this.pathSeparator = pathSeparator;
-      return this;
+    private boolean doubleAsteriskMatch(String pattern, String path) {
+        if (pattern.charAt(1) != ASTERISK) {
+            return false;
+        } else if (pattern.length() > LENGTH_OF_DOUBLE_WILDCARD) {
+            return isMatch(pattern.substring(3), path);
+        }
+        return false;
     }
 
-    public Builder withIgnoreCase() {
-      this.ignoreCase = true;
-      return this;
+    @Override
+    public Comparator<String> getPatternComparator(String path) {
+        return new AntPatternComparator(path);
     }
 
-    public Builder withMatchStart() {
-      this.matchStart = true;
-      return this;
+    private boolean charEqual(char pathChar, char patternChar) {
+        if (ignoreCase) {
+            return pathChar == patternChar ||
+                    ((pathChar > patternChar) ?
+                            pathChar == patternChar + ASCII_CASE_DIFFERENCE_VALUE :
+                            pathChar == patternChar - ASCII_CASE_DIFFERENCE_VALUE);
+        }
+        return pathChar == patternChar;
     }
 
-    public Builder withTrimTokens() {
-      this.trimTokens = true;
-      return this;
-    }
+    public static final class Builder {
 
-    public AntPathMatcher build() {
-      return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);
+        private char pathSeparator = SLASH;
+        private boolean ignoreCase = false;
+        private boolean matchStart = false;
+        private boolean trimTokens = false;
+
+        public Builder() {
+
+        }
+
+        public Builder withPathSeparator(final char pathSeparator) {
+            this.pathSeparator = pathSeparator;
+            return this;
+        }
+
+        public Builder withIgnoreCase() {
+            this.ignoreCase = true;
+            return this;
+        }
+
+        public Builder withMatchStart() {
+            this.matchStart = true;
+            return this;
+        }
+
+        public Builder withTrimTokens() {
+            this.trimTokens = true;
+            return this;
+        }
+
+        public AntPathMatcher build() {
+            return new AntPathMatcher(pathSeparator, ignoreCase, matchStart, trimTokens);
+        }
     }
-  }
 }

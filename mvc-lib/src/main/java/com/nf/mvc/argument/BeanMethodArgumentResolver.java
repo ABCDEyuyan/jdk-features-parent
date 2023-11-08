@@ -11,7 +11,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
- *这是一个解析参数类型为自定义的bean类型的参数解析器，此解析器只处理bean的属性（setter方法），
+ * 这是一个解析参数类型为自定义的bean类型的参数解析器，此解析器只处理bean的属性（setter方法），
  * 如果属性的类型是非bean类型，那么交给其它的参数解析器去解析，如果仍然是bean类型，就进行递归解析处理<br/>
  *
  * <i>这个解析器要求是参数解析器链中的最后一个解析器。</i>
@@ -93,6 +93,7 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
 
     /**
      * 这个方法是用来对原始的method中复杂类型参数的属性进行值的填充操作的（比如示例代码中Emp类型）
+     *
      * @param instance：要填充的bean实例
      * @param request:数据来源
      * @param prefixStack:用来存放属性名前缀的
@@ -119,6 +120,7 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
 
     /**
      * 调用setter方法，相当于在填充bean实例，所有的setter方法都得到调用，就表示bean实例填充完毕
+     *
      * @param instance:setter方法所在类的实例
      * @param method:某一个setter方法,setter方法有且只有一个参数
      * @param request:数据来源
@@ -127,7 +129,7 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * @throws Exception 反射调用bean的setter方法时可能抛出的异常
      */
     private void invokeSetterMethod(Object instance, Method method, String
-            parameterName,HttpServletRequest request, Stack<String> prefixStack) throws Exception {
+            parameterName, HttpServletRequest request, Stack<String> prefixStack) throws Exception {
         // 如果需要加前缀的话(prefixStack不为空)，就把参数名添加上前缀
         parameterName = handleParameterName(prefixStack, parameterName);
 
@@ -140,7 +142,8 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
 
     /**
      * 处理属性名，这个属性就是用来从request对象中提前数据的key值:req.getParameter(key)
-     * @param prefixStack: 前缀栈
+     *
+     * @param prefixStack:               前缀栈
      * @param parameterName：setter方法的参数名
      * @return: 返回的是添加了前缀的参数名
      */
@@ -154,7 +157,7 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
             prefix.append(s).append(".");
         }
 
-        parameterName  = prefix + parameterName;
+        parameterName = prefix + parameterName;
         return parameterName;
     }
 
@@ -172,12 +175,13 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * 此复杂类型的解析器利用其它的解析器来进行数据解析，所以要排除掉自己
      * <p>参数解析器是单例的，但其运行在多线程环境下，
      * 下面的代码采用的是双重检查的方式确保resolvers只会被求值一次以确保线程安全性</p>
+     *
      * @return 返回框架中除了自己以外的其它所有参数解析器
      */
     private MethodArgumentResolverComposite getResolvers() {
         if (resolvers == null) {
             synchronized (BeanMethodArgumentResolver.class) {
-                if(resolvers == null) {
+                if (resolvers == null) {
                     resolvers = new MethodArgumentResolverComposite().addResolvers(
                             MvcContext.getMvcContext().getArgumentResolvers().stream()
                                     .filter(r -> !(r instanceof BeanMethodArgumentResolver))

@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.nf.mvc.support.HttpHeaders.CONTENT_DISPOSITION;
 import static com.nf.mvc.util.FileUtils.getMediaType;
 
 /**
@@ -43,52 +44,53 @@ import static com.nf.mvc.util.FileUtils.getMediaType;
  */
 public class FileViewResult extends StreamViewResult {
 
-  private final String filename;
+    private final String filename;
 
-  public FileViewResult(String realPath) {
-    this(realPath, new HashMap<>());
-  }
+    public FileViewResult(String realPath) {
+        this(realPath, new HashMap<>());
+    }
 
-  /**
-   * 通过文件物理路径实例化视图结果
-   *
-   * @param realPath:物理路径,比如D:/downloads/1.jpg
-   * @param headers：响应头信息
-   */
-  public FileViewResult(String realPath, Map<String, String> headers) {
-    super(StreamUtils.getInputStreamFromRealPath(realPath), headers);
-    // this.realPath = realPath;
-    this.filename = FileUtils.getFilename(realPath);
-  }
+    /**
+     * 通过文件物理路径实例化视图结果
+     *
+     * @param realPath:物理路径,比如D:/downloads/1.jpg
+     * @param headers：响应头信息
+     */
+    public FileViewResult(String realPath, Map<String, String> headers) {
+        super(StreamUtils.getInputStreamFromRealPath(realPath), headers);
+        // this.realPath = realPath;
+        this.filename = FileUtils.getFilename(realPath);
+    }
 
-  public FileViewResult(InputStream inputStream, String filename) {
-    this(inputStream, filename, new HashMap<>());
-  }
+    public FileViewResult(InputStream inputStream, String filename) {
+        this(inputStream, filename, new HashMap<>());
+    }
 
-  /**
-   * 通过文件流方式实例化视图结果
-   *
-   * @param inputStream:要下载文件的输入流
-   * @param filename:下载文件的名字，要有扩展名，比如a.jpg
-   * @param headers:响应头信息
-   */
-  public FileViewResult(InputStream inputStream, String filename, Map<String, String> headers) {
-    super(inputStream, headers);
-    this.filename = filename;
-  }
+    /**
+     * 通过文件流方式实例化视图结果，文件名要有扩展名，以便可以知道要响应的contentType
+     *
+     * @param inputStream:要下载文件的输入流
+     * @param filename:下载文件的名字，比如a.jpg
+     * @param headers:响应头信息
+     */
+    public FileViewResult(InputStream inputStream, String filename, Map<String, String> headers) {
+        super(inputStream, headers);
+        this.filename = filename;
+    }
 
-  @SuppressWarnings("RedundantThrows")
-  @Override
-  protected void writeContentType(HttpServletResponse resp) throws Exception {
-    resp.setContentType(getMediaType(this.filename));
-  }
+    @SuppressWarnings("RedundantThrows")
+    @Override
+    protected void writeContentType(HttpServletResponse resp) throws Exception {
+        resp.setContentType(getMediaType(this.filename));
+    }
 
-  @Override
-  protected void writeHeaders(HttpServletResponse resp) throws Exception {
-    // attachment表示以附件的形式下载，对文件名编码以防止中文文件名在保存对话框中是乱码的
-    resp.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
-    super.writeHeaders(resp);
-  }
+    @Override
+    protected void writeHeaders(HttpServletResponse resp) throws Exception {
+        // attachment表示以附件的形式下载，对文件名编码以防止中文文件名在保存对话框中是乱码的
+        // 不要调整这2行代码的顺序，相当于以构造函数传递过来的headers为准
+        resp.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
+        super.writeHeaders(resp);
+    }
 
 }
 

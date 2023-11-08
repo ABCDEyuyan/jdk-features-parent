@@ -3,9 +3,10 @@ package com.nf.mvc.support.vo;
 
 /**
  * 统一的响应结构类型，优先推荐使用静态方法，当静态方法的各个重载不满足要求时，可以直接使用构造函数来实例化此类的实例
+ *
+ * @param <T>:响应数据
  * @see ResultCode
  * @see CommonResultCode
- * @param <T>:响应数据
  */
 public class ResponseVO<T> {
     private Integer code;
@@ -22,15 +23,15 @@ public class ResponseVO<T> {
         return new ResponseVO<>(CommonResultCode.SUCCESS.getCode(), CommonResultCode.SUCCESS.getMessage(), data);
     }
 
-    public static <T> ResponseVO<T> success(String message,T data) {
+    public static <T> ResponseVO<T> success(String message, T data) {
         return new ResponseVO<>(CommonResultCode.SUCCESS.getCode(), message, data);
     }
 
-    public static <T> ResponseVO<T> success(Integer code,T data) {
-        return new ResponseVO<>(code,  CommonResultCode.SUCCESS.getMessage(), data);
+    public static <T> ResponseVO<T> success(Integer code, T data) {
+        return new ResponseVO<>(code, CommonResultCode.SUCCESS.getMessage(), data);
     }
 
-    public static <T> ResponseVO<T> success(ResultCode resultCode,T data) {
+    public static <T> ResponseVO<T> success(ResultCode resultCode, T data) {
         return new ResponseVO<>(resultCode.getCode(), resultCode.getMessage(), data);
     }
 
@@ -42,7 +43,7 @@ public class ResponseVO<T> {
         return new ResponseVO<>(CommonResultCode.FAILED.getCode(), message, null);
     }
 
-    public static <T> ResponseVO<T> fail(Integer code,String message) {
+    public static <T> ResponseVO<T> fail(Integer code, String message) {
         return new ResponseVO<>(code, message, null);
     }
 

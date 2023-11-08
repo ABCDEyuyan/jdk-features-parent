@@ -5,18 +5,18 @@ import com.nf.mvc.util.CollectionUtils;
 import com.nf.mvc.util.ObjectUtils;
 import com.nf.mvc.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CorsConfiguration {
 
     public static final String ALL = "*";
 
-    private final List<String> allowedOrigins = new ArrayList<>();
+    private final Set<String> allowedOrigins = new HashSet<>();
 
-    private final List<String> allowedMethods = new ArrayList<>();
+    private final Set<String> allowedMethods = new HashSet<>();
 
-    private final List<String> allowedHeaders = new ArrayList<>();
+    private final Set<String> allowedHeaders = new HashSet<>();
 
     private Boolean allowCredentials = false;
 
@@ -27,7 +27,7 @@ public class CorsConfiguration {
         return this;
     }
 
-    public List<String> getAllowedOrigins() {
+    public Set<String> getAllowedOrigins() {
         return this.allowedOrigins;
     }
 
@@ -45,7 +45,7 @@ public class CorsConfiguration {
         return this;
     }
 
-    public List<String> getAllowedHeaders() {
+    public Set<String> getAllowedHeaders() {
         return this.allowedHeaders;
     }
 
@@ -56,7 +56,7 @@ public class CorsConfiguration {
         return this;
     }
 
-    public List<String> getAllowedMethods() {
+    public Set<String> getAllowedMethods() {
         return this.allowedMethods;
     }
 
@@ -78,14 +78,14 @@ public class CorsConfiguration {
      *     <li>允许的头部设置为*</li>
      * </ul>
      */
-    public void applyDefaultConfiguration(){
+    public void applyDefaultConfiguration() {
         allowedOrigins(ALL).
-        allowCredentials(false).
-        allowedMethods(HttpMethod.OPTIONS,HttpMethod.GET,HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PUT).
-        allowedHeaders(ALL);
+                allowCredentials(false).
+                allowedMethods(HttpMethod.OPTIONS, HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT).
+                allowedHeaders(ALL);
     }
 
-    public static CorsConfiguration defaultInstance(){
+    public static CorsConfiguration defaultInstance() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.applyDefaultConfiguration();
         return corsConfiguration;
@@ -94,14 +94,14 @@ public class CorsConfiguration {
     /**
      * 清理默认的跨域设置，origin是空，允许的方法也不设置，允许的头也没有任何设置
      */
-    public void clearDefaultConfiguration(){
+    public void clearDefaultConfiguration() {
         this.allowedOrigins.clear();
         allowCredentials(false);
         this.allowedMethods.clear();
         this.allowedHeaders.clear();
     }
 
-    public String checkOrigin( String origin) {
+    public String checkOrigin(String origin) {
         if (!StringUtils.hasText(origin)) {
             return null;
         }
@@ -125,7 +125,7 @@ public class CorsConfiguration {
     }
 
     public void validateAllowCredentials() {
-        if (this.allowCredentials.equals( Boolean.TRUE) && this.allowedOrigins.contains(ALL)) {
+        if (this.allowCredentials.equals(Boolean.TRUE) && this.allowedOrigins.contains(ALL)) {
 
             throw new IllegalArgumentException(
                     "When allowCredentials is true, allowedOrigins cannot contain the special value \"*\" " +
@@ -134,5 +134,4 @@ public class CorsConfiguration {
                             "or consider using \"allowedOriginPatterns\" instead.");
         }
     }
-
 }

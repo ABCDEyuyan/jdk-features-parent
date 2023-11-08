@@ -1,8 +1,79 @@
 # 说明
 这个框架是一个教学用的框架，主要目标是只利用Servlet技术与jdk 8基础知识来实现一个功能上类似spring mvc框架的小框架，
-以便初学者能更好的理解知识的运用，特别是OOP编程的思维逻辑与代码实现
+以便初学者能更好的理解知识的运用，特别是OOP编程的思维逻辑与代码实现，联系作者可以加QQ：417278483
 
 # 框架功能
+
+基本与spring mvc类似，就是在视图的处理类似于asp.net mvc的方式，采用ViewResult的体系，典型用法如下:
+
+```java
+import static com.nf.mvc.handler.HandlerHelper.json;
+
+@RequestMapping("/product")
+public class ProductController {
+
+    @Injected
+    private MyConfigurationProperties1 config1;
+    
+    @RequestMapping("/list/{pageno}/{pagesize}")
+    public JsonViewResult demo(@PathVariable("pageno") int pageNo,
+                                 @PathVariable("pagesize") int pageSize,
+                                 @RequestParam("username") String name,
+                                 @RequestParam(defaultValue = "100")int id,
+                                 int age,
+                                MultipartFile file,
+                                 Emp e,
+                                @RequestBody Emp emp){
+        
+        return json(new ResponseVO(200,"ok",true));
+    }
+}
+```
+
+配置属性类
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ConfigurationProperties("s1")
+public class MyConfigurationProperties1 {
+    private int id;
+    private String name;
+}
+```
+
+application.yml文件内容
+
+```yml
+s1:
+  id: 1000
+  name: abcd
+s2:
+  id: 2000
+  name: defg
+```
+
+如果要写拦截器,通过注解@Intercepts指定要拦截的地址与要排除拦截的地址，如果不加注解就表示拦截器拦截所有的请求
+
+```java
+@Intercepts(value={"/product/insert"},excludePattern = {"/login/**"})
+public class FirstInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("first pre---");
+        return  true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("first post---");
+
+    }
+}
+```
+
+
 
 # 各个技术点
 
@@ -42,6 +113,7 @@
 
 - RequestMappingHandlerAdapter类的构造函数写法
 - HandlerMethod#HandlerMethod(java.lang.Class<?>, java.lang.reflect.Method)构造函数的额外的初始化逻辑处理
+- FileViewResult的构造函数对父类构造函数的调用
 
 ## 接口
 
@@ -49,6 +121,7 @@
 - 都是默认方法的接口:HandlerInterceptor
 - 部分默认方法：HandlerMapping
 - 有静态方法的接口:ScanUtils
+- AntPathMatcher的extractPathVariables方法有调用接口的默认方法的写法
 ## 注解
 
 - 修饰在方法参数上的PathVariable
@@ -102,6 +175,7 @@ public interface MethodArgumentResolver {
 ### catch里什么都没写
 
 - FileCopyUtils的close方法
+- MultipartFileMethodArgumentResolver#getSource
 
 ### 主动抛异常是有业务意义的
 
@@ -120,6 +194,10 @@ public interface MethodArgumentResolver {
 ### throws
 
 - NameConventionHandlerMapping#getHandler:此方法由于没有抛出异常，可以删掉方法签名上的throws语句，虽然与其实现的接口上的方法签名不一致，但是符合java语法规则的。但不建议这么做，此类不用，所以删掉了，演示知识使用
+
+### try with resource写法
+
+- StreamViewResult#writeContent
 
 ## null
 
@@ -168,6 +246,7 @@ MethodArgumentResolverComposite
 - DispatcherServlet类
 - ExceptionHandlerExceptionResolver，特别留意resolveExceptionHandlerMethods方法
 - AbstractCommonTypeMethodArgumentResolver
+- StreamViewResult与FileViewResult
 
 ## 适配器
 
@@ -193,7 +272,10 @@ MethodArgumentResolverComposite
 
 ## 链式方法实现
 
-MethodArgumentResolverComposite类的添加解析器的相关方法
+- MethodArgumentResolverComposite类的添加解析器的相关方法
+- AntPathMatcher的Builder类
+- HandlerContext
+- CorsConfiguration
 
 ## 任意值但用户不会提供的值
 
@@ -313,6 +395,10 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 - BeanMethodArgumentResolver#resolveArgument
 
+## Set集合的运用
+
+- CorsConfiguration中的三个Set型字段
+
 ## 内部类
 
 - AntPathMatcher
@@ -320,7 +406,7 @@ MethodArgumentResolverComposite类的添加解析器的相关方法
 
 ## 代码块
 
-- WebTypeConverters
+- WebTypeConverters中的静态代码块
 
 ## 文档化注释
 

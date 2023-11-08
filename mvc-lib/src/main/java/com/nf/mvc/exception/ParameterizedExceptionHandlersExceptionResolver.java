@@ -25,34 +25,34 @@ import java.lang.reflect.Method;
  * 并关闭了(比如在反序列化解析时),这里仍然需要读取流的话就会抛出异常,框架目前是不支持这种情况的
  */
 public class ParameterizedExceptionHandlersExceptionResolver extends ExceptionHandlersExceptionResolver {
-  @Override
-  protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception exposedException, HttpServletRequest request) throws Exception{
-    MethodArgumentResolverComposite argumentResolver = MethodArgumentResolverComposite.defaultInstance();
-    // 这里要用insert相关方法添加,用add相关方法添加就会用BeanPropertyMethodArgumentResolver解析异常参数了
-    argumentResolver.insertResolvers(new ExceptionArgumentResolver(exposedException));
-
-    MethodInvoker methodInvoker = new MethodInvoker(argumentResolver);
-    Object instance = exceptionHandlerMethod.getHandlerObject();
-    Method method = exceptionHandlerMethod.getMethod();
-
-    return methodInvoker.invoke(instance, method, request);
-  }
-
-  private static class ExceptionArgumentResolver implements MethodArgumentResolver{
-    private final Exception raisedException;
-
-    public ExceptionArgumentResolver(Exception raisedException) {
-      this.raisedException = raisedException;
-    }
-
     @Override
-    public boolean supports(MethodParameter parameter) {
-      return Exception.class.isAssignableFrom(parameter.getParameterType());
+    protected Object executeExceptionHandlerMethod(HandlerMethod exceptionHandlerMethod, Exception exposedException, HttpServletRequest request) throws Exception {
+        MethodArgumentResolverComposite argumentResolver = MethodArgumentResolverComposite.defaultInstance();
+        // 这里要用insert相关方法添加,用add相关方法添加就会用BeanPropertyMethodArgumentResolver解析异常参数了
+        argumentResolver.insertResolvers(new ExceptionArgumentResolver(exposedException));
+
+        MethodInvoker methodInvoker = new MethodInvoker(argumentResolver);
+        Object instance = exceptionHandlerMethod.getHandlerObject();
+        Method method = exceptionHandlerMethod.getMethod();
+
+        return methodInvoker.invoke(instance, method, request);
     }
 
-    @Override
-    public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
-      return this.raisedException;
+    private static class ExceptionArgumentResolver implements MethodArgumentResolver {
+        private final Exception raisedException;
+
+        public ExceptionArgumentResolver(Exception raisedException) {
+            this.raisedException = raisedException;
+        }
+
+        @Override
+        public boolean supports(MethodParameter parameter) {
+            return Exception.class.isAssignableFrom(parameter.getParameterType());
+        }
+
+        @Override
+        public Object resolveArgument(MethodParameter parameter, HttpServletRequest request) throws Exception {
+            return this.raisedException;
+        }
     }
-  }
 }

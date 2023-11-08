@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class ForwardViewResult extends ViewResult {
     private final String url;
-    private final Map<String,Object> model;
+    private final Map<String, Object> model;
 
     public ForwardViewResult(String url) {
         this(url, new HashMap<>());
@@ -23,12 +23,12 @@ public class ForwardViewResult extends ViewResult {
     @Override
     public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         initModel(req);
-        req.getRequestDispatcher(url).forward(req,resp);
+        req.getRequestDispatcher(url).forward(req, resp);
     }
 
-    private void initModel(HttpServletRequest req){
+    private void initModel(HttpServletRequest req) {
         for (Map.Entry<String, Object> entry : model.entrySet()) {
-            req.setAttribute(entry.getKey(),entry.getValue());
+            req.setAttribute(entry.getKey(), entry.getValue());
         }
     }
 }

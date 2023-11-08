@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
  * </ul>
  * 配置属性类会在初始化阶段创建出来,其实例是单例的,可以通过{@link MvcContext#getConfigurationProperties()}来获取,
  * 利用这个特性,你就可以把配置属性类应用在上面列出的三大类地方的任意其他地方了
+ *
  * @author cj
  */
 @Target({ElementType.TYPE})
@@ -33,6 +34,7 @@ import java.lang.annotation.Target;
 public @interface ConfigurationProperties {
     /**
      * 指定在yml配置文件前缀用的
+     *
      * @return 前缀
      */
     String value();

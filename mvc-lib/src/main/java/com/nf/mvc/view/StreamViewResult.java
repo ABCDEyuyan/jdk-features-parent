@@ -13,12 +13,14 @@ import java.util.Map;
 
 /**
  * 此类主要是用来响应流这种视图结果的
+ *
  * @see FileViewResult
  * @see ViewResult
+ * @see StreamUtils
  * @see com.nf.mvc.handler.HandlerHelper
  */
 public class StreamViewResult extends ViewResult {
-    private final Map<String, String> headers ;
+    private final Map<String, String> headers;
     private final InputStream inputStream;
 
     public StreamViewResult(InputStream inputStream) {
@@ -37,7 +39,7 @@ public class StreamViewResult extends ViewResult {
         writeContent(resp);
     }
 
-    protected void writeContentType(HttpServletResponse resp) throws Exception{
+    protected void writeContentType(HttpServletResponse resp) throws Exception {
         resp.setContentType(StreamUtils.APPLICATION_OCTET_STREAM_VALUE);
     }
 
@@ -49,6 +51,7 @@ public class StreamViewResult extends ViewResult {
     }
 
     protected void writeContent(HttpServletResponse resp) throws Exception {
+        // StreamUtils中的copy方法是没有关闭操作的，所以这里需要用try-with-resource写法
         try (InputStream input = this.inputStream; OutputStream output = resp.getOutputStream()) {
             StreamUtils.copy(input, output);
         }
