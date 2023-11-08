@@ -57,7 +57,6 @@ public abstract class ViewResult {
         } else {
             viewResult = new PlainViewResult(handlerResult.toString());
         }
-
         return viewResult;
     }
 }

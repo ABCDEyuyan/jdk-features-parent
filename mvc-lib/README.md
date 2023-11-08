@@ -98,6 +98,7 @@ public class FirstInterceptor implements HandlerInterceptor {
 - MethodArgumentResolverComposite#addResolver与insertResolver方法
 - HandlerMethod的构造函数重载
 - HandlerExecutionChain类中添加拦截器的重载
+- null参数值导致方法调用模糊，见HandlerExecutionChain构造函数的处理
 
 ### 重写
 
@@ -114,6 +115,7 @@ public class FirstInterceptor implements HandlerInterceptor {
 - RequestMappingHandlerAdapter类的构造函数写法
 - HandlerMethod#HandlerMethod(java.lang.Class<?>, java.lang.reflect.Method)构造函数的额外的初始化逻辑处理
 - FileViewResult的构造函数对父类构造函数的调用
+- 构造函数有额外逻辑代码，最好用单独的方法封装，见NameConventionHandlerMapping
 
 ## 接口
 
