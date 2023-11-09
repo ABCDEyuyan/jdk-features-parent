@@ -125,7 +125,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                     currentRequestInterceptors.add(interceptor);
                 }
             } else {
-                //没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
+                // 没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
                 currentRequestInterceptors.add(interceptor);
             }
         }

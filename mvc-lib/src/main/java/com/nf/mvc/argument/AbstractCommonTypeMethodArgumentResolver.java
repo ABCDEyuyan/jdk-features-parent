@@ -44,7 +44,7 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
         Object[] source = getSource(parameter, request);
         /* 如果source为null，会返回一个长度为0的空数组，toObjectArray方法并不是一定要调用的，调用可以避免空引用与数组索引越界的异常 */
         Object[] objectArray = ObjectUtils.toObjectArray(source);
-        //用三目运算符取代if else
+        // 用三目运算符取代if else
         return isScalarType(parameter) ? resolveScalarType(parameter.getParameterType(), Array.getLength(objectArray) == 0 ? null : objectArray[0], parameter)
                 : isScalarTypeArray(parameter) ? resolveScalarTypeArray(parameter.getComponentType(), objectArray, parameter)
                 : resolveScalarTypeList(parameter.getFirstActualTypeArgument(), objectArray, parameter);

@@ -34,7 +34,7 @@ public class NameConventionHandlerMapping implements HandlerMapping {
     private void resolveHandlers() {
         List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
         for (Class<?> clz : classList) {
-            //com.FirstController(类的全称）--->FirstController（简单名）
+            // com.FirstController(类的全称）--->FirstController（简单名）
             String simpleName = clz.getSimpleName();
             if (simpleName.endsWith(SUFFIX)) {
                 String url = generateHandleUrl(simpleName);

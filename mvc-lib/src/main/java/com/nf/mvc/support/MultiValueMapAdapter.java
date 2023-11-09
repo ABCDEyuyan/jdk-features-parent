@@ -138,7 +138,7 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
         return this.targetMap.remove(key);
     }
 
-    @SuppressWarnings("NullableProblems")
+
     @Override
     public void putAll(Map<? extends K, ? extends List<V>> map) {
         this.targetMap.putAll(map);

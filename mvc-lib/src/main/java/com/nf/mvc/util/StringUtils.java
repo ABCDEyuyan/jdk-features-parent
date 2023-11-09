@@ -233,7 +233,7 @@ public abstract class StringUtils {
         String[] strings = source.trim()
                 .split(regex);
         return Arrays.stream(strings)
-                .filter(s -> s.length() != 0)
+                .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
     }
 
@@ -341,7 +341,7 @@ public abstract class StringUtils {
                 result.add(deleteAny(str.substring(pos, delPos), charsToDelete));
                 pos = delPos + delimiter.length();
             }
-            if (str.length() > 0 && pos <= str.length()) {
+            if (!str.isEmpty() && pos <= str.length()) {
                 // Add rest of String, but not in case of empty input.
                 result.add(deleteAny(str.substring(pos), charsToDelete));
             }
@@ -378,7 +378,7 @@ public abstract class StringUtils {
             if (trimTokens) {
                 token = token.trim();
             }
-            if (!ignoreEmptyTokens || token.length() > 0) {
+            if (!ignoreEmptyTokens || !token.isEmpty()) {
                 tokens.add(token);
             }
         }
