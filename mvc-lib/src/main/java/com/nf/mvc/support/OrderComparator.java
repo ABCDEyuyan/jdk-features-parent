@@ -11,8 +11,8 @@ import java.util.Comparator;
 public class OrderComparator<T> implements Comparator<T> {
 
     /**
-     * 这里的实现要用减号，不要用类似o1Order>o2Order?1:-1这种写法，因为不满足自反性，
-     * 见阿里巴巴java开发手册的说明
+     * 这里的实现要用减号，不要用类似o1Order>o2Order?1:-1这种写法，
+     * 因为没有考虑两者相等的情况，见阿里巴巴java开发手册的说明
      *
      * @param o1 第一个修饰了Order注解的对象
      * @param o2 第二个修饰了Order注解的对象
@@ -24,8 +24,11 @@ public class OrderComparator<T> implements Comparator<T> {
     }
 
     private int getOrderValue(T o) {
-        return o.getClass().isAnnotationPresent(Order.class) ?
-                o.getClass().getDeclaredAnnotation(Order.class).value() :
+        return o.getClass()
+                .isAnnotationPresent(Order.class) ?
+                o.getClass()
+                        .getDeclaredAnnotation(Order.class)
+                        .value() :
                 Integer.MAX_VALUE;
     }
 }

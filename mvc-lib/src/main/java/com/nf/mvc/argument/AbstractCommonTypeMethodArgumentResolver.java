@@ -9,9 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 此抽象解析器对通常的类型进行解析，给那些支持对某个标量类型T，T[],List<T>这样情况的解析器继承用的，比如Integer,Integer[],List<Integer>这样的参数类型或
- * MultipartFile，MultipartFile[],List<MultipartFile>这样的情况。
- * 并不要求所有的参数解析器继承此类型，比如@RequestBody修饰的参数的解析器就完全没有必要继承此类型,servlet Api的参数解析器也不需要继承此类
+ * 此抽象解析器对通常的类型进行解析，给那些支持对某个标量类型T，T[],List<T>,Set<T>等等这样情况的解析器继承用的，
+ * 比如Integer,Integer[],List<Integer>这样的参数类型或MultipartFile，MultipartFile[],List<MultipartFile>这样的情况。
+ * 并不要求所有的参数解析器继承此类型，比如@RequestBody修饰的参数解析器就完全没有必要继承此类型,ServletApi的参数解析器也不需要继承此类
+ * <p>我内心还有另外一种思路,当前没有实现,现在记录在这个注释里.就是把这个类改名为ContainerTypeMethodArgumentResolver,
+ * 代表某个标量类型的容器类型,比如Integer的数组,Integer的List集合等,并把此解析器作为整个解析器链的最后一个解析器,
+ * 这样所有其他解析器支持的类型就不需要处理容器类型的解析,比如List<Integer>,统统就交给本类处理了.
+ * 本类的职责就是负责实例化容器类,比如List,数组,Set等,并确定如何从请求端获取数据,比如规定请求数据格式为
+ * employees[0].id=100,employees[0].name="cj",employees[1].id=200,employees[1].name="cj2",那么就创建一个List<Employee>
+ * 的对象,其中有两条记录,而解析employee类型就交给其它的解析器去完成.这个解析器实现时有个重点注意点,
+ * 就是与BeanMethodArgumentResolver解析器谁在解析器链的最后面问题,因为这两个解析器都需要用到解析器链的
+ * 其他所有解析器来解析参数/p>
  *
  * @author cj
  * @see RequestBodyMethodArgumentResolver
@@ -28,7 +36,9 @@ public abstract class AbstractCommonTypeMethodArgumentResolver implements Method
     }
 
     /**
-     * 这里加final修饰方法，是不想让子类重写，因为支持的情况就这三种，逻辑是固定的
+     * 这里用final修饰方法，是不想让子类重写，因为支持的情况目前就这么三种，逻辑是固定的,
+     * 如果以后要支持其他类型,比如Set<T>,Map<String,T>这样的情况,只需要在此父类添加相关实现即可,
+     * 子类是不需要额外再改动的
      *
      * @param parameter 方法参数
      * @param request   servlet请求对象

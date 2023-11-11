@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see com.nf.mvc.exception.LogHandlerExceptionResolver
  * @see com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver
  */
+@FunctionalInterface
 public interface HandlerExceptionResolver {
     /**
      * 执行链的异常解析器设计为只处理Exception异常，Error异常是不处理的，
