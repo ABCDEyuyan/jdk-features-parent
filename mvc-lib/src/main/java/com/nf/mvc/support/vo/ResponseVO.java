@@ -8,7 +8,7 @@ package com.nf.mvc.support.vo;
  * @see ResultCode
  * @see CommonResultCode
  */
-public class ResponseVO<T> {
+public final class ResponseVO<T> {
     private Integer code;
     private String message;
     private T data;
