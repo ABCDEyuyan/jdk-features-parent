@@ -6,7 +6,7 @@ package com.nf.mvc.support.vo;
  *
  * @param <T>:响应数据
  * @see ResultCode
- * @see CommonResultCode
+ * @see CommonResultCodeEnum
  */
 public final class ResponseVO<T> {
     private Integer code;
@@ -20,15 +20,15 @@ public final class ResponseVO<T> {
     }
 
     public static <T> ResponseVO<T> success(T data) {
-        return new ResponseVO<>(CommonResultCode.SUCCESS.getCode(), CommonResultCode.SUCCESS.getMessage(), data);
+        return new ResponseVO<>(CommonResultCodeEnum.SUCCESS.getCode(), CommonResultCodeEnum.SUCCESS.getMessage(), data);
     }
 
     public static <T> ResponseVO<T> success(String message, T data) {
-        return new ResponseVO<>(CommonResultCode.SUCCESS.getCode(), message, data);
+        return new ResponseVO<>(CommonResultCodeEnum.SUCCESS.getCode(), message, data);
     }
 
     public static <T> ResponseVO<T> success(Integer code, T data) {
-        return new ResponseVO<>(code, CommonResultCode.SUCCESS.getMessage(), data);
+        return new ResponseVO<>(code, CommonResultCodeEnum.SUCCESS.getMessage(), data);
     }
 
     public static <T> ResponseVO<T> success(ResultCode resultCode, T data) {
@@ -36,11 +36,11 @@ public final class ResponseVO<T> {
     }
 
     public static <T> ResponseVO<T> fail() {
-        return new ResponseVO<>(CommonResultCode.FAILED.getCode(), CommonResultCode.FAILED.getMessage(), null);
+        return new ResponseVO<>(CommonResultCodeEnum.FAILED.getCode(), CommonResultCodeEnum.FAILED.getMessage(), null);
     }
 
     public static <T> ResponseVO<T> fail(String message) {
-        return new ResponseVO<>(CommonResultCode.FAILED.getCode(), message, null);
+        return new ResponseVO<>(CommonResultCodeEnum.FAILED.getCode(), message, null);
     }
 
     public static <T> ResponseVO<T> fail(Integer code, String message) {
