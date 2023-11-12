@@ -2,14 +2,7 @@ package com.nf.mvc;
 
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
-import com.nf.mvc.argument.BeanMethodArgumentResolver;
-import com.nf.mvc.argument.MethodArgumentResolverComposite;
-import com.nf.mvc.argument.MethodParameter;
-import com.nf.mvc.argument.MultipartFileMethodArgumentResolver;
-import com.nf.mvc.argument.PathVariableMethodArgumentResolver;
-import com.nf.mvc.argument.RequestBodyMethodArgumentResolver;
-import com.nf.mvc.argument.ServletApiMethodArgumentResolver;
-import com.nf.mvc.argument.SimpleTypeMethodArgumentResolver;
+import com.nf.mvc.argument.*;
 import com.nf.mvc.cors.CorsConfiguration;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.LogHandlerExceptionResolver;
@@ -358,7 +351,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.addAll(defaultHandlerAdapters);
         MvcContext.getMvcContext()
                 .setHandlerAdapters(handlerAdapters);
-
     }
 
     protected List<HandlerAdapter> getCustomHandlerAdapters() {
@@ -465,7 +457,9 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
-            /* spring mvc在这个地方是做了额外的异常处理的 */
+            // 这里捕获的ex可能是执行链执行过程中抛出的异常（没有任何异常解析器能处理时），
+            // 也可能是某个异常解析器解析执行链的异常时异常解析器自己本身抛出了异常，
+            // 也可能是视图渲染时出现了异常
             System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
         } finally {
             /* 保存到ThreadLocal的内容一定要清掉，所以放在finally是合理的 */
@@ -624,7 +618,6 @@ public class DispatcherServlet extends HttpServlet {
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, StringUtils.toCommaDelimitedString(configuration.getAllowedMethods(), ", "));
             // 允许浏览器发送的请求消息头
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, StringUtils.toCommaDelimitedString(configuration.getAllowedHeaders(), ", "));
-
         }
     }
 
