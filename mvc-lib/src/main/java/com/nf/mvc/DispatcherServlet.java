@@ -2,7 +2,14 @@ package com.nf.mvc;
 
 import com.nf.mvc.adapter.HttpRequestHandlerAdapter;
 import com.nf.mvc.adapter.RequestMappingHandlerAdapter;
-import com.nf.mvc.argument.*;
+import com.nf.mvc.argument.BeanMethodArgumentResolver;
+import com.nf.mvc.argument.MethodArgumentResolverComposite;
+import com.nf.mvc.argument.MethodParameter;
+import com.nf.mvc.argument.MultipartFileMethodArgumentResolver;
+import com.nf.mvc.argument.PathVariableMethodArgumentResolver;
+import com.nf.mvc.argument.RequestBodyMethodArgumentResolver;
+import com.nf.mvc.argument.ServletApiMethodArgumentResolver;
+import com.nf.mvc.argument.SimpleTypeMethodArgumentResolver;
 import com.nf.mvc.cors.CorsConfiguration;
 import com.nf.mvc.exception.ExceptionHandlerExceptionResolver;
 import com.nf.mvc.exception.LogHandlerExceptionResolver;
@@ -395,7 +402,7 @@ public class DispatcherServlet extends HttpServlet {
         if (pkg == null || pkg.isEmpty()) {
             throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它Mvc框架扩展组件所在的包");
         }
-        return StringUtils.split(pkg, Delimiters.Common.getPattern())
+        return StringUtils.split(pkg, Delimiters.COMMON.getPattern())
                 .toArray(new String[]{});
     }
 
