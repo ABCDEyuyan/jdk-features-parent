@@ -119,10 +119,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         for (HandlerInterceptor interceptor : allInterceptors) {
             Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
             if (interceptorClass.isAnnotationPresent(Intercepts.class)) {
-                Intercepts annotation = interceptorClass.getDeclaredAnnotation(Intercepts.class);
-                String[] includesPattern = annotation.value();
-                String[] excludesPattern = annotation.excludePattern();
-                if (shouldApply(requestUrl, includesPattern) && !shouldApply(requestUrl, excludesPattern)) {
+                Intercepts intercepts = interceptorClass.getDeclaredAnnotation(Intercepts.class);
+                String[] includesPattern = intercepts.value();
+                String[] excludesPattern = intercepts.excludePattern();
+                PathMatcher pathMatcher = getInterceptorPathMatcher(intercepts);
+                if (shouldApply(pathMatcher, requestUrl, includesPattern) && !shouldApply(pathMatcher, requestUrl, excludesPattern)) {
                     currentRequestInterceptors.add(interceptor);
                 }
             } else {
@@ -133,18 +134,29 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         return currentRequestInterceptors;
     }
 
-    protected boolean shouldApply(String requestUrl, String... patterns) {
+    protected boolean shouldApply(PathMatcher pathMatcher, String requestUrl, String... patterns) {
         boolean shouldApply = false;
         if (patterns == null) {
             return false;
         }
         for (String pattern : patterns) {
-            shouldApply = getPathMatcher().isMatch(pattern, requestUrl);
+            shouldApply = pathMatcher.isMatch(pattern, requestUrl);
             if (shouldApply) {
                 break;
             }
         }
         return shouldApply;
+    }
+
+    /**
+     * 此方法用来获取拦截器地址的路径匹配器，获取Handler的路径匹配器与拦截器的路径匹配器是可以不一样的，
+     * 当前的实现是两者都是一样的，并且可以通过MvcConfigurer来进行设置调整的
+     *
+     * @param intercepts 拦截器注解
+     * @return 拦截器使用的路径匹配器
+     */
+    protected PathMatcher getInterceptorPathMatcher(Intercepts intercepts) {
+        return getPathMatcher();
     }
 
     /**

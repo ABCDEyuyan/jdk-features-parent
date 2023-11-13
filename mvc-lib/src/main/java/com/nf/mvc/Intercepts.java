@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * 默认的HandlerMapping实现类{@link com.nf.mvc.mapping.RequestMappingHandlerMapping}
  * 对于拦截器地址的解析是采用ant地址模式进行解析的
  *
- * <p>通过value属性指定要拦截的地址，默认值是拦截所有的地址<br/>
+ * <p>通过value属性指定要拦截的地址，默认值是蚂蚁地址的/**,拦截所有的地址的意思<br/>
  * 通过excludePattern属性指定不拦截的地址，默认值是空，意思就是没有要排除的地址
  * </p>
  *
