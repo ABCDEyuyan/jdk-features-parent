@@ -34,7 +34,8 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * 能匹配上就返回此Handler作为处理者
  * </p>
  * <h3>缓存</h3>
- * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能
+ * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能,
+ * caffeine采用的是类似LFU(最近最少使用频率）的淘汰算法，具体见<a href="https://www.cnblogs.com/rickiyang/p/11074158.html">Caffeine Cache-高性能Java本地缓存组件</a>
  * 整个Mvc框架在缓存上的应用的详细介绍见{@link MethodArgumentResolverComposite}</p>
  *
  * @see com.nf.mvc.HandlerMapping
