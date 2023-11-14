@@ -30,8 +30,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * 此类是一个前端控制器，我也喜欢称其为总控器，此Servlet类是请求进入到我们的mvc框架的入口部分。<br/><br/>
- *
+ * 此类是一个前端控制器，我也喜欢称其为总控器，此Servlet类是请求进入到我们的mvc框架的入口部分
  * <h3>基本使用</h3>
  * <p>
  * 用户通常应该只配置一个这样的Servlet，并且为其url-pattern设置值为"/",虽然理论上你可以配置多个这样的servlet，但很少见。
@@ -39,33 +38,34 @@ import java.util.function.Consumer;
  * 通常也会配置load-on-startup选项,典型的配置如下:
  * <pre class="xml">
  *
- *   < servlet>
- *      < servlet-name>mvcDemo< /servlet-name>
- *      < servlet-class>com.nf.mvc.DispatcherServlet< /servlet-class>
- *      < init-param>
- *          < param-name>base-package< /param-name>
- *          <param-value>mvcDemo.web< /param-value>
- *      </init-param>
- *      < load-on-startup>200< /load-on-startup>
- *      < multipart-config>
- *      < /multipart-config>
- *  < /servlet>
+ *   &lt;servlet>
+ *      &lt;servlet-name>mvcDemo< /servlet-name>
+ *      &lt;servlet-class>com.nf.mvc.DispatcherServlet&lt;/servlet-class>
+ *      &lt;init-param>
+ *          &lt;param-name>base-package&lt;/param-name>
+ *          &lt;param-value>mvcDemo.web&lt;/param-value>
+ *      &lt;/init-param>
+ *      &lt;load-on-startup>200&lt;/load-on-startup>
+ *      &lt;multipart-config>
+ *      &lt;/multipart-config>
+ *  &lt;/servlet>
  *
- *  < servlet-mapping>
- *      < servlet-name>mvcDemo</servlet-name>
- *      < url-pattern>/</url-pattern>
- *  < /servlet-mapping>
- * }
+ *  &lt;servlet-mapping>
+ *      &lt;servlet-name>mvcDemo&lt;/servlet-name>
+ *      &lt;url-pattern>/&lt;/url-pattern>
+ *  &lt;/servlet-mapping>
  * </pre>
  * </p>
  * <h3>默认组件与自定义组件</h3>
- * <p>
- * 整个mvc框架扩展用的组件分为框架提供的默认组件与用户提供的自定义组件，同类型的自定义组件优先级总是高于框架提供的的默认组件的，
- * 同类型的自定义组件的优先级可以通过Order注解调整。<br/>
- * 整个Mvc框架管理有7大组件，其中前4大组件是只要编写对应的实现类，放置在项目中即可，Mvc框架通过类扫描的方式获取并应用到框架上，不需要再在别的地方使用或配置，
- * 而第五大组件ViewResult，用户通常采用继承此类来扩展Mvc框架的能力，并应用在控制器方法的返回值上，第6类组件是用来对Mvc框架内置的5大组件(HandlerMapping,HandlerAdapter,
- * MethodArgumentResolver,HandlerExceptionResolver,CorsConfiguration)进行配置用的，最后一个拦截器组件，是用户用来编写项目的拦截相关的业务使用，
- * 比如实现验证方面的拦截器
+ * <p>mvc框架的组件分为框架提供的默认组件与用户提供的自定义组件，自定义组件的优先级总是高于同类型的框架提供的的默认组件的，
+ * 同类型的自定义组件的优先级可以通过Order注解调整</p>
+ * <p>整个Mvc框架管理有如下7大组件,其中前4大组件的扩展只要编写相应接口的实现类并放置在框架可以扫描到的包里面即可，
+ * 不需要再在别的地方进行注册或进行额外的配置。</p>
+ * <p>第五大组件ViewResult,用户通常采用继承此类的方式来扩展Mvc框架的能力,接着把新的ViewResult类型应用在控制器方法
+ * 或者异常解析方法的返回类型上即可，并不需要被框架扫描到，更不需要进行额外的注册处理。</p>
+ * <p>第6类组件是用来对Mvc框架提供的5大内置组件(HandlerMapping,HandlerAdapter,MethodArgumentResolver,
+ * HandlerExceptionResolver,CorsConfiguration)进行定制配置用的,以便可以修改内置组件的某些默认行为</p>
+ * <p>最后一个是拦截器组件，是用户用来编写项目的拦截相关的业务使用，比如实现验证方面的拦截器</p>
  * <ul>
  *     <li>{@link HandlerMapping}</li>
  *     <li>{@link HandlerAdapter}</li>
@@ -78,13 +78,14 @@ import java.util.function.Consumer;
  * </p>
  * <h3>组件的获取</h3>
  * <p>
- * 用户自定义组件是通过类扫描的方式获取的，用户在配置DispatcherServlet的时候通过参数<i>{@code base-package }</i>指定扫描的基础包，
- * 框架会扫描指定包及其子包下的所有类型，并加载到jvm，所以，强烈建议指定的包，只包含web层面的一些组件，不要指定dao，service相关的类所在的包，
+ * 用户自定义前4大组件是通过类扫描的方式获取的，用户在配置DispatcherServlet的时候通过参数<i>{@code base-package }</i>指定扫描的基础包，
+ * 框架会扫描指定包及其子包下的所有类型，并加载到jvm。所以，强烈建议指定的包，只包含web层面的一些组件，不要指定dao，service相关的类所在的包，
  * web层面的类型主要有如下一些类型
  *    <ul>
  *       <li>用户创建的后端控制器</li>
  *       <li>用户创建的拦截器</li>
  *       <li>用户创建的WebMvcConfigurer</li>
+ *       <li>用户对前4大组件的扩展实现</li>
  *    </ul>
  * </p>
  * <h3>核心组件的实例化</h3>
@@ -92,7 +93,7 @@ import java.util.function.Consumer;
  *   核心的mvc框架组件都是在此类的{@link #init(ServletConfig)}方法实例化并完成组合的。可以看任何一个以init开头的方法了解详情，
  *   比如{@link #initHandlerMappings()},7大被Mvc框架处理的组件都要求必须有默认构造函数
  * </p>
- * <h3>初始化处理</h3>
+ * <h3>初始化处理流程</h3>
  * <ul>
  *     <li>扫描指定包及其子包下的所有类型</li>
  *     <li>创建MvcContext实例</li>
@@ -106,10 +107,11 @@ import java.util.function.Consumer;
  *     </li>
  *     <li>配置Mvc框架：利用{@link MvcConfigurer}的实现类对Mvc框架内部组件进行配置</li>
  * </ul>
- * <h3>核心请求处理流程</h3>
+ * <h3>请求处理流程</h3>
  * <ol>
  *     <li>用户发起请求</li>
- *     <li>遍历所有的HandlerMapping，直到找到一个Handler处理请求，找不到就交给默认Servlet处理请求</li>
+ *     <li>遍历所有的HandlerMapping，直到找到一个HandlerExecutionChain来处理请求，找不到就交给容器的<i>默认Servlet</i>处理请求</li>
+ *     <li>处理拦截器链的前置逻辑</li>
  *     <li>遍历所有的HandlerAdapter，直到找到一个支持此Handler的HandlerAdapter，找不到就抛异常</li>
  *     <li>HandlerAdapter开始负责Handler方法的调用执行
  *          <ol>
@@ -120,20 +122,21 @@ import java.util.function.Consumer;
  *              <li>适配Handler执行结果为ViewResult类型</li>
  *          </ol>
  *     </li>
+ *     <li>处理拦截器链的后置逻辑</li>
  *     <li>对Handler的执行结果ViewResult进行渲染（render）</li>
- *     <li>如果Handler执行链出了异常交给异常解析器去处理</li>
+ *     <li>如果执行链出了异常交给异常解析器链去处理</li>
  * </ol>
  * <h3>静态资源处理</h3>
  * <p>
  *     静态资源的地址如果没有对应HandlerMapping能处理，就进入到了默认Servlet的处理逻辑，
- *     而默认Servlet是可以处理静态资源的
+ *     而默认Servlet会直接读取静态资源并响应给请求端
  * </p>
  *
- *  <h3>cors</h3>
+ *  <h3>cors处理</h3>
  *  <p>
  *  mvc框架只实现了全局跨域的处理，并没有对某个地址进行单独的跨域处理，所以，跨域的配置是影响到所有的url请求的，
- *  如果你不通过实现WebMvcConfigurer接口的方式配置跨域，那么它会采用默认值，具体的跨域配置情况见{@link CorsConfiguration#applyDefaultConfiguration()}
- *  方法里面的设置
+ *  如果你没有实现{@link MvcConfigurer#configureCors(CorsConfiguration)}方法进行跨域的定制配置，
+ *  那么它会采用默认值，具体的跨域配置情况见{@link CorsConfiguration#applyDefaultConfiguration()}
  *  </p>
  *
  * @see MvcContext
