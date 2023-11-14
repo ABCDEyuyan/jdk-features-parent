@@ -60,8 +60,20 @@ public interface MvcConfigurer {
 
     }
 
+    /**
+     * 当前的Mvc框架默认全局就支持跨域，不需要进行额外的设置，具体的默认跨域设置见{@link CorsConfiguration#applyDefaultConfiguration()},
+     * 框架不支持对某个具体的请求进行单独的跨域配置.
+     * <p>此方法提供了对默认全局跨域设置进行修改的功能，方法的参数是已经有了默认跨域配置的对象,
+     * 你可以在默认设置基础上继续进行其它的跨域设置，也可以调用{@link CorsConfiguration#clearDefaultConfiguration()}
+     * 方法清理默认设置之后进行全新的跨域设置,实现细节见{@link DispatcherServlet#configGlobalCors(CorsConfiguration, MvcConfigurer)}</p>
+     *
+     * @param configuration 跨域配置对象
+     */
     default void configureCors(CorsConfiguration configuration) {
         configuration.applyDefaultConfiguration();
     }
 
+    default void processBeyondChainException(Throwable ex) {
+        System.out.println(ex.getMessage());
+    }
 }

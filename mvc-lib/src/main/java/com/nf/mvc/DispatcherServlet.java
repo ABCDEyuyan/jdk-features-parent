@@ -457,10 +457,10 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
-            // 这里捕获的ex可能是执行链执行过程中抛出的异常（没有任何异常解析器能处理时），
+            // 这里捕获的ex可能是执行链执行过程中抛出的异常（没有任何异常解析器能处理时或者拦截器后置逻辑执行时出现的异常），
             // 也可能是某个异常解析器解析执行链的异常时异常解析器自己本身抛出了异常，
             // 也可能是视图渲染时出现了异常
-            System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
+            processThrowable(ex);
         } finally {
             /* 保存到ThreadLocal的内容一定要清掉，所以放在finally是合理的 */
             context.clear();
@@ -486,7 +486,7 @@ public class DispatcherServlet extends HttpServlet {
             viewResult = applyHandle(req, resp, chain.getHandler());
             chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
-            // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器的后置逻辑即便出了异常也需要执行
+            // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器,其后置逻辑也需要执行
             chain.applyPostHandle(req, resp);
             // 这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
@@ -565,6 +565,28 @@ public class DispatcherServlet extends HttpServlet {
         req.getServletContext()
                 .getNamedDispatcher("default")
                 .forward(req, resp);
+    }
+
+    protected void processThrowable(Throwable ex) {
+        MvcConfigurer mvcConfigurer = MvcContext.getMvcContext().getCustomWebMvcConfigurer();
+        if (mvcConfigurer != null) {
+            mvcConfigurer.processBeyondChainException(ex);
+        } else {
+            processBeyondChainException(ex);
+        }
+    }
+
+    /**
+     * 可以在这里处理执行链之外的异常，执行链以外的异常通常就是视图渲染与异常解析器执行过程中出现的异常
+     * <p><i>注意</i>：这里的ex通常是视图渲染时出现的异常，也可能是执行链执行过程中产生的异常，比如没有异常解析器能处理执行链的异常、
+     * 执行链抛出的异常不是Exception的子类或者拦截器的后置逻辑执行过程中产生的异常等，这种情况我把其称之为执行链之外要处理的异常</p>
+     *
+     * @param ex 异常对象
+     */
+    protected void processBeyondChainException(Throwable ex) {
+        System.out.println("==================Handler执行链之外的异常信息(begin)=====================");
+        System.out.println(ex.getMessage());
+        System.out.println("==================Handler执行链之外的异常信息(end)=====================");
     }
 
     protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {

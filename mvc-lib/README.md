@@ -284,6 +284,12 @@ MethodArgumentResolverComposite
 - com.nf.mvc.util.StringUtils#split
 - BeanMethodArgumentResolver#getResolvers
 
+## 函数式接口
+
+- com.nf.mvc.DispatcherServlet#executeMvcComponentsConfig的Consume接口
+- com.nf.mvc.exception.ExceptionHandlerExceptionResolver#scanExceptionHandlerMethods的Predicate接口
+- ServletApiMethodArgumentResolver.ServletApiEnum#ServletApiEnum用到了Supplier接口
+
 ## 链式方法实现
 
 - MethodArgumentResolverComposite类的添加解析器的相关方法
