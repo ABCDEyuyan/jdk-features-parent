@@ -2,7 +2,12 @@ package com.nf.mvc.mapping;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.nf.mvc.*;
+import com.nf.mvc.HandlerExecutionChain;
+import com.nf.mvc.HandlerInterceptor;
+import com.nf.mvc.HandlerMapping;
+import com.nf.mvc.Intercepts;
+import com.nf.mvc.MvcConfigurer;
+import com.nf.mvc.MvcContext;
 import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.PathMatcher;
@@ -11,7 +16,11 @@ import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
 
@@ -34,7 +43,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * 能匹配上就返回此Handler作为处理者
  * </p>
  * <h3>缓存</h3>
- * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能,
+ * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的HandlerExecutionChain，避免每次请求过来都去查找执行链以提高性能,
  * caffeine采用的是类似LFU(最近最少使用频率）的淘汰算法，具体见<a href="https://www.cnblogs.com/rickiyang/p/11074158.html">Caffeine Cache-高性能Java本地缓存组件</a>
  * 整个Mvc框架在缓存上的应用的详细介绍见{@link MethodArgumentResolverComposite}</p>
  *
@@ -56,7 +65,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     protected void resolveHandlers() {
-        List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
+        List<Class<?>> classList = MvcContext.getMvcContext()
+                .getAllScannedClasses();
 
         for (Class<?> clz : classList) {
             String urlInClass = getUrlPattern(clz);
@@ -114,7 +124,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     @Override
     public List<HandlerInterceptor> getInterceptors(HttpServletRequest request) {
         List<HandlerInterceptor> currentRequestInterceptors = new ArrayList<>();
-        List<HandlerInterceptor> allInterceptors = MvcContext.getMvcContext().getCustomHandlerInterceptors();
+        List<HandlerInterceptor> allInterceptors = MvcContext.getMvcContext()
+                .getCustomHandlerInterceptors();
         String requestUrl = RequestUtils.getRequestUrl(request);
         for (HandlerInterceptor interceptor : allInterceptors) {
             Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
@@ -150,7 +161,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     /**
      * 此方法用来获取拦截器地址的路径匹配器，获取Handler的路径匹配器与拦截器的路径匹配器是可以不一样的，
-     * 当前的实现是两者都是一样的，并且可以通过MvcConfigurer来进行设置调整的
+     * 当前的实现是两者都是一样的，并且可以通过MvcConfigurer来统一调整Handler与拦截器的路径匹配器
      *
      * @param intercepts 拦截器注解
      * @return 拦截器使用的路径匹配器
