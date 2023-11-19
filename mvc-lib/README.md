@@ -121,6 +121,7 @@ public class FirstInterceptor implements HandlerInterceptor {
 - HandlerMethod#HandlerMethod(java.lang.Class<?>, java.lang.reflect.Method)构造函数的额外的初始化逻辑处理
 - FileViewResult的构造函数对父类构造函数的调用
 - 构造函数有额外逻辑代码，最好用单独的方法封装，见NameConventionHandlerMapping
+- MethodInvoker类只有一个有参数的构造函数，没有默认构造函数
 
 ## 接口
 
