@@ -2,12 +2,7 @@ package com.nf.mvc.mapping;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.nf.mvc.HandlerExecutionChain;
-import com.nf.mvc.HandlerInterceptor;
-import com.nf.mvc.HandlerMapping;
-import com.nf.mvc.Intercepts;
-import com.nf.mvc.MvcConfigurer;
-import com.nf.mvc.MvcContext;
+import com.nf.mvc.*;
 import com.nf.mvc.argument.MethodArgumentResolverComposite;
 import com.nf.mvc.handler.HandlerMethod;
 import com.nf.mvc.support.PathMatcher;
@@ -16,13 +11,10 @@ import com.nf.mvc.util.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
+import static com.nf.mvc.util.ObjectUtils.isEmpty;
 
 /**
  * 此类是Mvc框架的核心{@link HandlerMapping}实现，其核心的功能有
@@ -147,7 +139,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     protected boolean shouldApply(PathMatcher pathMatcher, String requestUrl, String... patterns) {
         boolean shouldApply = false;
-        if (patterns == null) {
+        if (isEmpty(patterns)) {
             return false;
         }
         for (String pattern : patterns) {
