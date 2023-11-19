@@ -114,12 +114,13 @@ public class FirstInterceptor implements HandlerInterceptor {
 - ServletApiEnum#of
 - com.nf.mvc.ViewResult#adaptHandlerResult
 - com.nf.mvc.argument.MethodArgumentResolverComposite#defaultInstance
+- com.nf.mvc.view.FileViewResult#writeHeaders 重写并调用了父类被重写的方法
 
 ## 构造函数
 
 - RequestMappingHandlerAdapter类的构造函数写法
 - HandlerMethod#HandlerMethod(java.lang.Class<?>, java.lang.reflect.Method)构造函数的额外的初始化逻辑处理
-- FileViewResult的构造函数对父类构造函数的调用
+- FileViewResult的构造函数对父类构造函数的调用,父类没有默认构造函数，这里包含典型的构造函数写法
 - 构造函数有额外逻辑代码，最好用单独的方法封装，见NameConventionHandlerMapping
 - MethodInvoker类只有一个有参数的构造函数，没有默认构造函数
 

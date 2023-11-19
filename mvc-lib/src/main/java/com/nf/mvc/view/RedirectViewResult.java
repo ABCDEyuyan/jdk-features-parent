@@ -29,7 +29,7 @@ public class RedirectViewResult extends ViewResult {
     }
 
     private String initModel() {
-        // ur?a=10&b=20
+        // url?a=10&b=20
         if (model.isEmpty()) {
             return "";
         }
@@ -47,5 +47,4 @@ public class RedirectViewResult extends ViewResult {
         }
         return builder.toString();
     }
-
 }
