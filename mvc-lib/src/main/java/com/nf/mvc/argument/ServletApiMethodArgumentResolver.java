@@ -2,6 +2,7 @@ package com.nf.mvc.argument;
 
 import com.nf.mvc.HandlerContext;
 import com.nf.mvc.MethodArgumentResolver;
+import com.nf.mvc.support.HttpMethod;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +74,9 @@ public class ServletApiMethodArgumentResolver implements MethodArgumentResolver 
         /**
          * 此方法依据类型来返回对应的枚举实例的，枚举类自带的valueOf方法是一种严格相等的形式
          * 来返回对应的枚举实例，这里是看apiClass是不是可以赋值给对应枚举实例支持的类型
+         * <p>此方法可以像{@link HttpMethod}那样继续进行改进，避免调用此方法时反复遍历此枚举的values,
+         * 但由于此方法基本不会用到，顺便也能更好理解为什么{@link HttpMethod}在类的静态代码块中
+         * 把枚举的各实例放置到Map集合中</p>
          *
          * @param apiClass api类型
          * @return 返回对应的枚举实例

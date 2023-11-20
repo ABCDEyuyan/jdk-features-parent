@@ -20,7 +20,9 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
 
     @Override
     public boolean supports(MethodParameter parameter) {
-        return parameter.isPresent(PathVariable.class) && parameter.isSimpleType();
+        return parameter.isSimpleType() &&
+                (parameter.isPresent(PathVariable.class) ||
+                        parameter.getContainingClass().isAnnotationPresent(PathVariable.class));
     }
 
     @Override
@@ -32,9 +34,7 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
         String path = RequestUtils.getRequestUrl(request);
 
         Map<String, String> variables = pathMatcher.extractPathVariables(pattern, path);
-        String varName = parameter.getParameter()
-                .getDeclaredAnnotation(PathVariable.class)
-                .value();
+        String varName = parameter.getParameter().getDeclaredAnnotation(PathVariable.class).value();
 
         String value = variables.get(varName);
         return WebTypeConverters.convert(value, parameter.getParameterType());
