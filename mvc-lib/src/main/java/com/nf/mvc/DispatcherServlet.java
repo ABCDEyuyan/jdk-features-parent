@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -225,23 +226,23 @@ public class DispatcherServlet extends HttpServlet {
          */
         initMvcContext(scanResult);
         initMvc();
-        configMvc();
+        applyMvcConfigurer();
     }
 
     private void initMvcContext(ScanResult scanResult) {
-        MvcContext.getMvcContext()
-                .resolveScannedResult(scanResult);
+        MvcContext.getMvcContext().resolveScannedResult(scanResult);
     }
 
     private void initMvc() {
-        /* 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行 */
+        // 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行
+        // 其它两类组件的初始化没有顺序要求
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
         initExceptionResolvers();
     }
 
-    private void configMvc() {
+    private void applyMvcConfigurer() {
         MvcContext mvcContext = MvcContext.getMvcContext();
         MvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
         // 没有配置器，不需要配置，提前结束configMvc方法的执行
@@ -281,9 +282,9 @@ public class DispatcherServlet extends HttpServlet {
     protected void configGlobalCors(CorsConfiguration configuration, MvcConfigurer mvcConfigurer) {
         // 不需要再调用默认设置，全局实例化时已经设置过了，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
         // configuration.applyDefaultConfiguration();
-        mvcConfigurer.configureCors(configuration);
-        // mvcConfigurer.configureCors(configuration) 这行代码你也可以换成像下面这样写
-        // executeMvcComponentsConfig(Arrays.asList(configuration),mvcConfigurer::configureCors);
+        // mvcConfigurer.configureCors(configuration);
+        // 上面一行的代码你也可以换成像下面这样写，这样就与其它组件配置逻辑的写法是一致的了
+        executeMvcComponentsConfig(Arrays.asList(configuration), mvcConfigurer::configureCors);
     }
 
     private <T> void executeMvcComponentsConfig(List<T> mvcComponents, Consumer<T> consumer) {
@@ -291,24 +292,23 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initArgumentResolvers() {
-
         List<MethodArgumentResolver> customArgumentResolvers = getCustomArgumentResolvers();
-
         List<MethodArgumentResolver> defaultArgumentResolvers = getDefaultArgumentResolvers();
 
         argumentResolvers.addAll(customArgumentResolvers);
         argumentResolvers.addAll(defaultArgumentResolvers);
-        // 把定制+默认的所有HandlerMapping组件添加到上下文中
-        MvcContext.getMvcContext()
-                .setArgumentResolvers(argumentResolvers);
+
+        MvcContext.getMvcContext().setArgumentResolvers(argumentResolvers);
     }
 
     protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
+        // 通常是处理特定类型与特定注解的解析器放置在前面，以便优先利用它来解析参数
         List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
         argumentResolvers.add(new ServletApiMethodArgumentResolver());
         argumentResolvers.add(new MultipartFileMethodArgumentResolver());
-        // RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
+        // RequestBody解析器要放在bean解析器之前，Simple与Bean类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArgumentResolver());
+        // PathVariable解析器应该放置在Simple解析器之前
         argumentResolvers.add(new PathVariableMethodArgumentResolver());
         argumentResolvers.add(new SimpleTypeMethodArgumentResolver());
         argumentResolvers.add(new BeanMethodArgumentResolver());
@@ -317,8 +317,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected List<MethodArgumentResolver> getCustomArgumentResolvers() {
-        return MvcContext.getMvcContext()
-                .getCustomArgumentResolvers();
+        return MvcContext.getMvcContext().getCustomArgumentResolvers();
     }
 
     private void initHandlerMappings() {
@@ -330,13 +329,11 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.addAll(customHandlerMappings);
         handlerMappings.addAll(defaultHandlerMappings);
         // 把定制+默认的所有HandlerMapping组件添加到上下文中
-        MvcContext.getMvcContext()
-                .setHandlerMappings(handlerMappings);
+        MvcContext.getMvcContext().setHandlerMappings(handlerMappings);
     }
 
     protected List<HandlerMapping> getCustomHandlerMappings() {
-        return MvcContext.getMvcContext()
-                .getCustomHandlerMappings();
+        return MvcContext.getMvcContext().getCustomHandlerMappings();
     }
 
     protected List<HandlerMapping> getDefaultHandlerMappings() {
@@ -352,13 +349,11 @@ public class DispatcherServlet extends HttpServlet {
 
         handlerAdapters.addAll(customHandlerAdapters);
         handlerAdapters.addAll(defaultHandlerAdapters);
-        MvcContext.getMvcContext()
-                .setHandlerAdapters(handlerAdapters);
+        MvcContext.getMvcContext().setHandlerAdapters(handlerAdapters);
     }
 
     protected List<HandlerAdapter> getCustomHandlerAdapters() {
-        return MvcContext.getMvcContext()
-                .getCustomHandlerAdapters();
+        return MvcContext.getMvcContext().getCustomHandlerAdapters();
     }
 
     protected List<HandlerAdapter> getDefaultHandlerAdapters() {
@@ -374,13 +369,11 @@ public class DispatcherServlet extends HttpServlet {
         List<HandlerExceptionResolver> defaultExceptionResolvers = getDefaultExceptionResolvers();
         exceptionResolvers.addAll(customExceptionResolvers);
         exceptionResolvers.addAll(defaultExceptionResolvers);
-        MvcContext.getMvcContext()
-                .setExceptionResolvers(exceptionResolvers);
+        MvcContext.getMvcContext().setExceptionResolvers(exceptionResolvers);
     }
 
     protected List<HandlerExceptionResolver> getCustomExceptionResolvers() {
-        return MvcContext.getMvcContext()
-                .getCustomExceptionResolvers();
+        return MvcContext.getMvcContext().getCustomExceptionResolvers();
     }
 
     protected List<HandlerExceptionResolver> getDefaultExceptionResolvers() {
