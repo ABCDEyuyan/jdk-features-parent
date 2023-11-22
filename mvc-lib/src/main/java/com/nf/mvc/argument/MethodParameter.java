@@ -9,6 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
+import java.util.Objects;
 
 /**
  * 此类是某个方法的某一个参数的封装类，里面主要封装了
@@ -187,6 +188,8 @@ public class MethodParameter {
      * 所以需要把这种匹配关系缓存起来，而通常是用一个HashMap结构来缓存，键是{@link MethodParameter},值是{@link MethodArgumentResolver}，
      * 所以需要重写{@link Object#equals(Object)}与{@link Object#hashCode()},以便进行更合理的hash比较与判等比较，
      * 具体的实现见{@link MethodArgumentResolverComposite#getArgumentResolver(MethodParameter)}
+     * <p>实现可以使用{@link Objects#equals(Object, Object)}与{@link Objects#hashCode(Object)},
+     * 可以去网上搜索effective java一书中对这两个方法推荐的实现技巧</p>
      *
      * @param other 其它的要比较的对象
      * @return 相等返回true，否则返回false
@@ -201,18 +204,16 @@ public class MethodParameter {
         if (!(other instanceof MethodParameter)) {
             return false;
         }
-        // 3.代码到这里，就意味着绝不是同一个对象，但类型是一样的
-        // 参数位置一样，所在方法一样，所在类一样
+        // 3.代码到这里，就意味着绝不是同一个对象，但类型是一样的，所以可以安全的进行类型转换
         MethodParameter otherParam = (MethodParameter) other;
+        // 方法参数所在类一样，所在方法一样，位置一样，那么就可以认为两个对象代表同一个方法参数
         return (getContainingClass() == otherParam.getContainingClass() &&
                 this.parameterIndex == otherParam.parameterIndex &&
-                this.getMethod()
-                        .equals(otherParam.getMethod()));
+                this.getMethod().equals(otherParam.getMethod()));
     }
 
     @Override
     public int hashCode() {
-        return (31 * this.getMethod()
-                .hashCode() + this.parameterIndex);
+        return (31 * this.getMethod().hashCode() + this.parameterIndex);
     }
 }
