@@ -437,6 +437,7 @@ public class DispatcherServlet extends HttpServlet {
      * </ol>
      * <p>
      *     注意：HandlerMapping查找Handler的过程中出现的异常不会被HandlerExceptionResolver去处理
+     *     doDispatch方法里才会利用异常解析器处理执行链的异常
      * </p>
      *
      * @param req  请求对象
@@ -445,8 +446,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
         HandlerExecutionChain chain;
         HandlerContext context = HandlerContext.getContext();
-        context.setRequest(req)
-                .setResponse(resp);
+        context.setRequest(req).setResponse(resp);
         try {
             chain = getHandler(req);
             if (chain != null) {
