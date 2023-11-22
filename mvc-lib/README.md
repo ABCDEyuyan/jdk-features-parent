@@ -228,10 +228,6 @@ public interface MethodArgumentResolver {
 - MvcContext
 - HandlerContext
 
-## ThreadLocal
-
-HandlerContext
-
 ## 拦截器链的实现
 
 HandlerExecutionChain
@@ -252,6 +248,13 @@ HandlerExecutionChain
 ## builder写法
 
 - AntPathMatcher类
+
+## 链式方法实现
+
+- MethodArgumentResolverComposite类的添加解析器的相关方法
+- AntPathMatcher的Builder类
+- HandlerContext
+- CorsConfiguration
 
 ## 组合设计模式
 
@@ -277,13 +280,13 @@ MethodArgumentResolverComposite
 ## 单例模式
 
 - MvcContext
-- HandlerContext:threadlocal下的单例
+- HandlerContext:多线程下的单例
 
 ## 流
 
 - MethodArgumentResolverComposite类的insertResolvers方法
 - ServletApiMethodArgumentResolver#supports
-- com.nf.mvc.util.StringUtils#split
+- StringUtils#split
 - BeanMethodArgumentResolver#getResolvers
 
 ## 函数式接口
@@ -291,13 +294,6 @@ MethodArgumentResolverComposite
 - com.nf.mvc.DispatcherServlet#executeMvcComponentsConfig的Consume接口
 - com.nf.mvc.exception.ExceptionHandlerExceptionResolver#scanExceptionHandlerMethods的Predicate接口
 - ServletApiMethodArgumentResolver.ServletApiEnum#ServletApiEnum用到了Supplier接口
-
-## 链式方法实现
-
-- MethodArgumentResolverComposite类的添加解析器的相关方法
-- AntPathMatcher的Builder类
-- HandlerContext
-- CorsConfiguration
 
 ## 任意值但用户不会提供的值
 
@@ -368,9 +364,9 @@ MethodArgumentResolverComposite
 
 ## 线程安全
 
-- HandlerContext的ThreadLocal
-- BeanMethodArgumentResolver的getResolvers方法的synchronized语句块
-- WebTypeConverters里的ConcurrentHashMap的使用
+- HandlerContext的ThreadLocal的应用
+- BeanMethodArgumentResolver的getResolvers方法的synchronized语句块与volatile关键字
+- WebTypeConverters里ConcurrentHashMap并发集合的使用
 
 ## ascii文本log
 
