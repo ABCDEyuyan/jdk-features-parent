@@ -399,13 +399,15 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 方法通常会包含很多核心逻辑步骤，如果每一个逻辑步骤都有一些零散的代码
-     * 如果都放在一起，就会导致本方法代码很长，不容易看懂，
+     * 如果都放在一起，就会导致本方法代码很长，不容易看懂。
      * 所以，最好是把其中一个个的核心逻辑用单独的方法封装起来
      * <p>
-     * service的方法，由于是重写父类型的方法，其签名是没有办法改变
-     * 比如改成throws Throwable，这是不行的
-     * <p>
-     * 所以就增加了一个doService的方法，以便有机会改doService的签名
+     * service的方法，由于是重写父类型的方法，其签名是不应该改变的，
+     * 比如改成throws Throwable，这是不行的.所以就增加了一个doService的方法，
+     * 以便有机会改doService的签名,让其不抛出异常，因为doService方法处理了异常
+     * </p>
+     * <p>增加了一个doService方法也让service逻辑更清晰，次要的跨域处理逻辑放在service方法里，
+     * 重要的请求处理逻辑放在doService方法里</p>
      *
      * @param req  请求对象
      * @param resp 响应对象
@@ -417,7 +419,7 @@ public class DispatcherServlet extends HttpServlet {
         setEncoding(req, resp);
         if (CorsUtils.isCorsRequest(req)) {
             processCors(req, resp, corsConfiguration);
-            /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
+            // 如果是预检请求提前结束方法执行，以便及时由processCors响应预检请求，以便处理后续的真正的跨域请求
             if (CorsUtils.isPreFlightRequest(req)) {
                 return;
             }
