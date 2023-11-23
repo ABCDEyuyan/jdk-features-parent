@@ -174,16 +174,20 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * bean的所有setter方法的参数值都是靠这个解析器组合来进行解析的
      * <p>本来此方法可以写成下面的实现,那么就会导致每次调用此方法时都要遍历并过滤一下所有的解析器，
      * 而这个解析器组合就是所有解析器排除掉自身之后的所有其它解析器组成的，是固定不变的。
-     * 每次遍历并过滤这样的操作显得没有必要，所以就声明一个全局的变量resolvers，此变量赋值之后就不再遍历。
+     * 每次获取解析器组合都要进行遍历并过滤这样的操作显得没有必要</p>
      * <pre class="code">
      *      return new MethodArgumentResolverComposite().addResolvers(
      *            MvcContext.getMvcContext().getArgumentResolvers().stream()
      *                      .filter(r -> !(r instanceof BeanMethodArgumentResolver))
      *                      .collect(Collectors.toList()));
      * </pre>
-     * </p>
-     * <p>又由于参数解析器是单例的，并且其运行在多线程环境下，所以,为了确保resolvers变量只赋值一次
-     * (也就是遍历并过滤操作只执行一次),就必须确保线程安全性。这里采用的是双重检查的方式来实现这一点的</p>
+     * <p>由于bean参数解析器是单例的，所以可以声明一个全局变量resolvers，并把上面的代码放在此类的构造函数中，
+     * 并把获取到的解析器集合赋值给全局变量，这样就不会导致反复循环遍历了。但这样做会导致当前的bean参数解析器的实例化
+     * 要在其它参数解析器实例化之后进行，进而导致参数解析器的初始化逻辑更复杂。所以放弃在构造函数里处理解析器组合的写法</p>
+     * <p>你也可以在servlet初始化阶段预先就构建出一个除了bean参数解析器的解析器组合出来，并放置在MvcContext中，
+     * 以后要用这个解析器组合时直接从MvcContext里取即可，但没有选择这么做，因为解析器组合的创建不属于MvcContext的职责</p>
+     * <p>又由于bean参数解析器是单例的，并且其运行在多线程环境下，就必须确保线程安全性。
+     * 所以,为了达成这些目标，这里采用的是双重检查的方式来实现解析器组合的获取</p>
      *
      * @return 返回框架中除了自己以外的其它所有参数解析器
      */
