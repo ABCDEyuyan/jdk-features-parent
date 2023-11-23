@@ -358,6 +358,10 @@ MethodArgumentResolverComposite
 
 - MethodParameter:这里对equals的重写有注释说明
 
+## toString重写
+
+- HandlerMethod#toString
+
 ## 递归
 
 - BeanMethodArgumentResolver

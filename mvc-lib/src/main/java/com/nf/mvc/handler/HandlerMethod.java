@@ -1,6 +1,8 @@
 package com.nf.mvc.handler;
 
+import com.nf.mvc.HandlerMapping;
 import com.nf.mvc.argument.MethodParameter;
+import com.nf.mvc.mapping.RequestMappingHandlerMapping;
 import com.nf.mvc.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -68,6 +70,18 @@ public class HandlerMethod extends HandlerClass {
 
     public int getParameterCount() {
         return method.getParameterCount();
+    }
+
+    /**
+     * 重写此方法是为了更好的显示handler的描述信息，可以用在{@link HandlerMapping}
+     * 的实现类中，见{@link RequestMappingHandlerMapping#addHandler(String, HandlerMethod)}
+     *
+     * @return handler所在方法名以及所在的类名
+     */
+    @Override
+    public String toString() {
+        return "当前handler的方法名是:" + getMethodName()
+                + " 所在类的名字是:" + getHandlerClass().getName();
     }
 }
 

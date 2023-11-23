@@ -47,7 +47,7 @@ import static com.nf.mvc.util.ObjectUtils.isEmpty;
 public class RequestMappingHandlerMapping implements HandlerMapping {
     private final Map<String, HandlerMethod> handlers = new HashMap<>();
     private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
-    private final Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
+    private final Cache<String, HandlerExecutionChain> chainCache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
             .build();
@@ -57,12 +57,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     protected void resolveHandlers() {
-        List<Class<?>> classList = MvcContext.getMvcContext()
-                .getAllScannedClasses();
+        List<Class<?>> scannedClasses = MvcContext.getMvcContext().getAllScannedClasses();
 
-        for (Class<?> clz : classList) {
-            String urlInClass = getUrlPattern(clz);
-            Method[] methods = clz.getDeclaredMethods();
+        for (Class<?> scannedClass : scannedClasses) {
+            String urlInClass = getUrlPattern(scannedClass);
+            Method[] methods = scannedClass.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     HandlerMethod handlerMethod = new HandlerMethod(method);
@@ -75,8 +74,10 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     protected void addHandler(String url, HandlerMethod handlerMethod) {
-        if (handlers.get(url) != null) {
-            throw new IllegalStateException("不能有多个处理者对应同一个url");
+        HandlerMethod handler = handlers.get(url);
+        if (handler != null) {
+            throw new IllegalStateException("当前的url:[" + url + "]已经有一个对应的handler了:" + handler
+                    + ",现在想添加的handler是:" + handlerMethod);
         }
         this.handlers.put(url, handlerMethod);
     }
@@ -88,7 +89,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         /* get方法的第二个参数是在缓存中没有对应的key时执行的函数，其返回值会自动放置到缓存中
          * 如果返回值是null，那么不会放置到缓存中。
          * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
-        return cache.get(requestUrl, k -> {
+        return chainCache.get(requestUrl, k -> {
             HandlerMethod handler = getHandlerInternal(requestUrl);
             if (handler != null) {
                 return new HandlerExecutionChain(handler, getInterceptors(request));
