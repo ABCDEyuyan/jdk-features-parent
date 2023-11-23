@@ -88,7 +88,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         String requestUrl = RequestUtils.getRequestUrl(request);
         /* get方法的第二个参数是在缓存中没有对应的key时执行的函数，其返回值会自动放置到缓存中
          * 如果返回值是null，那么不会放置到缓存中。
-         * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
+         * 所以，在这个案例中，如果url没有对应的执行链，那么就返回null，chainCache中不会放置url没有对应链的缓存条目 */
         return chainCache.get(requestUrl, k -> {
             HandlerMethod handler = getHandlerInternal(requestUrl);
             if (handler != null) {
@@ -127,7 +127,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 String[] includesPattern = intercepts.value();
                 String[] excludesPattern = intercepts.excludePattern();
                 PathMatcher pathMatcher = getInterceptorPathMatcher(intercepts);
-                if (shouldApply(pathMatcher, requestUrl, includesPattern) && !shouldApply(pathMatcher, requestUrl, excludesPattern)) {
+                if (shouldApply(pathMatcher, requestUrl, includesPattern) &&
+                        !shouldApply(pathMatcher, requestUrl, excludesPattern)) {
                     currentRequestInterceptors.add(interceptor);
                 }
             } else {
