@@ -133,6 +133,14 @@ public abstract class FileUtils {
         }
     }
 
+    /**
+     * 依据文件名来推断其对应的MIME类型，MIME类型用在servlet响应的类型设置里.
+     * 比如文件名product.png,那么其对应的MIME类型是image/png.
+     * 细节见<a href="https://www.baeldung.com/java-file-mime-type">java-file-mime-type</a>
+     *
+     * @param filename 文件名
+     * @return
+     */
     public static String getMediaType(String filename) {
         // guessContentTypeFromName是从文件名猜测其内容类型，如果为null就猜测失败
         String mediaType = URLConnection.guessContentTypeFromName(filename);
