@@ -5,7 +5,8 @@
 
 # 框架功能
 
-基本与spring mvc类似，就是在视图的处理类似于asp.net mvc的方式，采用ViewResult的体系，典型用法如下:
+基本与spring mvc类似，就是在视图的处理上类似于asp.net
+mvc的方式，采用ViewResult的体系，下面的代码只是演示了框架的技术特色，并不是一个可执行的示例代码:
 
 ```java
 import static com.nf.mvc.handler.HandlerHelper.json;
@@ -78,7 +79,7 @@ public class FirstInterceptor implements HandlerInterceptor {
 
 # 各个技术点
 
-这里列出的一些技术点，是我认为初学者能学会，但不知道如何应用在实际的项目中的一些技术点，排名不分先后
+这里列出的一些技术点，是我认为初学者能学会，但不知道如何应用在实际的项目中的一些技术点，排名不分先后，
 
 列在这里是在看懂框架源码之后进行知识点的梳理使用，以便更好的掌握知识的运用
 
