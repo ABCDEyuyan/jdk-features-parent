@@ -1,12 +1,13 @@
 package com.nf.mvc.cors;
 
 import com.nf.mvc.support.HttpMethod;
-import com.nf.mvc.util.CollectionUtils;
 import com.nf.mvc.util.ObjectUtils;
 import com.nf.mvc.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.nf.mvc.util.CollectionUtils.mergeArrayIntoCollection;
 
 public class CorsConfiguration {
 
@@ -23,7 +24,7 @@ public class CorsConfiguration {
     private Long maxAge = 3600L;
 
     public CorsConfiguration allowedOrigins(String... origins) {
-        CollectionUtils.mergeArrayIntoCollection(origins, allowedOrigins);
+        mergeArrayIntoCollection(origins, allowedOrigins);
         return this;
     }
 
@@ -41,7 +42,7 @@ public class CorsConfiguration {
     }
 
     public CorsConfiguration allowedHeaders(String... allowedHeaders) {
-        CollectionUtils.mergeArrayIntoCollection(allowedHeaders, this.allowedHeaders);
+        mergeArrayIntoCollection(allowedHeaders, this.allowedHeaders);
         return this;
     }
 
@@ -50,9 +51,7 @@ public class CorsConfiguration {
     }
 
     public CorsConfiguration allowedMethods(HttpMethod... allowedMethods) {
-        for (HttpMethod allowedMethod : allowedMethods) {
-            this.allowedMethods.add(allowedMethod.name());
-        }
+        mergeArrayIntoCollection(allowedMethods, this.allowedMethods);
         return this;
     }
 
