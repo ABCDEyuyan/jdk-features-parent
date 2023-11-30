@@ -189,19 +189,26 @@ public class BeanMethodArgumentResolver implements MethodArgumentResolver {
      * <p>又由于bean参数解析器是单例的，并且其运行在多线程环境下，就必须确保线程安全性。
      * 所以,为了达成这些目标，这里采用的是双重检查的方式来实现解析器组合的获取</p>
      *
+     * <a href="https://developer.aliyun.com/article/866640">双重检查</a>
+     * <a href="https://codeql.github.com/codeql-query-help/java/java-unsafe-double-checked-locking/">双重检查</a>
      * @return 返回框架中除了自己以外的其它所有参数解析器
      */
     private MethodArgumentResolverComposite getResolvers() {
-        if (resolvers == null) {
+        // 创建局部变量是为了避免反复读取全局volatile变量，提高性能用，不使用局部变量也是可以的
+        // 见Spring框架中DefaultConversionService#getSharedInstance的写法
+        MethodArgumentResolverComposite resolverComposite = this.resolvers;
+        if (resolverComposite == null) {
             synchronized (BeanMethodArgumentResolver.class) {
-                if (resolvers == null) {
-                    resolvers = new MethodArgumentResolverComposite().addResolvers(
+                resolverComposite = this.resolvers;
+                if (resolverComposite == null) {
+                    resolverComposite = new MethodArgumentResolverComposite().addResolvers(
                             MvcContext.getMvcContext().getArgumentResolvers().stream()
                                     .filter(r -> !(r instanceof BeanMethodArgumentResolver))
                                     .collect(Collectors.toList()));
+                    this.resolvers = resolverComposite;
                 }
             }
         }
-        return resolvers;
+        return resolverComposite;
     }
 }
