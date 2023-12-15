@@ -13,16 +13,15 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
 
 /**
  * 路径变量参数解析器,基本只对简单类型数据做解析,因为数据来源是路径上的某一个片段的值
- * <p>此参数解析器最好放置在{@link SimpleTypeMethodArgumentResolver}之前使用</p>
+ * <p>方法参数的值可以是方法上的RequestMapping中设定的路径变量也可能是类上设置的路径变量</p>
+ * <p>此参数解析器要放置在{@link SimpleTypeMethodArgumentResolver}之前使用</p>
  */
 public class PathVariableMethodArgumentResolver implements MethodArgumentResolver {
     private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
 
     @Override
     public boolean supports(MethodParameter parameter) {
-        return parameter.isSimpleType() &&
-                (parameter.isPresent(PathVariable.class) ||
-                        parameter.getContainingClass().isAnnotationPresent(PathVariable.class));
+        return parameter.isSimpleType() && parameter.isPresent(PathVariable.class);
     }
 
     @Override
@@ -34,7 +33,9 @@ public class PathVariableMethodArgumentResolver implements MethodArgumentResolve
         String path = RequestUtils.getRequestUrl(request);
 
         Map<String, String> variables = pathMatcher.extractPathVariables(pattern, path);
-        String varName = parameter.getParameter().getDeclaredAnnotation(PathVariable.class).value();
+        String varName = parameter.getParameter()
+                .getDeclaredAnnotation(PathVariable.class)
+                .value();
 
         String value = variables.get(varName);
         return WebTypeConverters.convert(value, parameter.getParameterType());
