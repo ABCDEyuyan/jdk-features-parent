@@ -84,7 +84,7 @@ public class MvcContext {
             // 这些扫描到的类使用的类加载器与DispatcherServlet的类加载器是同一个
             Class<?> scannedClass = classInfo.loadClass();
             allScannedClasses.add(scannedClass);
-            //配置属性类的解析必须优先于其它类型的解析，这样才有可能把配置属性类注入到其它解析到的组件中
+            // 配置属性类的解析必须优先于其它类型的解析，这样才有可能把配置属性类注入到其它解析到的组件中
             resolveConfigurationProperties(scannedClass);
             resolveMvcClasses(scannedClass);
         }
@@ -150,7 +150,7 @@ public class MvcContext {
         if (customConfigurers.size() > 1) {
             throw new IllegalStateException("配置器应该只写一个");
         }
-        return customConfigurers.size() == 0 ? null : customConfigurers.get(0);
+        return customConfigurers.isEmpty() ? null : customConfigurers.get(0);
     }
 
     public Map<Class<?>, Object> getConfigurationProperties() {

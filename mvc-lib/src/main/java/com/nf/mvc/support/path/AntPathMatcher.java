@@ -93,7 +93,7 @@ public class AntPathMatcher implements PathMatcher {
 
     @Override
     public boolean isMatch(String pattern, String path) {
-        //这个if块就是用来把路径变量(PathVariable)替换为一个*来处理匹配问题的
+        // 这个if块就是用来把路径变量(PathVariable)替换为一个*来处理匹配问题的
         if (StringUtils.hasText(pattern)) {
             pattern = pattern.replaceAll(PATH_VARIABLE_PATTERN, "*");
         }

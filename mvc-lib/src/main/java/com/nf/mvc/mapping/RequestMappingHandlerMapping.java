@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
+import static com.nf.mvc.util.ObjectUtils.isEmpty;
 
 /**
  * 此类是Mvc框架的核心{@link HandlerMapping}实现，其核心的功能有
@@ -34,7 +35,8 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
  * 能匹配上就返回此Handler作为处理者
  * </p>
  * <h3>缓存</h3>
- * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的Handler，避免每次请求过来都去查找Handler以提高性能
+ * <p>此类利用caffeine进行了缓存实现，会缓存100条url对应的HandlerExecutionChain，避免每次请求过来都去查找执行链以提高性能,
+ * caffeine采用的是类似LFU(最近最少使用频率）的淘汰算法，具体见<a href="https://www.cnblogs.com/rickiyang/p/11074158.html">Caffeine Cache-高性能Java本地缓存组件</a>
  * 整个Mvc框架在缓存上的应用的详细介绍见{@link MethodArgumentResolverComposite}</p>
  *
  * @see com.nf.mvc.HandlerMapping
@@ -45,7 +47,7 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
 public class RequestMappingHandlerMapping implements HandlerMapping {
     private final Map<String, HandlerMethod> handlers = new HashMap<>();
     private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;
-    private final Cache<String, HandlerExecutionChain> cache = Caffeine.newBuilder()
+    private final Cache<String, HandlerExecutionChain> chainCache = Caffeine.newBuilder()
             .initialCapacity(10)
             .maximumSize(100)
             .build();
@@ -55,11 +57,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     protected void resolveHandlers() {
-        List<Class<?>> classList = MvcContext.getMvcContext().getAllScannedClasses();
+        List<Class<?>> scannedClasses = MvcContext.getMvcContext().getAllScannedClasses();
 
-        for (Class<?> clz : classList) {
-            String urlInClass = getUrlPattern(clz);
-            Method[] methods = clz.getDeclaredMethods();
+        for (Class<?> scannedClass : scannedClasses) {
+            String urlInClass = getUrlPattern(scannedClass);
+            Method[] methods = scannedClass.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     HandlerMethod handlerMethod = new HandlerMethod(method);
@@ -72,8 +74,10 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     protected void addHandler(String url, HandlerMethod handlerMethod) {
-        if (handlers.get(url) != null) {
-            throw new IllegalStateException("不能有多个处理者对应同一个url");
+        HandlerMethod handler = handlers.get(url);
+        if (handler != null) {
+            throw new IllegalStateException("当前的url:[" + url + "]已经有一个对应的handler了:" + handler
+                    + ",现在想添加的handler是:" + handlerMethod);
         }
         this.handlers.put(url, handlerMethod);
     }
@@ -84,8 +88,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         String requestUrl = RequestUtils.getRequestUrl(request);
         /* get方法的第二个参数是在缓存中没有对应的key时执行的函数，其返回值会自动放置到缓存中
          * 如果返回值是null，那么不会放置到缓存中。
-         * 所以，在这个案例中，如果url没有对应的handler，那么就返回null，cache中不会放置这个不存在url的缓存条目 */
-        return cache.get(requestUrl, k -> {
+         * 所以，在这个案例中，如果url没有对应的执行链，那么就返回null，chainCache中不会放置url没有对应链的缓存条目 */
+        return chainCache.get(requestUrl, k -> {
             HandlerMethod handler = getHandlerInternal(requestUrl);
             if (handler != null) {
                 return new HandlerExecutionChain(handler, getInterceptors(request));
@@ -113,37 +117,51 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     @Override
     public List<HandlerInterceptor> getInterceptors(HttpServletRequest request) {
         List<HandlerInterceptor> currentRequestInterceptors = new ArrayList<>();
-        List<HandlerInterceptor> allInterceptors = MvcContext.getMvcContext().getCustomHandlerInterceptors();
+        List<HandlerInterceptor> allInterceptors = MvcContext.getMvcContext()
+                .getCustomHandlerInterceptors();
         String requestUrl = RequestUtils.getRequestUrl(request);
         for (HandlerInterceptor interceptor : allInterceptors) {
             Class<? extends HandlerInterceptor> interceptorClass = interceptor.getClass();
             if (interceptorClass.isAnnotationPresent(Intercepts.class)) {
-                Intercepts annotation = interceptorClass.getDeclaredAnnotation(Intercepts.class);
-                String[] includesPattern = annotation.value();
-                String[] excludesPattern = annotation.excludePattern();
-                if (shouldApply(requestUrl, includesPattern) && !shouldApply(requestUrl, excludesPattern)) {
+                Intercepts intercepts = interceptorClass.getDeclaredAnnotation(Intercepts.class);
+                String[] includesPattern = intercepts.value();
+                String[] excludesPattern = intercepts.excludePattern();
+                PathMatcher pathMatcher = getInterceptorPathMatcher(intercepts);
+                if (shouldApply(pathMatcher, requestUrl, includesPattern) &&
+                        !shouldApply(pathMatcher, requestUrl, excludesPattern)) {
                     currentRequestInterceptors.add(interceptor);
                 }
             } else {
-                //没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
+                // 没有注解修饰的拦截器被认为是拦截所有的请求，完全不理会当前请求url是什么
                 currentRequestInterceptors.add(interceptor);
             }
         }
         return currentRequestInterceptors;
     }
 
-    protected boolean shouldApply(String requestUrl, String... patterns) {
+    protected boolean shouldApply(PathMatcher pathMatcher, String requestUrl, String... patterns) {
         boolean shouldApply = false;
-        if (patterns == null) {
+        if (isEmpty(patterns)) {
             return false;
         }
         for (String pattern : patterns) {
-            shouldApply = getPathMatcher().isMatch(pattern, requestUrl);
+            shouldApply = pathMatcher.isMatch(pattern, requestUrl);
             if (shouldApply) {
                 break;
             }
         }
         return shouldApply;
+    }
+
+    /**
+     * 此方法用来获取拦截器地址的路径匹配器，获取Handler的路径匹配器与拦截器的路径匹配器是可以不一样的，
+     * 当前的实现是两者都是一样的，并且可以通过MvcConfigurer来统一调整Handler与拦截器的路径匹配器
+     *
+     * @param intercepts 拦截器注解
+     * @return 拦截器使用的路径匹配器
+     */
+    protected PathMatcher getInterceptorPathMatcher(Intercepts intercepts) {
+        return getPathMatcher();
     }
 
     /**

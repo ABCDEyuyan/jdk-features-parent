@@ -6,7 +6,7 @@ package com.nf.mvc.support.vo;
  * 以便于ResponseVO类配合使用，实现类建议使用枚举类型来实现
  *
  * @see ResponseVO
- * @see CommonResultCode
+ * @see CommonResultCodeEnum
  */
 public interface ResultCode {
 

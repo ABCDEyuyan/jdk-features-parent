@@ -13,7 +13,23 @@ import static com.nf.mvc.mapping.RequestMappingUtils.getUrlPattern;
 
 /**
  * 路径变量参数解析器,基本只对简单类型数据做解析,因为数据来源是路径上的某一个片段的值
- * <p>此参数解析器最好放置在{@link SimpleTypeMethodArgumentResolver}之前使用</p>
+ * <p>方法参数的值可以是方法上的RequestMapping中设定的路径变量也可能是类上设置的路径变量,
+ * 方法参数名是不重要的,只要PathVariable注解指定的值与路径模式中声明的变量名一样就可以了</p>
+ * <p>当前的实现也不支持通过PathVariable注解指定默认值,因为提供默认值会对路径模式匹配逻辑产生影响</p>
+ * <p>此解析器对方法参数上的注解RequestParam注解是不支持的,也就是说通过RequestParam指定方法参数名</p>
+ * 与默认值是无效的,示例使用代码如下
+ * <pre class="code">
+ *     &#064;RequestMapping("classes/{classId}")
+ *     public class StudentController{
+ *        &#064;RequestMapping("students/{page}")
+ *        public List<Student> getPagedStudents
+ *          (@PathVariable("classId")Integer classId,@PathVariable("page") Integer pageNo){
+ *
+ *        }
+ *     }
+ * </pre>
+ * </p>
+ * <p><b><i>注意:此参数解析器要放置在{@link SimpleTypeMethodArgumentResolver}之前使用</i></b></p>
  */
 public class PathVariableMethodArgumentResolver implements MethodArgumentResolver {
     private PathMatcher pathMatcher = PathMatcher.DEFAULT_PATH_MATCHER;

@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @see Intercepts
  * @see com.nf.mvc.mapping.RequestMappingHandlerMapping
- * @see com.nf.mvc.util.JacksonUtils
+ * @see DispatcherServlet
  */
 public interface HandlerInterceptor {
     /**
@@ -75,5 +75,4 @@ public interface HandlerInterceptor {
      */
     default void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     }
-
 }

@@ -82,12 +82,12 @@ public class YmlParser {
         if (!isFileLoaded() || !hasText(prefix)) {
             return null;
         }
-        //每次要解析之前先恢复
+        // 每次要解析之前先恢复
         reset();
-        //获取层级关系
+        // 获取层级关系
         String[] keys = prefix.trim().split("\\.");
         for (String key : keys) {
-            //只对map类型进行了处理,没有处理current是其它类型的情况
+            // 只对map类型进行了处理,没有处理current是其它类型的情况
             this.current = (Map<?, ?>) (this.current.get(key));
         }
         return populateBean(configurationPropertiesCLass, this.current);
@@ -124,7 +124,7 @@ public class YmlParser {
     private <T> T populateBean(Class<T> clazz, Map<?, ?> map) {
         T obj;
         try {
-            //实例化配置属性类,不能使用ReflectionUtils.newInstance,因为它还有一个作用就是用来注入配置属性类的
+            // 实例化配置属性类,不能使用ReflectionUtils.newInstance,因为它还有一个作用就是用来注入配置属性类的
             obj = clazz.newInstance();
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {

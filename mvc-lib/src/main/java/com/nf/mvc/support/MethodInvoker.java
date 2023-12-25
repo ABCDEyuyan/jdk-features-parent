@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * 这是一个通用的方法调用类型，2参数的invoke方法是调用静态方法用的，
- * 3参数的invoke方法是调用实例方法用的
+ * 这是一个通用的处理方法调用的类型，方法的参数值是靠{@link MethodArgumentResolverComposite}解析的.
+ * 2参数的invoke方法是调用静态方法用的，3参数的invoke方法是调用实例方法用的
  */
 public class MethodInvoker {
 

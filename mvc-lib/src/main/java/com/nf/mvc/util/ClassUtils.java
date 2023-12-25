@@ -18,6 +18,10 @@ import java.util.*;
  *     <li>Container，这是我定义的一个术语，代表jdk中的Collection+Map</li>
  *     <li>CommonContainer，这是我定义的一个术语，代表着List,Set,Map这三种类型</li>
  * </ul>
+ * <h3>参考资料</h3>
+ * <ul>
+ *     <li><a href="https://www.cnblogs.com/binarylei/p/10344262.html">Spring的泛型解析ResolvableType</a></li>
+ * </ul>
  */
 public abstract class ClassUtils {
     /**

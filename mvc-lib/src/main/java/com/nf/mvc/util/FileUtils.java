@@ -133,6 +133,14 @@ public abstract class FileUtils {
         }
     }
 
+    /**
+     * 依据文件名来推断其对应的MIME类型，MIME类型用在servlet响应的类型设置里.
+     * 比如文件名product.png,那么其对应的MIME类型是image/png.
+     * 各种实现见<a href="https://www.baeldung.com/java-file-mime-type">java-file-mime-type</a>
+     *
+     * @param filename 文件名
+     * @return
+     */
     public static String getMediaType(String filename) {
         // guessContentTypeFromName是从文件名猜测其内容类型，如果为null就猜测失败
         String mediaType = URLConnection.guessContentTypeFromName(filename);
@@ -142,37 +150,37 @@ public abstract class FileUtils {
         return mediaType;
     }
 
-    public static String getFilename(String path) {
-        if (path == null) {
-            return null;
-        }
-
-        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
-        return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
-    }
-
     /**
      * Extract the filename extension from the given Java resource path,
-     * e.g. "path/file.txt" -> "txt".
+     * e.g. "path/file.txt" -> "txt".(这个方法与getFilename方法的实现都来自于spring)
      *
      * @param path the file path (maybe {@code null})
      * @return the extracted filename extension, or {@code null} if none
      */
     public static String getFilenameExtension(String path) {
-        if (path == null) {
-            return null;
+        if (path == null || path.isEmpty()) {
+            throw new IllegalArgumentException("空的文件路径是没办法取得其文件扩展名的");
         }
 
         int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
         if (extIndex == -1) {
-            return null;
+            throw new IllegalArgumentException("只支持文件路径中有.号的形式，.号后面的内容就是扩展名");
         }
 
         int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
         if (folderIndex > extIndex) {
-            return null;
+            throw new IllegalArgumentException("路径分隔符不能出现在.号后面，不支持.或者..这种路径形式");
         }
 
         return path.substring(extIndex + 1);
+    }
+
+    public static String getFilename(String path) {
+        if (path == null || path.isEmpty()) {
+            throw new IllegalArgumentException("空的文件路径是没办法取得其文件名的");
+        }
+
+        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
     }
 }

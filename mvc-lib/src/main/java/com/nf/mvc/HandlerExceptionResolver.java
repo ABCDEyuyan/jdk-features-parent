@@ -33,12 +33,19 @@ import javax.servlet.http.HttpServletResponse;
  * @see com.nf.mvc.exception.LogHandlerExceptionResolver
  * @see com.nf.mvc.exception.PrintStackTraceHandlerExceptionResolver
  */
+@FunctionalInterface
 public interface HandlerExceptionResolver {
     /**
      * 执行链的异常解析器设计为只处理Exception异常，Error异常是不处理的，
-     * <p>异常解析器能解析就正常返回一个ViewResult类型的对象，
-     * 异常解析器解析过程中出异常或者返回null被认为是解析不了当前异常，
-     * 框架会查找下一个异常解析器去解析异常</p>
+     * <p>异常解析器能解析过程中会出现下面几种情况
+     * <ul>
+     *     <li>能解析：也就是异常解析方法正常执行，那么就返回一个ViewResult类型的对象</li>
+     *     <li>返回null：表明当前异常解析器处理不了执行链抛出的异常，会找异常解析链的下一个异常解析器去继续解析执行链抛出的异常</li>
+     *     <li>异常：指异常解析器方法在解析执行链异常时，自己本身出现了异常，这个时候会被{@link DispatcherServlet#doService(HttpServletRequest, HttpServletResponse)}
+     *     方法捕获，并不会被{@link DispatcherServlet#doDispatch(HttpServletRequest, HttpServletResponse, HandlerExecutionChain)}处理，
+     *     而当前框架的{@link DispatcherServlet#doService(HttpServletRequest, HttpServletResponse)}方法实现中，并没有特别的处理这些异常，
+     *     只是在控制台输出了一些提示信息而已</li>
+     * </ul></p>
      * 由{@link DispatcherServlet#doService(HttpServletRequest, HttpServletResponse)}去处理
      *
      * @param request  请求对象

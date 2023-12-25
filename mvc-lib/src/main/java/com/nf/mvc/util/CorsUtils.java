@@ -16,7 +16,7 @@ public abstract class CorsUtils {
      * 判断是否是跨域请求
      */
     public static boolean isCorsRequest(HttpServletRequest request) {
-        /*更好的实现见spring mvc中CorsUtils类，这里简化为只要有origin就表示是跨域请求*/
+        // 更好的实现见spring mvc中CorsUtils类，这里简化为只要有origin就表示是跨域请求
         return request.getHeader(ORIGIN) != null;
     }
 

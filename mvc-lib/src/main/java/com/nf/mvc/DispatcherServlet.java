@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * 此类是一个前端控制器，我也喜欢称其为总控器，此Servlet类是请求进入到我们的mvc框架的入口部分。<br/><br/>
- *
+ * 此类是一个前端控制器，我也喜欢称其为总控器，此Servlet类是请求进入到我们的mvc框架的入口部分
  * <h3>基本使用</h3>
  * <p>
  * 用户通常应该只配置一个这样的Servlet，并且为其url-pattern设置值为"/",虽然理论上你可以配置多个这样的servlet，但很少见。
@@ -39,33 +39,34 @@ import java.util.function.Consumer;
  * 通常也会配置load-on-startup选项,典型的配置如下:
  * <pre class="xml">
  *
- *   < servlet>
- *      < servlet-name>mvcDemo< /servlet-name>
- *      < servlet-class>com.nf.mvc.DispatcherServlet< /servlet-class>
- *      < init-param>
- *          < param-name>base-package< /param-name>
- *          <param-value>mvcDemo.web< /param-value>
- *      </init-param>
- *      < load-on-startup>200< /load-on-startup>
- *      < multipart-config>
- *      < /multipart-config>
- *  < /servlet>
+ *   &lt;servlet>
+ *      &lt;servlet-name>mvcDemo< /servlet-name>
+ *      &lt;servlet-class>com.nf.mvc.DispatcherServlet&lt;/servlet-class>
+ *      &lt;init-param>
+ *          &lt;param-name>base-package&lt;/param-name>
+ *          &lt;param-value>mvcDemo.web&lt;/param-value>
+ *      &lt;/init-param>
+ *      &lt;load-on-startup>200&lt;/load-on-startup>
+ *      &lt;multipart-config>
+ *      &lt;/multipart-config>
+ *  &lt;/servlet>
  *
- *  < servlet-mapping>
- *      < servlet-name>mvcDemo</servlet-name>
- *      < url-pattern>/</url-pattern>
- *  < /servlet-mapping>
- * }
+ *  &lt;servlet-mapping>
+ *      &lt;servlet-name>mvcDemo&lt;/servlet-name>
+ *      &lt;url-pattern>/&lt;/url-pattern>
+ *  &lt;/servlet-mapping>
  * </pre>
  * </p>
  * <h3>默认组件与自定义组件</h3>
- * <p>
- * 整个mvc框架扩展用的组件分为框架提供的默认组件与用户提供的自定义组件，同类型的自定义组件优先级总是高于框架提供的的默认组件的，
- * 同类型的自定义组件的优先级可以通过Order注解调整。<br/>
- * 整个Mvc框架管理有7大组件，其中前4大组件是只要编写对应的实现类，放置在项目中即可，Mvc框架通过类扫描的方式获取并应用到框架上，不需要再在别的地方使用或配置，
- * 而第五大组件ViewResult，用户通常采用继承此类来扩展Mvc框架的能力，并应用在控制器方法的返回值上，第6类组件是用来对Mvc框架内置的5大组件(HandlerMapping,HandlerAdapter,
- * MethodArgumentResolver,HandlerExceptionResolver,CorsConfiguration)进行配置用的，最后一个拦截器组件，是用户用来编写项目的拦截相关的业务使用，
- * 比如实现验证方面的拦截器
+ * <p>mvc框架的组件分为框架提供的默认组件与用户提供的自定义组件，自定义组件的优先级总是高于同类型的框架提供的的默认组件的，
+ * 同类型的自定义组件的优先级可以通过Order注解调整</p>
+ * <p>整个Mvc框架管理有如下7大组件,其中前4大组件的扩展只要编写相应接口的实现类并放置在框架可以扫描到的包里面即可，
+ * 不需要再在别的地方进行注册或进行额外的配置。</p>
+ * <p>第五大组件ViewResult,用户通常采用继承此类的方式来扩展Mvc框架的能力,接着把新的ViewResult类型应用在控制器方法
+ * 或者异常解析方法的返回类型上即可，并不需要被框架扫描到，更不需要进行额外的注册处理。</p>
+ * <p>第6类组件是用来对Mvc框架提供的5大内置组件(HandlerMapping,HandlerAdapter,MethodArgumentResolver,
+ * HandlerExceptionResolver,CorsConfiguration)进行定制配置用的,以便可以修改内置组件的某些默认行为</p>
+ * <p>最后一个是拦截器组件，是用户用来编写项目的拦截相关的业务使用，比如实现验证方面的拦截器</p>
  * <ul>
  *     <li>{@link HandlerMapping}</li>
  *     <li>{@link HandlerAdapter}</li>
@@ -78,13 +79,14 @@ import java.util.function.Consumer;
  * </p>
  * <h3>组件的获取</h3>
  * <p>
- * 用户自定义组件是通过类扫描的方式获取的，用户在配置DispatcherServlet的时候通过参数<i>{@code base-package }</i>指定扫描的基础包，
- * 框架会扫描指定包及其子包下的所有类型，并加载到jvm，所以，强烈建议指定的包，只包含web层面的一些组件，不要指定dao，service相关的类所在的包，
+ * 用户自定义前4大组件是通过类扫描的方式获取的，用户在配置DispatcherServlet的时候通过参数<i>{@code base-package }</i>指定扫描的基础包，
+ * 框架会扫描指定包及其子包下的所有类型，并加载到jvm。所以，强烈建议指定的包，只包含web层面的一些组件，不要指定dao，service相关的类所在的包，
  * web层面的类型主要有如下一些类型
  *    <ul>
  *       <li>用户创建的后端控制器</li>
  *       <li>用户创建的拦截器</li>
  *       <li>用户创建的WebMvcConfigurer</li>
+ *       <li>用户对前4大组件的扩展实现</li>
  *    </ul>
  * </p>
  * <h3>核心组件的实例化</h3>
@@ -92,7 +94,7 @@ import java.util.function.Consumer;
  *   核心的mvc框架组件都是在此类的{@link #init(ServletConfig)}方法实例化并完成组合的。可以看任何一个以init开头的方法了解详情，
  *   比如{@link #initHandlerMappings()},7大被Mvc框架处理的组件都要求必须有默认构造函数
  * </p>
- * <h3>初始化处理</h3>
+ * <h3>初始化处理流程</h3>
  * <ul>
  *     <li>扫描指定包及其子包下的所有类型</li>
  *     <li>创建MvcContext实例</li>
@@ -106,10 +108,11 @@ import java.util.function.Consumer;
  *     </li>
  *     <li>配置Mvc框架：利用{@link MvcConfigurer}的实现类对Mvc框架内部组件进行配置</li>
  * </ul>
- * <h3>核心请求处理流程</h3>
+ * <h3>请求处理流程</h3>
  * <ol>
  *     <li>用户发起请求</li>
- *     <li>遍历所有的HandlerMapping，直到找到一个Handler处理请求，找不到就交给默认Servlet处理请求</li>
+ *     <li>遍历所有的HandlerMapping，直到找到一个HandlerExecutionChain来处理请求，找不到就交给容器的<i>默认Servlet</i>处理请求</li>
+ *     <li>处理拦截器链的前置逻辑</li>
  *     <li>遍历所有的HandlerAdapter，直到找到一个支持此Handler的HandlerAdapter，找不到就抛异常</li>
  *     <li>HandlerAdapter开始负责Handler方法的调用执行
  *          <ol>
@@ -120,20 +123,21 @@ import java.util.function.Consumer;
  *              <li>适配Handler执行结果为ViewResult类型</li>
  *          </ol>
  *     </li>
+ *     <li>处理拦截器链的后置逻辑</li>
  *     <li>对Handler的执行结果ViewResult进行渲染（render）</li>
- *     <li>如果Handler执行链出了异常交给异常解析器去处理</li>
+ *     <li>如果执行链出了异常交给异常解析器链去处理</li>
  * </ol>
  * <h3>静态资源处理</h3>
  * <p>
  *     静态资源的地址如果没有对应HandlerMapping能处理，就进入到了默认Servlet的处理逻辑，
- *     而默认Servlet是可以处理静态资源的
+ *     而默认Servlet会直接读取静态资源并响应给请求端
  * </p>
  *
- *  <h3>cors</h3>
+ *  <h3>cors处理</h3>
  *  <p>
  *  mvc框架只实现了全局跨域的处理，并没有对某个地址进行单独的跨域处理，所以，跨域的配置是影响到所有的url请求的，
- *  如果你不通过实现WebMvcConfigurer接口的方式配置跨域，那么它会采用默认值，具体的跨域配置情况见{@link CorsConfiguration#applyDefaultConfiguration()}
- *  方法里面的设置
+ *  如果你没有实现{@link MvcConfigurer#configureCors(CorsConfiguration)}方法进行跨域的定制配置，
+ *  那么它会采用默认值，具体的跨域配置情况见{@link CorsConfiguration#applyDefaultConfiguration()}
  *  </p>
  *
  * @see MvcContext
@@ -222,23 +226,23 @@ public class DispatcherServlet extends HttpServlet {
          */
         initMvcContext(scanResult);
         initMvc();
-        configMvc();
+        applyMvcConfigurer();
     }
 
     private void initMvcContext(ScanResult scanResult) {
-        MvcContext.getMvcContext()
-                .resolveScannedResult(scanResult);
+        MvcContext.getMvcContext().resolveScannedResult(scanResult);
     }
 
     private void initMvc() {
-        /* 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行 */
+        // 参数解析器因为被Adapter使用，所以其初始化要在adapter初始化之前进行
+        // 其它两类组件的初始化没有顺序要求
         initArgumentResolvers();
         initHandlerMappings();
         initHandlerAdapters();
         initExceptionResolvers();
     }
 
-    private void configMvc() {
+    private void applyMvcConfigurer() {
         MvcContext mvcContext = MvcContext.getMvcContext();
         MvcConfigurer mvcConfigurer = mvcContext.getCustomWebMvcConfigurer();
         // 没有配置器，不需要配置，提前结束configMvc方法的执行
@@ -278,9 +282,9 @@ public class DispatcherServlet extends HttpServlet {
     protected void configGlobalCors(CorsConfiguration configuration, MvcConfigurer mvcConfigurer) {
         // 不需要再调用默认设置，全局实例化时已经设置过了，如果用户不需要这些默认设置，可以调用clearDefaultConfiguration方法进行清除
         // configuration.applyDefaultConfiguration();
-        mvcConfigurer.configureCors(configuration);
-        // mvcConfigurer.configureCors(configuration) 这行代码你也可以换成像下面这样写
-        // executeMvcComponentsConfig(Arrays.asList(configuration),mvcConfigurer::configureCors);
+        // mvcConfigurer.configureCors(configuration);
+        // 上面一行的代码你也可以换成像下面这样写，这样就与其它组件配置逻辑的写法是一致的了
+        executeMvcComponentsConfig(Arrays.asList(configuration), mvcConfigurer::configureCors);
     }
 
     private <T> void executeMvcComponentsConfig(List<T> mvcComponents, Consumer<T> consumer) {
@@ -288,24 +292,23 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initArgumentResolvers() {
-
         List<MethodArgumentResolver> customArgumentResolvers = getCustomArgumentResolvers();
-
         List<MethodArgumentResolver> defaultArgumentResolvers = getDefaultArgumentResolvers();
 
         argumentResolvers.addAll(customArgumentResolvers);
         argumentResolvers.addAll(defaultArgumentResolvers);
-        // 把定制+默认的所有HandlerMapping组件添加到上下文中
-        MvcContext.getMvcContext()
-                .setArgumentResolvers(argumentResolvers);
+
+        MvcContext.getMvcContext().setArgumentResolvers(argumentResolvers);
     }
 
     protected List<MethodArgumentResolver> getDefaultArgumentResolvers() {
+        // 通常是处理特定类型与特定注解的解析器放置在前面，以便优先利用它来解析参数
         List<MethodArgumentResolver> argumentResolvers = new ArrayList<>();
         argumentResolvers.add(new ServletApiMethodArgumentResolver());
         argumentResolvers.add(new MultipartFileMethodArgumentResolver());
-        // RequestBody解析器要放在复杂类型解析器之前，基本上简单与复杂类型解析器应该放在最后
+        // RequestBody解析器要放在bean解析器之前，Simple与Bean类型解析器应该放在最后
         argumentResolvers.add(new RequestBodyMethodArgumentResolver());
+        // PathVariable解析器应该放置在Simple解析器之前
         argumentResolvers.add(new PathVariableMethodArgumentResolver());
         argumentResolvers.add(new SimpleTypeMethodArgumentResolver());
         argumentResolvers.add(new BeanMethodArgumentResolver());
@@ -314,8 +317,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected List<MethodArgumentResolver> getCustomArgumentResolvers() {
-        return MvcContext.getMvcContext()
-                .getCustomArgumentResolvers();
+        return MvcContext.getMvcContext().getCustomArgumentResolvers();
     }
 
     private void initHandlerMappings() {
@@ -327,13 +329,11 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.addAll(customHandlerMappings);
         handlerMappings.addAll(defaultHandlerMappings);
         // 把定制+默认的所有HandlerMapping组件添加到上下文中
-        MvcContext.getMvcContext()
-                .setHandlerMappings(handlerMappings);
+        MvcContext.getMvcContext().setHandlerMappings(handlerMappings);
     }
 
     protected List<HandlerMapping> getCustomHandlerMappings() {
-        return MvcContext.getMvcContext()
-                .getCustomHandlerMappings();
+        return MvcContext.getMvcContext().getCustomHandlerMappings();
     }
 
     protected List<HandlerMapping> getDefaultHandlerMappings() {
@@ -349,14 +349,11 @@ public class DispatcherServlet extends HttpServlet {
 
         handlerAdapters.addAll(customHandlerAdapters);
         handlerAdapters.addAll(defaultHandlerAdapters);
-        MvcContext.getMvcContext()
-                .setHandlerAdapters(handlerAdapters);
-
+        MvcContext.getMvcContext().setHandlerAdapters(handlerAdapters);
     }
 
     protected List<HandlerAdapter> getCustomHandlerAdapters() {
-        return MvcContext.getMvcContext()
-                .getCustomHandlerAdapters();
+        return MvcContext.getMvcContext().getCustomHandlerAdapters();
     }
 
     protected List<HandlerAdapter> getDefaultHandlerAdapters() {
@@ -372,13 +369,11 @@ public class DispatcherServlet extends HttpServlet {
         List<HandlerExceptionResolver> defaultExceptionResolvers = getDefaultExceptionResolvers();
         exceptionResolvers.addAll(customExceptionResolvers);
         exceptionResolvers.addAll(defaultExceptionResolvers);
-        MvcContext.getMvcContext()
-                .setExceptionResolvers(exceptionResolvers);
+        MvcContext.getMvcContext().setExceptionResolvers(exceptionResolvers);
     }
 
     protected List<HandlerExceptionResolver> getCustomExceptionResolvers() {
-        return MvcContext.getMvcContext()
-                .getCustomExceptionResolvers();
+        return MvcContext.getMvcContext().getCustomExceptionResolvers();
     }
 
     protected List<HandlerExceptionResolver> getDefaultExceptionResolvers() {
@@ -395,7 +390,7 @@ public class DispatcherServlet extends HttpServlet {
         if (pkg == null || pkg.isEmpty()) {
             throw new IllegalStateException("必须指定扫描的包，此包是控制器或者是其它Mvc框架扩展组件所在的包");
         }
-        return StringUtils.split(pkg, Delimiters.Common.getPattern())
+        return StringUtils.split(pkg, Delimiters.COMMON.getPattern())
                 .toArray(new String[]{});
     }
 
@@ -404,13 +399,15 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 方法通常会包含很多核心逻辑步骤，如果每一个逻辑步骤都有一些零散的代码
-     * 如果都放在一起，就会导致本方法代码很长，不容易看懂，
+     * 如果都放在一起，就会导致本方法代码很长，不容易看懂。
      * 所以，最好是把其中一个个的核心逻辑用单独的方法封装起来
      * <p>
-     * service的方法，由于是重写父类型的方法，其签名是没有办法改变
-     * 比如改成throws Throwable，这是不行的
-     * <p>
-     * 所以就增加了一个doService的方法，以便有机会改doService的签名
+     * service的方法，由于是重写父类型的方法，其签名是不应该改变的，
+     * 比如改成throws Throwable，这是不行的.所以就增加了一个doService的方法，
+     * 以便有机会改doService的签名,让其不抛出异常，因为doService方法处理了异常
+     * </p>
+     * <p>增加了一个doService方法也让service逻辑更清晰，次要的跨域处理逻辑放在service方法里，
+     * 重要的请求处理逻辑放在doService方法里</p>
      *
      * @param req  请求对象
      * @param resp 响应对象
@@ -422,7 +419,7 @@ public class DispatcherServlet extends HttpServlet {
         setEncoding(req, resp);
         if (CorsUtils.isCorsRequest(req)) {
             processCors(req, resp, corsConfiguration);
-            /*如果是预检请求需要return，以便及时响应预检请求，以便处理后续的真正请求*/
+            // 如果是预检请求提前结束方法执行，以便及时由processCors响应预检请求，以便处理后续的真正的跨域请求
             if (CorsUtils.isPreFlightRequest(req)) {
                 return;
             }
@@ -440,6 +437,7 @@ public class DispatcherServlet extends HttpServlet {
      * </ol>
      * <p>
      *     注意：HandlerMapping查找Handler的过程中出现的异常不会被HandlerExceptionResolver去处理
+     *     doDispatch方法里才会利用异常解析器处理执行链的异常
      * </p>
      *
      * @param req  请求对象
@@ -448,8 +446,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void doService(HttpServletRequest req, HttpServletResponse resp) {
         HandlerExecutionChain chain;
         HandlerContext context = HandlerContext.getContext();
-        context.setRequest(req)
-                .setResponse(resp);
+        context.setRequest(req).setResponse(resp);
         try {
             chain = getHandler(req);
             if (chain != null) {
@@ -458,8 +455,10 @@ public class DispatcherServlet extends HttpServlet {
                 noHandlerFound(req, resp);
             }
         } catch (Throwable ex) {
-            /* spring mvc在这个地方是做了额外的异常处理的 */
-            System.out.println("可以在这里再做一层异常处理，比如处理视图渲染方面的异常等，但现在什么都没做,异常消息是:" + ex.getMessage());
+            // 这里捕获的ex可能是执行链执行过程中抛出的异常（没有任何异常解析器能处理时或者拦截器后置逻辑执行时出现的异常），
+            // 也可能是某个异常解析器解析执行链的异常时异常解析器自己本身抛出了异常，
+            // 也可能是视图渲染时出现了异常
+            processThrowable(ex);
         } finally {
             /* 保存到ThreadLocal的内容一定要清掉，所以放在finally是合理的 */
             context.clear();
@@ -485,7 +484,7 @@ public class DispatcherServlet extends HttpServlet {
             viewResult = applyHandle(req, resp, chain.getHandler());
             chain.applyPostHandle(req, resp);
         } catch (Exception ex) {
-            // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器的后置逻辑即便出了异常也需要执行
+            // 拦截器的前置代码或者handler的执行出了异常，已正确执行过前置逻辑的拦截器,其后置逻辑也需要执行
             chain.applyPostHandle(req, resp);
             // 这里只处理Exception，非Exception并没有处理，会继续抛出给doService处理.
             viewResult = resolveException(req, resp, chain.getHandler(), ex);
@@ -566,6 +565,28 @@ public class DispatcherServlet extends HttpServlet {
                 .forward(req, resp);
     }
 
+    protected void processThrowable(Throwable ex) {
+        MvcConfigurer mvcConfigurer = MvcContext.getMvcContext().getCustomWebMvcConfigurer();
+        if (mvcConfigurer != null) {
+            mvcConfigurer.processBeyondChainException(ex);
+        } else {
+            processBeyondChainException(ex);
+        }
+    }
+
+    /**
+     * 可以在这里处理执行链之外的异常，执行链以外的异常通常就是视图渲染与异常解析器执行过程中出现的异常
+     * <p><i>注意</i>：这里的ex通常是视图渲染时出现的异常，也可能是执行链执行过程中产生的异常，比如没有异常解析器能处理执行链的异常、
+     * 执行链抛出的异常不是Exception的子类或者拦截器的后置逻辑执行过程中产生的异常等，这种情况我把其称之为执行链之外要处理的异常</p>
+     *
+     * @param ex 异常对象
+     */
+    protected void processBeyondChainException(Throwable ex) {
+        System.out.println("==================Handler执行链之外的异常信息(begin)=====================");
+        System.out.println(ex.getMessage());
+        System.out.println("==================Handler执行链之外的异常信息(end)=====================");
+    }
+
     protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
@@ -617,7 +638,6 @@ public class DispatcherServlet extends HttpServlet {
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, StringUtils.toCommaDelimitedString(configuration.getAllowedMethods(), ", "));
             // 允许浏览器发送的请求消息头
             resp.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, StringUtils.toCommaDelimitedString(configuration.getAllowedHeaders(), ", "));
-
         }
     }
 

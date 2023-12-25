@@ -21,6 +21,7 @@ import java.util.List;
  * @see Intercepts
  * @see DispatcherServlet
  */
+@FunctionalInterface
 public interface HandlerMapping {
     /**
      * 通常会依据当前请求的相关信息，比如requestURI信息来获取处理者，如果返回null表示本HandlerMapping不能处理此请求，
@@ -41,6 +42,7 @@ public interface HandlerMapping {
      * @return 所有当前请求的拦截器
      */
     default List<HandlerInterceptor> getInterceptors(HttpServletRequest request) {
-        return MvcContext.getMvcContext().getCustomHandlerInterceptors();
+        return MvcContext.getMvcContext()
+                .getCustomHandlerInterceptors();
     }
 }

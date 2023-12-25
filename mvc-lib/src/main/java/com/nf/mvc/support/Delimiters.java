@@ -29,52 +29,46 @@ public enum Delimiters {
     /**
      * 逗号分隔符
      */
-    Comma(",+", "逗号分隔符"),
+    COMMA(",+"),
     /**
      * 空格分隔符
      */
-    Space("\\s+", "空格分隔符"),
+    SPACE("\\s+"),
     /**
      * 分号分隔符
      */
-    SemiColon(";+", "分号分隔符"),
+    SEMI_COLON(";+"),
     /**
      * spring常用的分隔符，逗号，空格，分号
      */
-    Common("[\\s,;]+", "spring常用的分隔符，逗号，空格，分号"),
+    COMMON("[\\s,;]+"),
     /**
      * 连字符分隔符
      */
-    Hyphen("-+", "连字符分隔符"),
+    HYPHEN("-+"),
     /**
      * 冒号分隔符
      */
-    Colon(":+", "冒号分隔符"),
+    COLON(":+"),
     /**
      * 竖线分隔符(Vertical Line),也叫管道符
      */
-    Pipe("\\|", "竖线分隔符");
+    PIPE("\\|");
     private final String pattern;
-    private final String desc;
 
-    Delimiters(String pattern, String desc) {
+    Delimiters(String pattern) {
         this.pattern = pattern;
-        this.desc = desc;
     }
 
     public String getPattern() {
         return pattern;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
     /**
      * 此方法是用来处理定制的分隔符组合的pattern的
      * <h3>基本用法</h3>
      * <pre class="code">
-     *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.Space, Delimiters.Colon);
+     *    EnumSet<Delimiters> spaceAndColon = EnumSet.of(Delimiters.SPACE, Delimiters.COLON);
      *    String pattern = getCombinedPattern(spaceAndColon);
      * </pre>
      *

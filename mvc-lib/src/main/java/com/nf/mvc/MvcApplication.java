@@ -69,12 +69,12 @@ public class MvcApplication {
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(port);
-        //等价于new File(".").getAbsolutePath();
+        // 等价于new File(".").getAbsolutePath();
         String docBase = System.getProperty("user.dir");
         Context ctx = registerContext(tomcat, docBase);
-        //这行代码也会注册默认servlet,细节见https://stackoverflow.com/questions/6349472/embedded-tomcat-not-serving-static-content
+        // 这行代码也会注册默认servlet,细节见https://stackoverflow.com/questions/6349472/embedded-tomcat-not-serving-static-content
         Tomcat.initWebappDefaults(ctx);
-        //registerDefaultServlet(ctx);
+        // registerDefaultServlet(ctx);
         registerDispatcherServlet(ctx);
         registerShutdownHook(tomcat);
 
@@ -86,7 +86,7 @@ public class MvcApplication {
         // 先赋值为默认值
         setDefaultValues();
 
-        //解析参数中设定的值
+        // 解析参数中设定的值
         for (String arg : args) {
             String[] argument = arg.split("=");
             String key = argument[0];
@@ -119,7 +119,7 @@ public class MvcApplication {
             printBanner();
             tomcat.getServer().await();
         } catch (LifecycleException e) {
-            e.printStackTrace();
+            throw new RuntimeException("启动嵌入式tomcat失败", e);
         }
     }
 
@@ -145,7 +145,7 @@ public class MvcApplication {
         ctx.addServletMappingDecoded(urlPattern, "dispatcherServlet");
 
         wrapper.addInitParameter("base-package", basePackage);
-        //这行代码是让DispatcherServlet能支持servlet 3.0标准的文件上传能力
+        // 这行代码是让DispatcherServlet能支持servlet 3.0标准的文件上传能力
         wrapper.setMultipartConfigElement(new MultipartConfigElement(TEMP_DIR_DEFAULT));
         wrapper.setLoadOnStartup(1);
     }
@@ -156,14 +156,14 @@ public class MvcApplication {
                         tomcat.stop();
                         tomcat.destroy();
                     } catch (LifecycleException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException("关闭嵌入式tomcat失败", e);
                     }
                 })
         );
     }
 
     private void printBanner() {
-        //ascii 文本生成是借助于https://tools.kalvinbg.cn/txt/ascii提供的工具生成(采用starwars字体)
+        // ascii 文本生成是借助于https://tools.kalvinbg.cn/txt/ascii提供的工具生成(采用starwars字体)
         String bannerText = "  ______  __    __   _______ .__   __.        __   __    __  .__   __. \n" +
                 " /      ||  |  |  | |   ____||  \\ |  |       |  | |  |  |  | |  \\ |  | \n" +
                 "|  ,----'|  |__|  | |  |__   |   \\|  |       |  | |  |  |  | |   \\|  | \n" +

@@ -227,7 +227,6 @@ public abstract class ReflectionUtils {
             }
             return paramNames;
         } catch (NotFoundException e) {
-            e.printStackTrace();
             return null;
         }
     }
